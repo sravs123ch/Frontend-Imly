@@ -29,16 +29,12 @@
 // } from "../CustomTablePagination";
 // import "../../style.css";
 
-
-
 // const Orders = () => {
 //   const [products, setProducts] = useState([]);
 //   const [selectedFilter, setSelectedFilter] = useState("All");
 //   const [page, setPage] = useState(0);
 //   const [rowsPerPage, setRowsPerPage] = useState(10);
 //   const navigate = useNavigate();
-
-
 
 //   useEffect(() => {
 //     const fetchOrders = async () => {
@@ -49,7 +45,7 @@
 //             limit: 10,
 //           },
 //         });
-        
+
 //         const result = await response.json();
 //         console.log('Fetched result:', result);
 
@@ -96,7 +92,6 @@
 //       )
 //     );
 //   };
-
 
 //   const filteredOrders = products.filter(
 //     (product) =>
@@ -225,7 +220,6 @@
 //           </div>
 //         </div>
 
-       
 //         <TableContainer component={Paper}>
 //   <Table
 //     sx={{ minWidth: 700, tableLayout: "fixed" }}  // Ensure equal width columns
@@ -296,7 +290,6 @@
 
 // export default Orders;
 
-
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "@mui/material/Table";
@@ -315,7 +308,11 @@ import { TableFooter } from "@mui/material";
 import { MdOutlineCancel } from "react-icons/md";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { GET_ALL_ORDERS, GETALLSTORES_API,GETORDERBYID_API } from "../../Constants/apiRoutes";
+import {
+  GET_ALL_ORDERS,
+  GETALLSTORES_API,
+  GETORDERBYID_API,
+} from "../../Constants/apiRoutes";
 import {
   StyledTableCell,
   StyledTableRow,
@@ -328,8 +325,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { FaPlus, FaTable } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import Datepicker from "react-tailwindcss-datepicker";
-import {OrderContext} from "../../Context/orderContext";
-
+import { OrderContext } from "../../Context/orderContext";
 
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
@@ -356,7 +352,7 @@ const Orders = () => {
     setSearchName(value);
   };
 
-const { setOrderIdDetails } = useContext(OrderContext);
+  const { setOrderIdDetails } = useContext(OrderContext);
   const [stores, setStores] = useState([]);
 
   // const [startDate, setStartDate] = useState("");
@@ -408,51 +404,8 @@ const { setOrderIdDetails } = useContext(OrderContext);
         value.endDate
       );
 
-      // If searchName, selectedStore.StoreID, startDate, and endDate are all empty
-      if (
-        searchName === "" &&
-        selectedStore.StoreID === "" &&
-        !value.startDate &&
-        !value.endDate
-      ) {
-        setProducts(orders);
-        setTotalOrders(totalCount);
-        return;
-      }
-
-      // Filter orders by selected store if applicable
-      const filteredByStore = selectedStore.StoreID
-        ? orders.filter((order) => order.StoreID === selectedStore.StoreID)
-        : orders;
-
-      // Filter orders by date range if applicable
-      const filteredByDate = filteredByStore.filter((order) => {
-        const orderDate = new Date(order.OrderDate);
-        const isAfterStartDate = value.startDate
-          ? orderDate >= new Date(value.startDate)
-          : true;
-        const isBeforeEndDate = value.endDate
-          ? orderDate <= new Date(value.endDate)
-          : true;
-        return isAfterStartDate && isBeforeEndDate;
-      });
-
-      // If searchName has a value, filter by name
-      const filteredByName = searchName
-        ? filteredByDate.filter((order) => {
-            const fullName = order.CustomerName.toLowerCase();
-            const orderNumber = order.OrderNumber.toString().toLowerCase(); // Ensure OrderNumber is a string
-
-            return (
-              fullName.includes(searchName.toLowerCase()) ||
-              orderNumber.includes(searchName.toLowerCase())
-            );
-          })
-        : filteredByDate;
-
-      // Set the filtered products and total orders based on filters
-      setProducts(filteredByName);
-      setTotalOrders(searchName ? filteredByName.length : totalCount);
+      setProducts(orders);
+      setTotalOrders(totalCount);
     } catch (error) {
       console.error("Failed to fetch orders", error);
     } finally {
@@ -474,11 +427,11 @@ const { setOrderIdDetails } = useContext(OrderContext);
   //   navigate("/OrdersAdd", { state: { orderId } });
   // };
 
-    const getOrderById = async (orderId) => {
+  const getOrderById = async (orderId) => {
     try {
       const response = await axios.get(
         // `https://imlystudios-backend-mqg4.onrender.com/api/userrole/getRoleById/${roleId}`
-     `${GETORDERBYID_API}/${orderId}`,
+        `${GETORDERBYID_API}/${orderId}`
       );
       console.log("UserRole retrieved successfully:", response.data);
       return response.data;
@@ -489,7 +442,7 @@ const { setOrderIdDetails } = useContext(OrderContext);
   };
   const handleOrderUpdate = async (orderId) => {
     try {
-      const orderIdDetails= await getOrderById(orderId);
+      const orderIdDetails = await getOrderById(orderId);
       setOrderIdDetails(orderIdDetails);
       navigate("/OrdersAdd");
     } catch (error) {
@@ -702,13 +655,10 @@ const { setOrderIdDetails } = useContext(OrderContext);
         {/* Container for Date Pickers */}
         <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6 ">
           <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
-          
             <Datepicker
-             
               popoverDirection="down"
               showShortcuts={true}
               showFooter={true}
-            
               placeholder="Start Date and End Date"
               primaryColor={"purple"}
               value={value}
@@ -854,7 +804,6 @@ const { setOrderIdDetails } = useContext(OrderContext);
                       <button
                         type="button"
                         onClick={() => handleOrderUpdate(product.OrderID)}
-                    
                         className="button edit-button flex items-center"
                       >
                         <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
