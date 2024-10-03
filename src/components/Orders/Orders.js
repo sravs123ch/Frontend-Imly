@@ -315,7 +315,7 @@ import { TableFooter } from "@mui/material";
 import { MdOutlineCancel } from "react-icons/md";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { GET_ALL_ORDERS, GETALLSTORES_API } from "../../Constants/apiRoutes";
+import { GET_ALL_ORDERS, GETALLSTORES_API,GETORDERBYID_API } from "../../Constants/apiRoutes";
 import {
   StyledTableCell,
   StyledTableRow,
@@ -328,6 +328,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { FaPlus, FaTable } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import Datepicker from "react-tailwindcss-datepicker";
+import {OrderContext} from "../../Context/orderContext";
 
 
 TablePaginationActions.propTypes = {
@@ -355,6 +356,7 @@ const Orders = () => {
     setSearchName(value);
   };
 
+const { setOrderIdDetails } = useContext(OrderContext);
   const [stores, setStores] = useState([]);
 
   // const [startDate, setStartDate] = useState("");
@@ -468,10 +470,32 @@ const Orders = () => {
     value.endDate,
   ]);
 
-  const handleOrderUpdate = (orderId) => {
-    navigate("/OrdersAdd", { state: { orderId } });
-  };
+  // const handleOrderUpdate = (orderId) => {
+  //   navigate("/OrdersAdd", { state: { orderId } });
+  // };
 
+    const getOrderById = async (orderId) => {
+    try {
+      const response = await axios.get(
+        // `https://imlystudios-backend-mqg4.onrender.com/api/userrole/getRoleById/${roleId}`
+     `${GETORDERBYID_API}/${orderId}`,
+      );
+      console.log("UserRole retrieved successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching UserRole:", error);
+      throw error;
+    }
+  };
+  const handleOrderUpdate = async (orderId) => {
+    try {
+      const orderIdDetails= await getOrderById(orderId);
+      setOrderIdDetails(orderIdDetails);
+      navigate("/OrdersAdd");
+    } catch (error) {
+      console.error("Error fetching UserRole details:", error);
+    }
+  };
   const handleCancel = (id) => {
     const newStatus = "Cancelled";
     setProducts((prevItems) =>
@@ -678,51 +702,13 @@ const Orders = () => {
         {/* Container for Date Pickers */}
         <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6 ">
           <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
-            {/* <div className="flex items-center">
-            <input
-              type={isStartDateInput ? "date" : "text"}
-              value={startDate}
-              onFocus={() => setIsStartDateInput(true)}
-              onBlur={() => {
-                if (!startDate) setIsStartDateInput(false);
-              }}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-32 p-1 border rounded-md border-gray-300 transition-all duration-200"
-              placeholder=" Start Date"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type={isEndDateInput ? "date" : "text"}
-              value={endDate}
-              onFocus={() => setIsEndDateInput(true)}
-              onBlur={() => {
-                if (!endDate) setIsEndDateInput(false);
-              }}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-32 p-1 border rounded-md border-gray-300 transition-all duration-200"
-              placeholder=" End Date"
-            />
-          </div> */}
+          
             <Datepicker
-              // inputClassName="text-gray-600 p-1 border-solid border-1 border--500 "
+             
               popoverDirection="down"
               showShortcuts={true}
               showFooter={true}
-              // configs={{
-              //   shortcuts: {
-              //     today: "TText",
-              //     yesterday: "YText",
-              //     past: (period) => "P-" + period + " text",
-              //     currentMonth: "CMText",
-              //     pastMonth: "PMText",
-              //   },
-              //   footer: {
-              //     cancel: "CText",
-              //     apply: "AText",
-              //   },
-              // }}
+            
               placeholder="Start Date and End Date"
               primaryColor={"purple"}
               value={value}
@@ -868,6 +854,7 @@ const Orders = () => {
                       <button
                         type="button"
                         onClick={() => handleOrderUpdate(product.OrderID)}
+                    
                         className="button edit-button flex items-center"
                       >
                         <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
