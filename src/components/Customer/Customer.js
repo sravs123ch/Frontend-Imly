@@ -104,6 +104,7 @@ function Customers() {
 
   // Fetch customers from API
   const fetchCustomers = async () => {
+    setIsLoading(true); // Set loading state to true before fetching data
     try {
       const { customers, totalCount } = await getAllCustomers(
         page,
@@ -121,6 +122,8 @@ function Customers() {
       setTotalCustomers(totalCount);
     } catch (error) {
       console.error("Failed to fetch customers", error);
+    } finally {
+      setIsLoading(false); // Set loading state to false after fetching data
     }
   };
 
@@ -215,7 +218,7 @@ function Customers() {
   };
 
   const handleEditClick = async (customerId) => {
-    setIsLoading(true);
+    setIsLoading(true); // Set loading state to true before fetching data
     try {
       const customerDetails = await getCustomerById(customerId);
       const addressDetails = await getCustomerAddressById(customerId);
@@ -226,17 +229,19 @@ function Customers() {
     } catch (error) {
       console.error("Error fetching customer details:", error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Set loading state to false after fetching data
     }
   };
-
   // Handle delete button click
   const handleDeleteClick = async (customerId) => {
+    setIsLoading(true); // Set loading state to true before deleting data
     try {
       await deleteCustomerById(customerId);
       fetchCustomers();
     } catch (error) {
       console.error("Error deleting user:", error);
+    } finally {
+      setIsLoading(false); // Set loading state to false after deleting data
     }
   };
 
@@ -262,7 +267,7 @@ function Customers() {
   };
 
   const handleViewOrdersClick = async (customerId) => {
-    setIsLoading(true);
+    setIsLoading(true); // Set loading state to true before fetching data
     try {
       // Fetch orders for the selected customer
       const response = await axios.get(
@@ -287,10 +292,9 @@ function Customers() {
       console.error("Error fetching orders:", error);
       // Handle error, e.g., show a toast notification
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Set loading state to false after fetching data
     }
   };
-
   return (
     // <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
     <div className="main-container">
@@ -451,7 +455,13 @@ function Customers() {
           </TableHead>
 
           <TableBody>
-            {filteredCustomers.length > 0 ? (
+            {isLoading ? (
+              <StyledTableRow>
+                <StyledTableCell colSpan={5} align="center">
+                  <LoadingAnimation />
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : filteredCustomers.length > 0 ? (
               filteredCustomers.map((person, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>

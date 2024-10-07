@@ -84,20 +84,17 @@ function User() {
         throw new Error("No authentication token found");
       }
 
-      const response = await axios.get(
-        GETALLUSERS_API,
-        {
-          params: {
-            page: pageNum + 1,
-            limit: pageSize,
-            SearchText: search,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`, // Add the token to the request
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(GETALLUSERS_API, {
+        params: {
+          page: pageNum + 1,
+          limit: pageSize,
+          SearchText: search,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token to the request
+          "Content-Type": "application/json",
+        },
+      });
 
       return {
         users: response.data.users,
@@ -114,6 +111,7 @@ function User() {
   }, [page, rowsPerPage, searchName]);
 
   const fetchUsers = async () => {
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
       const { users, totalCount } = await getAllUsers(
         page,
@@ -131,6 +129,8 @@ function User() {
       setTotalUsers(totalCount);
     } catch (error) {
       console.error("Failed to fetch customers", error);
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
   };
 
@@ -144,55 +144,38 @@ function User() {
   };
 
   const getUserById = async (userId) => {
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      console.log(token);
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/users/getUserById/${userId}`,
-        `${GETALLUSERSBYID_API}/${userId}`,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass token in the headers
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${GETALLUSERSBYID_API}/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass token in the headers
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching user:", error);
       throw error;
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
   };
 
   const deleteUserById = async (userId) => {
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      console.log(token);
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await axios.delete(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/users/deleteUser/${userId}`,
-        `${DELETEUSERSBYID_API}/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass token in the headers
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.delete(`${DELETEUSERSBYID_API}/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass token in the headers
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error("Error deleting user:", error);
       throw error;
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
   };
 
@@ -458,91 +441,102 @@ function User() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {displayUsers.map((person) => (
-                <StyledTableRow key={person.UserID}>
-                  <StyledTableCell>
-                    <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
-                      <img
-                        src={person.ProfileImage}
-                        alt="Profile"
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                      <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
-                        <span>{person.FirstName}</span>
-                        <span>{person.LastName}</span>
-                      </div>
-                    </div>
-                  </StyledTableCell>
-
-                  <StyledTableCell className="whitespace-nowrap overflow-hidden text-ellipsis">
-                    {person.Email}
-                  </StyledTableCell>
-
-                  <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
-
-                  <StyledTableCell>
-                    {(() => {
-                      // Log the RoleID and available options for debugging
-                      console.log("RoleID:", person.RoleID);
-                      console.log("Role Options:", roleOptions);
-
-                      // Ensure person.RoleID is treated as a string for comparison
-                      const role = roleOptions.find(
-                        (role) => role.id === String(person.RoleID)
-                      );
-
-                      // Log the found role
-                      console.log("Found Role:", role);
-
-                      // Return the role name or "Unknown Role"
-                      return role?.name || "Unknown Role";
-                    })()}
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <span
-                      className={`w-[68px] text-center gender-pill ${
-                        person.Gender === "M"
-                          ? "gender-male"
-                          : person.Gender === "F"
-                          ? "gender-female"
-                          : "gender-na"
-                      }`}
-                    >
-                      {person.Gender === null
-                        ? "N/A"
-                        : person.Gender === "M"
-                        ? person.Gender + "ale"
-                        : person.Gender + "emale"}
-                    </span>
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <div className="button-container">
-                      <button
-                        type="button"
-                        onClick={() => handleEditClick(person.UserID)}
-                        className="button edit-button"
-                      >
-                        <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
-                        Edit
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteClick(person.UserID)}
-                        className="button delete-button"
-                      >
-                        <MdOutlineCancel
-                          aria-hidden="true"
-                          className="h-4 w-4"
-                        />
-                        Delete
-                      </button>
-                    </div>
+              {isLoading ? ( // Show loading animation while fetching
+                <StyledTableRow>
+                  <StyledTableCell colSpan={6} align="center">
+                    <LoadingAnimation /> {/* Display the loading animation */}
                   </StyledTableCell>
                 </StyledTableRow>
-              ))}
+              ) : (
+                displayUsers.map((person) => (
+                  <StyledTableRow key={person.UserID}>
+                    <StyledTableCell>
+                      <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
+                        <img
+                          src={person.ProfileImage}
+                          alt="Profile"
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                        <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
+                          <span>{person.FirstName}</span>
+                          <span>{person.LastName}</span>
+                        </div>
+                      </div>
+                    </StyledTableCell>
+
+                    <StyledTableCell className="whitespace-nowrap overflow-hidden text-ellipsis">
+                      {person.Email}
+                    </StyledTableCell>
+
+                    <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
+
+                    <StyledTableCell>
+                      {(() => {
+                        // Log the RoleID and available options for debugging
+                        console.log("RoleID:", person.RoleID);
+                        console.log("Role Options:", roleOptions);
+
+                        // Ensure person.RoleID is treated as a string for comparison
+                        const role = roleOptions.find(
+                          (role) => role.id === String(person.RoleID)
+                        );
+
+                        // Log the found role
+                        console.log("Found Role:", role);
+
+                        // Return the role name or "Unknown Role"
+                        return role?.name || "Unknown Role";
+                      })()}
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      <span
+                        className={`w-[68px] text-center gender-pill ${
+                          person.Gender === "M"
+                            ? "gender-male"
+                            : person.Gender === "F"
+                            ? "gender-female"
+                            : "gender-na"
+                        }`}
+                      >
+                        {person.Gender === null
+                          ? "N/A"
+                          : person.Gender === "M"
+                          ? person.Gender + "ale"
+                          : person.Gender + "emale"}
+                      </span>
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      <div className="button-container">
+                        <button
+                          type="button"
+                          onClick={() => handleEditClick(person.UserID)}
+                          className="button edit-button"
+                        >
+                          <AiOutlineEdit
+                            aria-hidden="true"
+                            className="h-4 w-4"
+                          />
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClick(person.UserID)}
+                          className="button delete-button"
+                        >
+                          <MdOutlineCancel
+                            aria-hidden="true"
+                            className="h-4 w-4"
+                          />
+                          Delete
+                        </button>
+                      </div>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              )}
             </TableBody>
             <TableFooter>
               <TableRow>

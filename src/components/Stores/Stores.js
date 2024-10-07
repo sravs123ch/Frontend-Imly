@@ -12,9 +12,13 @@ import { FaPlus, FaTable } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { AiOutlineEdit } from "react-icons/ai";
 import * as XLSX from "xlsx";
-import { StoreContext } from '../../Context/storeContext';
-import axios from 'axios';
-import { GETALLSTORES_API ,GETALLSTORESBYID_API , DELETESTORESSBYID_API } from '../../Constants/apiRoutes';
+import { StoreContext } from "../../Context/storeContext";
+import axios from "axios";
+import {
+  GETALLSTORES_API,
+  GETALLSTORESBYID_API,
+  DELETESTORESSBYID_API,
+} from "../../Constants/apiRoutes";
 import { MdOutlineCancel } from "react-icons/md";
 import "../../style.css";
 import {
@@ -47,7 +51,7 @@ function Stores() {
             pageNumber: pageNum + 1,
             pageSize: pageSize,
             SearchText: searchName,
-          }
+          },
         }
       );
 
@@ -56,7 +60,7 @@ function Stores() {
 
       return {
         stores: response.data.Stores || [], // Correctly access the 'Stores' field
-        totalCount: response.data.totalItems || 0 // Use 'totalItems' for total count
+        totalCount: response.data.totalItems || 0, // Use 'totalItems' for total count
       };
     } catch (error) {
       console.error("Error fetching stores:", error);
@@ -65,13 +69,17 @@ function Stores() {
   };
 
   const fetchStores = async () => {
-    console.log("Fetching data for page:", page);
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
-      const { stores, totalCount } = await getAllStores(page, rowsPerPage, searchName);
-      
+      const { stores, totalCount } = await getAllStores(
+        page,
+        rowsPerPage,
+        searchName
+      );
+
       setPaginatedPeople(stores);
-      console.log('Fetched stores:', stores);
-      console.log('Total stores count:', totalCount);
+      console.log("Fetched stores:", stores);
+      console.log("Total stores count:", totalCount);
       setStores(stores);
       setTotalStores(totalCount);
       // Only update filtered customers if no search is active
@@ -82,22 +90,20 @@ function Stores() {
       setTotalStores(totalCount);
     } catch (error) {
       console.error("Failed to fetch stores", error);
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
-  
   };
-
 
   useEffect(() => {
     fetchStores();
   }, [page, rowsPerPage, searchName]);
-
 
   const handleChangePage = (event, newPage) => {
     console.log("Current page:", page);
     console.log("Requested page:", newPage);
     setPage(newPage);
   };
-
 
   const handleChangeRowsPerPage = (event) => {
     console.log("Rows per page changed to:", event.target.value);
@@ -106,46 +112,43 @@ function Stores() {
   };
 
   const getStoreById = async (storeId) => {
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/stores/getStoreById/${storeId}`
-        `${GETALLSTORESBYID_API}/${storeId}`
-        
-      );
+      const response = await axios.get(`${GETALLSTORESBYID_API}/${storeId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching store:", error);
       throw error;
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
   };
 
   const deleteStoreById = async (storeId) => {
+    setIsLoading(true); // Set isLoading to true before making the network call
     try {
-      setIsLoading(true); 
       const response = await axios.delete(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/stores/deleteStore/${storeId}`
         `${DELETESTORESSBYID_API}/${storeId}`
       );
       return response.data;
     } catch (error) {
       console.error("Error deleting store:", error);
       throw error;
-    }finally {
-      setIsLoading(false);
+    } finally {
+      setIsLoading(false); // Set isLoading to false in the finally block
     }
   };
 
   const handleEdit = async (storeId) => {
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
       const storeDetails = await getStoreById(storeId);
       setStoreDetails(storeDetails);
       // Navigate to the update page with the store ID
       navigate(`/Storesform`);
     } catch (error) {
-      console.error('Error handling edit:', error);
-    }
-    finally {
+      console.error("Error handling edit:", error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -155,7 +158,7 @@ function Stores() {
       await deleteStoreById(storeId);
       fetchStores(); // Refresh store list after deletion
     } catch (error) {
-      console.error('Error handling delete:', error);
+      console.error("Error handling delete:", error);
     }
   };
 
@@ -182,8 +185,8 @@ function Stores() {
     setSearchName(searchValue);
 
     if (searchValue === "") {
-      setIsSearching(false); 
-      setFilteredStores(paginatedPeople); 
+      setIsSearching(false);
+      setFilteredStores(paginatedPeople);
     } else {
       setIsSearching(true); // Enable search mode
       const filteredData = paginatedPeople.filter((item) => {
@@ -196,134 +199,133 @@ function Stores() {
     }
   };
 
-  
   return (
-
-
     // <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-72 w-auto">
     <div className="main-container">
       {/* <div className="mt-6 bg-white p-6 rounded-lg shadow-md"> */}
       {/* <div className="mt-6  p-6 rounded-lg "> */}
-        <div className="body-container">
-  <h2 className="heading">Stores</h2>
-     <div className="search-button-group">
-            <div className="search-container">
-              <label htmlFor="searchName" className="sr-only">
-                Search
-              </label>
-              <input
-                id="searchName"
-                type="text"
-                placeholder="Search by Name or Email or Mobile"
-                value={searchName}
-                onChange={(e) => searchItems(e.target.value)}
-                className="mt-1 p-2 pr-10 border border-gray-300 rounded-md w-full "
-              />
-              <div className="search-icon-container text-gray-500">
-                <IoIosSearch />
-              </div>
+      <div className="body-container">
+        <h2 className="heading">Stores</h2>
+        <div className="search-button-group">
+          <div className="search-container">
+            <label htmlFor="searchName" className="sr-only">
+              Search
+            </label>
+            <input
+              id="searchName"
+              type="text"
+              placeholder="Search by Name or Email or Mobile"
+              value={searchName}
+              onChange={(e) => searchItems(e.target.value)}
+              className="mt-1 p-2 pr-10 border border-gray-300 rounded-md w-full "
+            />
+            <div className="search-icon-container text-gray-500">
+              <IoIosSearch />
             </div>
+          </div>
 
+          <ul className="button-list">
+            <li>
+              <button
+                type="button"
+                className="action-button"
+                onClick={handleAddStoreClick}
+              >
+                <FaPlus aria-hidden="true" className="icon" />
+                Add Stores
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="action-button"
+                onClick={handleExportStoresData}
+              >
+                <FaTable aria-hidden="true" className="icon" />
+                Export Stores
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-    <ul className="button-list">
-      <li>
-        <button
-          type="button"
-          className="action-button"
-          onClick={handleAddStoreClick}
-        >
-          <FaPlus aria-hidden="true" className="icon" />
-          Add Stores
-        </button>
-      </li>
-      <li>
-        <button
-          type="button"
-          className="action-button"
-          onClick={handleExportStoresData}
-        >
-          <FaTable aria-hidden="true" className="icon" />
-          Export Stores
-        </button>
-      </li>
-    </ul>
-  </div>
-</div>
-
-
-
-        <TableContainer component={Paper} className="mt-4 rounded-lg shadow">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Stores</StyledTableCell>
-                <StyledTableCell>Email</StyledTableCell>
-                <StyledTableCell>Phone</StyledTableCell>
-                <StyledTableCell>Address</StyledTableCell>
-                <StyledTableCell>Actions</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredStores.map((store, index) => (
+      <TableContainer component={Paper} className="mt-4 rounded-lg shadow">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Stores</StyledTableCell>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Phone</StyledTableCell>
+              <StyledTableCell>Address</StyledTableCell>
+              <StyledTableCell>Actions</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading ? ( // Show loading animation while fetching
+              <StyledTableRow>
+                <StyledTableCell colSpan={5} align="center">
+                  <LoadingAnimation /> {/* Display the loading animation */}
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : (
+              filteredStores.map((store, index) => (
                 <StyledTableRow key={store.StoreID}>
                   <StyledTableCell>{store.StoreName}</StyledTableCell>
                   <StyledTableCell>{store.Email}</StyledTableCell>
                   <StyledTableCell>{store.Phone}</StyledTableCell>
                   <StyledTableCell>
-                    {`${store.AddressLine1 || ''} ${store.AddressLine2 || ''}`}
+                    {`${store.AddressLine1 || ""} ${store.AddressLine2 || ""}`}
                   </StyledTableCell>
 
-              
-                     
- <StyledTableCell>
- 
-<div className="button-container">
-  <button
-    type="button"
-    onClick={() => handleEditClick(store.StoreID)}
-    className="button edit-button"
-  >
-    <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
-    Edit
-  </button>
+                  <StyledTableCell>
+                    <div className="button-container">
+                      <button
+                        type="button"
+                        onClick={() => handleEditClick(store.StoreID)}
+                        className="button edit-button"
+                      >
+                        <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
+                        Edit
+                      </button>
 
-  <button
-    type="button"
-    onClick={() => handleDeleteClick(store.StoreID)}
-    className="button delete-button"
-  >
-    <MdOutlineCancel aria-hidden="true" className="h-4 w-4" />
-    Delete
-  </button>
-</div>
-
-</StyledTableCell>
-
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteClick(store.StoreID)}
+                        className="button delete-button"
+                      >
+                        <MdOutlineCancel
+                          aria-hidden="true"
+                          className="h-4 w-4"
+                        />
+                        Delete
+                      </button>
+                    </div>
+                  </StyledTableCell>
                 </StyledTableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[10, 25, 50]}
-                  count={totalStores}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-        {isLoading && (
-      // <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
+              ))
+            )}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                count={totalStores}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+      {isLoading && (
+        // <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
         <LoadingAnimation />
-      // </div>
-    )}
-      </div>
+        // </div>
+      )}
+    </div>
     // </div >
   );
 }
