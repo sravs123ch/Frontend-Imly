@@ -30,27 +30,35 @@ import {
 import logo from "../../assests/Images/imly-logo-new.jpg";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { CogIcon } from "@heroicons/react/20/solid";
+import { useAuth } from "../../Context/AuthContext";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+const allNavigation = [
+  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, roles: [1, 2] },
 
   // { name: 'Create Orders', href: '/AddOrders', icon: UserIcon },
 
-  { name: "Orders", href: "/Orders", icon: ClipboardDocumentListIcon },
-  { name: "Payments", href: "/Payments", icon: CreditCardIcon },
-  { name: "Services", href: "/Returns", icon: DocumentMagnifyingGlassIcon },
+  {
+    name: "Orders",
+    href: "/Orders",
+    icon: ClipboardDocumentListIcon,
+    roles: [1, 2],
+  },
+  { name: "Payments", href: "/Payments", icon: CreditCardIcon, roles: [1, 2] },
+  {
+    name: "Services",
+    href: "/Returns",
+    icon: DocumentMagnifyingGlassIcon,
+    roles: [1, 2],
+  },
 
-  { name: "Customers", href: "/Customer", icon: UsersIcon },
-  { name: "Reports", href: "/Reports", icon: FolderIcon },
+  { name: "Customers", href: "/Customer", icon: UsersIcon, roles: [1, 2] },
+  { name: "Reports", href: "/Reports", icon: FolderIcon, roles: [1, 2] },
 
-  // { name: 'Add Products', href: '/products', icon: FolderIcon },
-  { name: "Users", href: "/user", icon: UsersIcon },
-  { name: "User Roles", href: "/RoleUser", icon: UsersIcon },
-  { name: "Production", href: "/production", icon: CogIcon },
+  { name: "Users", href: "/user", icon: UsersIcon, roles: [1, 2] },
+  { name: "User Roles", href: "/RoleUser", icon: UsersIcon, roles: [1, 2] },
+  { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
 
-  // { name: 'Products', href: '/product', icon: FolderIcon },
-  { name: "Stores", href: "/Stores", icon: ShoppingBagIcon },
-  // { name: 'Createorder', href: '/createorder', icon: ShoppingBagIcon },
+  { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1,2] },
 ];
 
 const userNavigation = [
@@ -63,21 +71,18 @@ function classNames(...classes) {
 }
 
 export default function Navigation() {
+  const { isLoggedIn, userRole } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
   const location = useLocation(); // Initialize useLocation
+  const { logout } = useAuth();
 
   // const handleSignOut = () => {
   //   // Handle sign out logic here
   //   navigate('/'); // Navigate to login page
   // };
   const handleSignOut = () => {
-    // Remove token from local storage
-    localStorage.removeItem("token");
-
-    // Handle any additional sign-out logic here
-
-    // Navigate to login page
+    logout();
     navigate("/");
   };
 
@@ -86,6 +91,9 @@ export default function Navigation() {
     // Handle settings logic here, such as opening a settings modal
     console.log("Settings button clicked");
   };
+  const navigation = allNavigation.filter(
+    (item) => isLoggedIn && item.roles.includes(userRole)
+  );
 
   return (
     <>

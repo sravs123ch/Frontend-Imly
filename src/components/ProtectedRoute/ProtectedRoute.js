@@ -1,11 +1,12 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
+import LoadingAnimation from "../Loading/LoadingAnimation";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, userRole, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a loading spinner
+    return <LoadingAnimation />; // Or a loading spinner
   }
 
   if (!isLoggedIn) {

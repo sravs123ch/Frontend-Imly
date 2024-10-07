@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CustomerContext } from "../../Context/customerContext";
@@ -12,10 +11,7 @@ import { Combobox } from "@headlessui/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import CustomerSearch from "../Orders/CustomerSearch";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-import { IoMdAddCircleOutline } from "react-icons/io";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 import {
@@ -39,7 +35,7 @@ import {
   GETALLSTORES_API,
   GETALLCUSTOMERSBYID_API,
   CUSTOMERID_API,
-  ADDRESS_API
+  ADDRESS_API,
 } from "../../Constants/apiRoutes";
 import { MdOutlineCancel } from "react-icons/md";
 import {
@@ -47,9 +43,9 @@ import {
   StyledTableRow,
   TablePaginationActions,
 } from "../CustomTablePagination";
-import SuccessPopup from '../SuccessPopup';
-import { showSuccessToast, showErrorToast } from '../../toastNotifications';
-
+import SuccessPopup from "../SuccessPopup";
+import { showSuccessToast, showErrorToast } from "../../toastNotifications";
+import { DataContext } from "../../Context/DataContext";
 
 const steps = ["Customer Details", "Address", "Orders"];
 const genderOptions = [
@@ -58,23 +54,20 @@ const genderOptions = [
 ];
 const referralOptions = ["Social Media", "Walk-In", "Reference"]; // Referral options
 
-
 function AddCustomers() {
   const navigate = useNavigate();
   const location = useLocation();
   // const { customerDetails } = useContext(CustomerContext);
   const { customerDetails, addressDetails } = useContext(CustomerContext);
 
-  const [ReferedBy , setReferedBy ] = useState(null);
-  
-  const [selectedReferenceSubOption, setSelectedReferenceSubOption] =
-    useState(null);
+  const [ReferedBy, setReferedBy] = useState(null);
+
+  const [SubReference, setSubReference] = useState(null);
   const [selectedSocialMediaPlatform, setSelectedSocialMediaPlatform] =
     useState(null);
   const [query, setQuery] = useState("");
 
-  const handleReferenceSubOptionChange = (option) =>
-    setSelectedReferenceSubOption(option);
+  const handleSubReferenceChange = (option) => setSubReference(option);
   const handleSocialMediaPlatformChange = (platform) =>
     setSelectedSocialMediaPlatform(platform);
   const handleRefereeNameChange = (e) =>
@@ -83,21 +76,22 @@ function AddCustomers() {
   const isEditMode = Boolean(
     location.state?.customerDetails?.customer || customerDetails?.customer
   );
+
   // Customer form data state
   const [customerFormData, setCustomerFormData] = useState({
     TenantID: 1,
     CustomerID: 0,
-    StoreID:"",
-    CustomerFirstName: "",
-    CustomerLastName: "",
-    CustomerEmail: "",
+    StoreID: "",
+    FirstName: "",
+    LastName: "",
+    Email: "",
     Password: "",
     ConfirmPassword: "",
     PhoneNumber: "",
     Gender: "",
     Comments: "",
-    Alternative_PhoneNumber:"",
-    ReferedBy:"",
+    Alternative_PhoneNumber: "",
+    ReferedBy: "",
   });
 
   const [addressFormData, setAddressFormData] = useState({
@@ -113,8 +107,7 @@ function AddCustomers() {
     Addresses: [],
   });
   const handleStepClick = (index) => {
-    setActiveStep(index); // Set the active step to the clicked step
-    // Add your logic to change the page or navigate here
+    setActiveStep(index);
   };
 
   const [error, setError] = useState("");
@@ -122,140 +115,164 @@ function AddCustomers() {
     customerFormData.Gender || ""
   );
   const [activeStep, setActiveStep] = useState(0);
+
+  const [countryMap, setCountryMap] = useState({});
+  const [setStateMap] = useState({});
+  const [setCityMap] = useState({});
+  const [Addresses, setAddresses] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [addressTableData, setAddressTableData] = useState([]);
+
+  const [popupMessage, setPopupMessage] = useState(""); // For pop-up message
+  const [showPopup, setShowPopup] = useState(false);
+
+  const { citiesData, statesData, countriesData } = useContext(DataContext);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedState, setSelectedState] = useState(null);
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [countryMap, setCountryMap] = useState({});
-  const [ setStateMap] = useState({});
-  const [ setCityMap] = useState({});
-  const [Addresses, setAddresses] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [storeNames, setStoreNames] = useState([]);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [addressTableData, setAddressTableData] = useState([]); 
-  const [storeOptions, setStoreOptions] = useState([]); 
-  const [popupMessage, setPopupMessage] = useState(""); // For pop-up message
-  const [showPopup, setShowPopup] = useState(false); 
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [filteredStates, setFilteredStates] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
 
-useEffect(() => {
-  console.log('customerDetails from context:', customerDetails); 
-  console.log('addressDetails from context:', addressDetails); 
+  useEffect(() => {
+    if (countriesData && statesData && citiesData) {
+      setCountries(countriesData.data || []);
+      setStates(statesData.data || []);
+      setCities(citiesData.data || []);
+    }
+  }, [countriesData, statesData, citiesData]);
 
-  if (isEditMode) {
-    const customer =
-      location.state?.customerDetails?.customer || customerDetails?.customer;
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  console.log(stores);
 
-    // Set customer form data
-    setCustomerFormData({
-      TenantID: customer?.TenantID || 1,
-      CustomerID: customer?.CustomerID || 0,
-      StoreID: customer?.StoreID || "",
-      CustomerFirstName: customer?.FirstName || "",
-      CustomerLastName: customer?.LastName || "",
-      CustomerEmail: customer?.Email || "",
-      Password: customer?.Password || "",
-      ConfirmPassword: "",
-      PhoneNumber: customer?.PhoneNumber || "",
-      Gender: customer?.Gender || "",
-      Comments: customer?.Comments || "",
-      Alternative_PhoneNumber: customer?.Alternative_PhoneNumber || "",
-      ReferedBy: customer?.ReferedBy || "",
-    });
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
 
-    // Set the selected referral type in edit mode
-    const selectedReferral = referralOptions.find(
-      (referral) => referral === customer?.ReferedBy
-    );
-    setReferedBy(selectedReferral || "");
+  useEffect(() => {
+    console.log("customerDetails from context:", customerDetails);
+    console.log("addressDetails from context:", addressDetails);
 
-    // Set the selected gender
-    const selectedGender = genderOptions.find(
-      (gender) => gender.id === customer?.Gender
-    );
-    setSelectedGender(selectedGender || "");
+    if (isEditMode) {
+      const customer =
+        location.state?.customerDetails?.customer || customerDetails?.customer;
 
-    // Set the selected store based on the StoreID
-    const selectedStore = storeOptions.find(
-      (store) => store.StoreID === customer?.StoreID
-    );
-    setSelectedStore(selectedStore || null);
+      // Set customer form data
+      setCustomerFormData({
+        TenantID: customer?.TenantID || 1,
+        CustomerID: customer?.CustomerID || 0,
+        StoreID: customer?.StoreID || "",
+        FirstName: customer?.FirstName || "",
+        LastName: customer?.LastName || "",
+        Email: customer?.Email || "",
+        Password: customer?.Password || "",
+        ConfirmPassword: "",
+        PhoneNumber: customer?.PhoneNumber || "",
+        Gender: customer?.Gender || "",
+        Comments: customer?.Comments || "",
+        Alternative_PhoneNumber: customer?.Alternative_PhoneNumber || "",
+        ReferedBy: customer?.ReferedBy || "",
+        SubReference: customer?.SubReference || "",
+      });
 
-    const firstAddress = location.state?.addressDetails || addressDetails;
-console.log("firstAddress ", firstAddress); 
+      // Set the selected referral type in edit mode
+      const selectedReferral = referralOptions.find(
+        (referral) => referral === customer?.ReferedBy
+      );
+      setReferedBy(selectedReferral || "");
 
-if (firstAddress?.Addresses && Array.isArray(firstAddress.Addresses)) {
-  setAddressTableData(firstAddress.Addresses);
-}
+      // Set the selected gender
+      const selectedGender = genderOptions.find(
+        (gender) => gender.id === customer?.Gender
+      );
+      setSelectedGender(selectedGender || "");
 
-// Fetch states by country and cities by state based on the first address
-if (firstAddress?.Addresses?.[0]?.CountryID) {
-  fetchStatesByCountry(firstAddress.Addresses[0].CountryID);
-}
-if (firstAddress?.Addresses?.[0]?.StateID) {
-  fetchCitiesByState(firstAddress.Addresses[0].StateID);
-}
+      // Set the selected store based on the StoreID
+      const selectedStore = stores.find(
+        (store) => store.StoreID === customer?.StoreID
+      );
+      console.log(selectedStore, "Sstore");
+      setSelectedStore(selectedStore || null);
 
-// Set the selected country, state, and city based on the first address
-setSelectedCountry(firstAddress?.Addresses?.[0]?.CountryID || null);
-setSelectedState(firstAddress?.Addresses?.[0]?.StateID || null);
-setSelectedCity(firstAddress?.Addresses?.[0]?.CityID || null);
+      const firstAddress = location.state?.addressDetails || addressDetails;
+      console.log("firstAddress ", firstAddress);
 
-// Set customer ID
-setCustomerId(customer?.CustomerID || 0);
+      if (firstAddress?.Addresses && Array.isArray(firstAddress.Addresses)) {
+        setAddressTableData(firstAddress.Addresses);
+      }
 
+      // Fetch states by country and cities by state based on the first address
+      if (firstAddress?.Addresses?.[0]?.CountryID) {
+        // fetchStatesByCountry(firstAddress.Addresses[0].CountryID);
+      }
+      if (firstAddress?.Addresses?.[0]?.StateID) {
+        // fetchCitiesByState(firstAddress.Addresses[0].StateID);
+      }
 
-    // Set customer ID
-    setCustomerId(customer?.CustomerID || 0);
-  } else {
-    // Clear data when not in edit mode
-    setCustomerFormData({
-      TenantID: 1,
-      CustomerID: 0,
-      StoreID: "",
-      CustomerFirstName: "",
-      CustomerLastName: "",
-      CustomerEmail: "",
-      Password: "",
-      ConfirmPassword: "",
-      PhoneNumber: "",
-      Gender: "",
-      Comments: "",
-      ReferedBy: "",
-    });
+      // Set the selected country, state, and city based on the first address
+      setSelectedCountry(firstAddress?.Addresses?.[0]?.CountryID || null);
+      setSelectedState(firstAddress?.Addresses?.[0]?.StateID || null);
+      setSelectedCity(firstAddress?.Addresses?.[0]?.CityID || null);
 
-    setAddressFormData({
-      CustomerID: 0,
-      AddressID: 0,
-      AddressLine1: "",
-      AddressLine2: "",
-      CityID: "",
-      StateID: "",
-      CountryID: "",
-      ZipCode: "",
-      Addresses: [],
-    });
+      // Set customer ID
+      setCustomerId(customer?.CustomerID || 0);
 
-    setAddressTableData([]);
-    setSelectedCountry(null);
-    setSelectedState(null);
-    setSelectedCity(null);
-  }
-}, [
-  isEditMode,
-  location.state?.customerDetails?.customer,
-  customerDetails?.customer,
-  addressDetails,  
-  genderOptions,
-  storeOptions,
-]);
+      // Set customer ID
+      setCustomerId(customer?.CustomerID || 0);
+    } else {
+      // Clear data when not in edit mode
+      setCustomerFormData({
+        TenantID: 1,
+        CustomerID: 0,
+        StoreID: "",
+        CustomerFirstName: "",
+        CustomerLastName: "",
+        CustomerEmail: "",
+        Password: "",
+        ConfirmPassword: "",
+        PhoneNumber: "",
+        Gender: "",
+        Comments: "",
+        ReferedBy: "",
+      });
+
+      setAddressFormData({
+        CustomerID: 0,
+        AddressID: 0,
+        AddressLine1: "",
+        AddressLine2: "",
+        CityID: "",
+        StateID: "",
+        CountryID: "",
+        ZipCode: "",
+        Addresses: [],
+      });
+
+      setAddressTableData([]);
+      setSelectedCountry(null);
+      setSelectedState(null);
+      setSelectedCity(null);
+    }
+  }, [
+    isEditMode,
+    location.state?.customerDetails?.customer,
+    customerDetails?.customer,
+    addressDetails,
+    genderOptions,
+    ,
+  ]);
   const handleReferralTypeChange = (type) => {
     setReferedBy(type); // Set the selected referral type
-    setCustomerFormData({ ...customerFormData, ReferedBy: type }); 
+    setCustomerFormData({ ...customerFormData, ReferedBy: type });
   };
-  
+
   const handleGenderChange = (gender) => {
     setSelectedGender(gender);
     setCustomerFormData({ ...customerFormData, Gender: gender.id });
@@ -279,31 +296,34 @@ setCustomerId(customer?.CustomerID || 0);
 
   const [customerId, setCustomerId] = useState(null);
   const [stepIndex, setStepIndex] = useState(0);
-  
+
   const handleCustomerFormSubmit = async () => {
     setIsLoading(true); // Show loading animation
     const customerApiUrl = CREATEORUPDATE_CUSTOMERS_API;
-  
+
     try {
-      console.log('Customer Form Data:', customerFormData);
-  
+      console.log("Customer Form Data:", customerFormData);
+
       // Create or update the customer
-      const customerResponse = await axios.post(customerApiUrl, customerFormData);
-      console.log('Customer Response:', customerResponse);
-  
+      const customerResponse = await axios.post(
+        customerApiUrl,
+        customerFormData
+      );
+      console.log("Customer Response:", customerResponse);
+
       const newCustomerId = customerResponse.data.CustomerID;
-  
+
       if (!newCustomerId) {
-        throw new Error('Failed to retrieve CustomerID from response.');
+        throw new Error("Failed to retrieve CustomerID from response.");
       }
-  
+
       setCustomerId(newCustomerId);
-      console.log('Customer ID has been set:', newCustomerId);
-  
+      console.log("Customer ID has been set:", newCustomerId);
+
       // Show success toast notification
       if (customerFormData.CustomerID) {
-        toast.success('Customer Details Updated successfully!', {
-          position: 'top-right',
+        toast.success("Customer Details Updated successfully!", {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -312,8 +332,8 @@ setCustomerId(customer?.CustomerID || 0);
           progress: undefined,
         });
       } else {
-        toast.success('Customer Details Added successfully!', {
-          position: 'top-right',
+        toast.success("Customer Details Added successfully!", {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -325,17 +345,17 @@ setCustomerId(customer?.CustomerID || 0);
       handleNext();
       return newCustomerId;
     } catch (error) {
-      console.error('Customer submission failed:', error);
-  
+      console.error("Customer submission failed:", error);
+
       // Show error toast notification
       if (error.response) {
-        console.error('Response data:', error.response.data);
+        console.error("Response data:", error.response.data);
         toast.error(
           `Failed to ${
-            customerFormData.CustomerID ? 'update' : 'create'
+            customerFormData.CustomerID ? "update" : "create"
           } customer: ` + error.response.data.message,
           {
-            position: 'top-right',
+            position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -345,9 +365,9 @@ setCustomerId(customer?.CustomerID || 0);
           }
         );
       } else if (error.request) {
-        console.error('No response received:', error.request);
-        toast.error('No response received from server.', {
-          position: 'top-right',
+        console.error("No response received:", error.request);
+        toast.error("No response received from server.", {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -356,9 +376,9 @@ setCustomerId(customer?.CustomerID || 0);
           progress: undefined,
         });
       } else {
-        console.error('Error in setting up request:', error.message);
-        toast.error('Error: ' + error.message, {
-          position: 'top-right',
+        console.error("Error in setting up request:", error.message);
+        toast.error("Error: " + error.message, {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -371,11 +391,11 @@ setCustomerId(customer?.CustomerID || 0);
       setIsLoading(false); // Hide loading animation
     }
   };
-  
+
   const handleAddressFormSubmit = async (customerId) => {
     setIsLoading(true); // Show loading animation
     const addressesApiUrl = CREATEORUPDATE_CUSTOMERS_ADDRESS_API;
-  
+
     try {
       console.log("Address FormData", addressFormData);
       const newAddress = {
@@ -387,20 +407,20 @@ setCustomerId(customer?.CustomerID || 0);
         CountryID: addressFormData.CountryID || "",
         ZipCode: addressFormData.ZipCode || "",
       };
-  
+
       // Create updated addresses array
       const updatedAddresses = addressFormData.Addresses
         ? [...addressFormData.Addresses, newAddress]
         : [newAddress];
-  
+
       // Update addressFormData with the new addresses
       setAddressFormData((prevState) => ({
         ...prevState,
         Addresses: updatedAddresses,
       }));
-  
+
       console.log("Updated Addresses Array:", updatedAddresses);
-  
+
       const addressData = {
         Addresses: updatedAddresses,
         AddressID: newAddress.AddressID,
@@ -413,21 +433,21 @@ setCustomerId(customer?.CustomerID || 0);
         CountryID: newAddress.CountryID,
         ZipCode: newAddress.ZipCode,
       };
-  
+
       console.log("Final Address Data for Submission:", addressData);
-  
+
       // Send the address data to the API
       const addressResponse = await axios.post(addressesApiUrl, addressData);
       console.log("Address Response:", addressResponse.data);
-  
+
       // Show success toast notification
       const isUpdating = Boolean(addressFormData.AddressID); // Check if updating an existing address
       const successMessage = isUpdating
-        ? 'Address Updated successfully!'
-        : 'Address Added successfully!';
-  
+        ? "Address Updated successfully!"
+        : "Address Added successfully!";
+
       toast.success(successMessage, {
-        position: 'top-right',
+        position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -435,28 +455,28 @@ setCustomerId(customer?.CustomerID || 0);
         draggable: true,
         progress: undefined,
       });
-  
+
       // Fetch updated customer data after successful submission
       const updatedCustomer = await getCustomerAddressById(customerId);
       console.log("Updated Customer:", updatedCustomer);
-  
+
       if (updatedCustomer && Array.isArray(updatedCustomer)) {
         console.log("Setting address table data:", updatedCustomer);
         setAddressTableData(updatedCustomer); // Set updated addresses in the table
       }
-  
+
       if (updatedCustomer?.Addresses?.[0]?.CountryID) {
         fetchStatesByCountry(updatedCustomer.Addresses[0].CountryID);
       }
       if (updatedCustomer?.Addresses?.[0]?.StateID) {
         fetchCitiesByState(updatedCustomer.Addresses[0].StateID);
       }
-  
+
       // Set the selected country, state, and city
       setSelectedCountry(updatedCustomer?.Addresses?.[0]?.CountryID || null);
       setSelectedState(updatedCustomer?.Addresses?.[0]?.StateID || null);
       setSelectedCity(updatedCustomer?.Addresses?.[0]?.CityID || null);
-  
+
       // Reset form fields
       setAddressFormData({
         AddressID: 0,
@@ -468,17 +488,16 @@ setCustomerId(customer?.CustomerID || 0);
         ZipCode: "",
         Addresses: [],
       });
-  
     } catch (error) {
       console.error("Error submitting address:", error);
-  
+
       // Show error toast notification
       if (error.response) {
-        console.error('Response data:', error.response.data);
+        console.error("Response data:", error.response.data);
         toast.error(
-          'Failed to submit address: ' + error.response.data.message,
+          "Failed to submit address: " + error.response.data.message,
           {
-            position: 'top-right',
+            position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -488,9 +507,9 @@ setCustomerId(customer?.CustomerID || 0);
           }
         );
       } else if (error.request) {
-        console.error('No response received:', error.request);
-        toast.error('No response received from server.', {
-          position: 'top-right',
+        console.error("No response received:", error.request);
+        toast.error("No response received from server.", {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -499,9 +518,9 @@ setCustomerId(customer?.CustomerID || 0);
           progress: undefined,
         });
       } else {
-        console.error('Error in setting up request:', error.message);
-        toast.error('Error: ' + error.message, {
-          position: 'top-right',
+        console.error("Error in setting up request:", error.message);
+        toast.error("Error: " + error.message, {
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -514,33 +533,30 @@ setCustomerId(customer?.CustomerID || 0);
       setIsLoading(false); // Hide loading animation
     }
   };
-  
+
   useEffect(() => {
     console.log("Address table data updated:", addressTableData);
-  
   }, [addressTableData]);
-  
-const getCustomerAddressById = async (customerId) => {
-  try {
-    console.log("Fetching addresses for customer ID:", customerId);
-    const response = await axios.get(`${ADDRESS_API}/${customerId}`);
 
-    // Assuming the response contains an array of addresses
-    const addressData = response.data?.Addresses || []; // Adjust based on your API response structure
+  const getCustomerAddressById = async (customerId) => {
+    try {
+      console.log("Fetching addresses for customer ID:", customerId);
+      const response = await axios.get(`${ADDRESS_API}/${customerId}`);
 
-    // Set address data in state
-    setAddressTableData({
-      Addresses: addressData,
-    });
+      // Assuming the response contains an array of addresses
+      const addressData = response.data?.Addresses || []; // Adjust based on your API response structure
 
-    return addressData; // Optionally return the addresses if needed
-  } catch (error) {
-    console.error("Error fetching customer addresses:", error);
-    throw error; // Re-throw the error for further handling if necessary
-  }
-};
+      // Set address data in state
+      setAddressTableData({
+        Addresses: addressData,
+      });
 
-
+      return addressData; // Optionally return the addresses if needed
+    } catch (error) {
+      console.error("Error fetching customer addresses:", error);
+      throw error; // Re-throw the error for further handling if necessary
+    }
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -551,7 +567,6 @@ const getCustomerAddressById = async (customerId) => {
         if (!customerId) return; // Ensure customerId exists
 
         const response = await axios.get(
-          // `https://imlystudios-backend-mqg4.onrender.com/api/customers/customers/getOrderByCustomerId/${customerId}`
           `${ORDERBYCUSTOMERID_API}/${customerId}`
         );
         setOrders(response.data.orders || []);
@@ -570,83 +585,6 @@ const getCustomerAddressById = async (customerId) => {
     }
   }, [customerFormData.CustomerID]); // Watch for changes in formData.CustomerID
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await axios.get(
-          // "https://imlystudios-backend-mqg4.onrender.com/api/cities/getCountries"
-          COUNTRIES_API
-        );
-        const countryData = response.data.data;
-        setCountries(countryData);
-
-        // Create countryMap
-        const countryMapData = countryData.reduce((map, country) => {
-          map[country.CountryName] = country.CountryID;
-          return map;
-        }, {});
-        setCountryMap(countryMapData);
-
-        console.log("Fetched countries:", countryData);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
-    };
-
-    fetchCountries();
-  }, []);
-
-  const fetchStatesByCountry = async (countryId) => {
-    if (!countryId) return;
-
-    try {
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getStatesByCountry?$filter=CountryID eq ${countryId}`
-        `${STATES_API}/${countryId}`
-      );
-      if (response.data.status === "SUCCESS") {
-        const stateData = response.data.data;
-        setStates(stateData);
-
-        // Create stateMap
-        const stateMapData = stateData.reduce((map, state) => {
-          map[state.StateName] = state.StateID;
-          return map;
-        }, {});
-        setStateMap(stateMapData);
-
-        console.log("Fetched states:", stateData);
-      }
-    } catch (error) {
-      console.error("Error fetching states:", error);
-    }
-  };
-
-  const fetchCitiesByState = async (stateId) => {
-    if (!stateId) return;
-
-    try {
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getCitiesByState?$filter=StateID eq ${stateId}`
-        `${CITIES_API}/${stateId}`
-      );
-      if (response.data.status === "SUCCESS") {
-        const cityData = response.data.data;
-        setCities(cityData);
-
-        // Create cityMap
-        const cityMapData = cityData.reduce((map, city) => {
-          map[city.CityName] = city.CityID;
-          return map;
-        }, {});
-        setCityMap(cityMapData);
-
-        console.log("Fetched cities:", cityData);
-      }
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-    }
-  };
   const handleCountryChange = (selectedCountry) => {
     if (!selectedCountry) return;
 
@@ -659,8 +597,11 @@ const getCustomerAddressById = async (customerId) => {
       CountryID: countryID,
       CountryName: selectedCountry.CountryName,
     });
-    fetchStatesByCountry(countryID);
-    console.log(addressFormData);
+    setSelectedState("");
+    setSelectedCity("");
+    setFilteredStates(
+      states.filter((state) => state.CountryID === selectedCountry.CountryID)
+    );
   };
 
   const handleStateChange = (state) => {
@@ -669,13 +610,13 @@ const getCustomerAddressById = async (customerId) => {
     const stateID = stateMap[state.StateName] || state.StateID;
 
     setSelectedState(state);
+    setSelectedCity("");
     setAddressFormData({
       ...addressFormData,
       StateID: stateID,
       StateName: state.StateName,
     });
-    console.log(addressFormData);
-    fetchCitiesByState(stateID);
+    setFilteredCities(cities.filter((city) => city.StateID === state.StateID));
   };
 
   const handleCityChange = (city) => {
@@ -706,8 +647,8 @@ const getCustomerAddressById = async (customerId) => {
       PhoneNumber: "",
       Gender: "",
       Comments: "",
-      Alternative_PhoneNumber:"",
-      ReferedBy:"",
+      Alternative_PhoneNumber: "",
+      ReferedBy: "",
     });
 
     // Reset address form data
@@ -735,17 +676,15 @@ const getCustomerAddressById = async (customerId) => {
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedStore, setSelectedStore] = useState(null);
- 
 
- const handleEdit = async (addressId) => {
+  const handleEdit = async (addressId) => {
     console.log(addressId);
-  
+
     // Find the selected address using the AddressID directly from the array
     const selectedAddress = addressTableData.find(
       (address) => address.AddressID === addressId
     );
-  
+
     if (selectedAddress) {
       // Find the corresponding country, state, and city based on their IDs
       const selectedCountry =
@@ -756,7 +695,7 @@ const getCustomerAddressById = async (customerId) => {
         states.find((state) => state.StateID === selectedAddress.StateID) || {};
       const selectedCity =
         cities.find((city) => city.CityID === selectedAddress.CityID) || {};
-  
+
       // Populate the form fields with the selected address details
       setAddressFormData((prevState) => ({
         ...prevState,
@@ -770,116 +709,85 @@ const getCustomerAddressById = async (customerId) => {
         ZipCode: selectedAddress.ZipCode || "",
         Addresses: prevState.Addresses, // Keep the existing array of addresses
       }));
-  
+
       // Set the country, state, and city dropdowns
       setSelectedCountry(selectedCountry);
       setSelectedState(selectedState);
       setSelectedCity(selectedCity);
-  
-      // Fetch states and cities based on the selected address
-      if (selectedAddress.CountryID) {
-        fetchStatesByCountry(selectedAddress.CountryID);
-      }
-      if (selectedAddress.StateID) {
-        fetchCitiesByState(selectedAddress.StateID);
-      }
-  
+
       console.log("Editing Address Data:", selectedAddress);
     } else {
       console.error("Address with the specified AddressID not found.");
     }
   };
 
+  const handleDelete = async (addressId, customerId) => {
+    console.log("AddressID to delete:", addressId);
 
-const handleDelete = async (addressId, customerId) => {
-  console.log("AddressID to delete:", addressId);
-  
-  if (!addressId) {
-    console.error("No AddressID provided.");
-    return;
-  }
-
-  const deleteApiUrl = `${DELETE_CUSTOMERS_ADDRESS_API}/${addressId}`;
-  
-  try {
-    // Make a DELETE request to the API
-    const response = await axios.delete(deleteApiUrl);
-    
-    console.log("Delete Response:", response.data);
-
-    // Remove the deleted address from the addressFormData state
-    setAddressFormData((prevState) => ({
-      ...prevState,
-      Addresses: prevState.Addresses.filter(
-        (address) => address.AddressID !== addressId
-      ),
-    }));
-
-    console.log("Address deleted successfully.");
-
-    // Show success toast notification
-    toast.success('Address deleted successfully!', {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-
-    const updatedCustomer = await getCustomerAddressById(customerId);
-    console.log("Updated Customer:", updatedCustomer);
-
-    if (updatedCustomer && Array.isArray(updatedCustomer)) {
-      console.log("Setting address table data:", updatedCustomer);
-      setAddressTableData(updatedCustomer);  // Set updated addresses in the table
-    }
-    
-    if (updatedCustomer?.Addresses?.[0]?.CountryID) {
-      fetchStatesByCountry(updatedCustomer.Addresses[0].CountryID);
-    }
-    if (updatedCustomer?.Addresses?.[0]?.StateID) {
-      fetchCitiesByState(updatedCustomer.Addresses[0].StateID);
+    if (!addressId) {
+      console.error("No AddressID provided.");
+      return;
     }
 
-  } catch (error) {
-    if (error.response) {
-      console.error("Response data:", error.response.data);
-    }
-  }
-};
+    const deleteApiUrl = `${DELETE_CUSTOMERS_ADDRESS_API}/${addressId}`;
 
-  
+    try {
+      // Make a DELETE request to the API
+      const response = await axios.delete(deleteApiUrl);
+
+      console.log("Delete Response:", response.data);
+
+      // Remove the deleted address from the addressFormData state
+      setAddressFormData((prevState) => ({
+        ...prevState,
+        Addresses: prevState.Addresses.filter(
+          (address) => address.AddressID !== addressId
+        ),
+      }));
+
+      console.log("Address deleted successfully.");
+
+      // Show success toast notification
+      toast.success("Address deleted successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      const updatedCustomer = await getCustomerAddressById(customerId);
+      console.log("Updated Customer:", updatedCustomer);
+
+      if (updatedCustomer && Array.isArray(updatedCustomer)) {
+        console.log("Setting address table data:", updatedCustomer);
+        setAddressTableData(updatedCustomer); // Set updated addresses in the table
+      }
+
+      if (updatedCustomer?.Addresses?.[0]?.CountryID) {
+        fetchStatesByCountry(updatedCustomer.Addresses[0].CountryID);
+      }
+      if (updatedCustomer?.Addresses?.[0]?.StateID) {
+        fetchCitiesByState(updatedCustomer.Addresses[0].StateID);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
+    }
+  };
+
   const handleCancel = () => {
     setIsLoading(true);
-  
+
     // Add a small delay before navigating to show the loader
     setTimeout(() => {
       navigate("/Customer");
     }, 1500); // Delay by 500ms
   };
-  
- 
 
-    useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get(GETALLSTORES_API);
-        console.log("API Response:", response.data);
-  
-        // Extract the Stores array from the API response
-        const storesData = response.data.Stores || [];
-  
-        // Set the store options in state
-        setStoreOptions(Array.isArray(storesData) ? storesData : []);
-      } catch (error) {
-        console.error("Error fetching stores:", error);
-      }
-    };
-  
-    fetchStores();
-  }, []);
   const handleStoreChange = (store) => {
     if (!store || !store.StoreID) {
       console.error("Invalid store selected:", store);
@@ -903,23 +811,20 @@ const handleDelete = async (addressId, customerId) => {
     }
   }, [location.state]);
 
-const cityMap = cities.reduce((acc, city) => {
-  acc[city.CityID] = city.CityName;
-  return acc;
-}, {});
+  const cityMap = cities.reduce((acc, city) => {
+    acc[city.CityID] = city.CityName;
+    return acc;
+  }, {});
 
-const stateMap = states.reduce((acc, state) => {
-  acc[state.StateID] = state.StateName;
-  return acc;
-}, {});
+  const stateMap = states.reduce((acc, state) => {
+    acc[state.StateID] = state.StateName;
+    return acc;
+  }, {});
 
   return (
     <>
-      {/* <div className="p-8 mr-10 mb-7 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-1/8 mt-8 bg-white shadow-lg rounded-lg"> */}
-      {/* <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto shadow-lg rounded-lg bg-white"> */}
-      {/* <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto rounded-lg"> */}
       <div className="main-container">
-      <ToastContainer />
+        <ToastContainer />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} className="mb-6" alternativeLabel>
             {steps.map((label, index) => {
@@ -974,12 +879,9 @@ const stateMap = states.reduce((acc, state) => {
                   pt: 2,
                 }}
               >
-          
-
-{activeStep === 0 && (
+                {activeStep === 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                 
-<div className="flex items-center gap-4 w-full">
+                    <div className="flex items-center gap-4 w-full">
                       <label
                         htmlFor="storeName"
                         className="w-1/3 text-xs font-medium text-gray-700"
@@ -1000,6 +902,7 @@ const stateMap = states.reduce((acc, state) => {
                             displayValue={(store) => store?.StoreName || ""}
                             placeholder="Select Store"
                           />
+
                           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronUpDownIcon
                               className="h-5 w-5 text-gray-400"
@@ -1007,7 +910,7 @@ const stateMap = states.reduce((acc, state) => {
                             />
                           </Combobox.Button>
                           <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {storeOptions.map((store) => (
+                            {stores.map((store) => (
                               <Combobox.Option
                                 key={store.StoreID} // Use StoreID as the key
                                 className={({ active }) =>
@@ -1029,7 +932,6 @@ const stateMap = states.reduce((acc, state) => {
                                       }`}
                                     >
                                       {store.StoreName}{" "}
-                                     
                                     </span>
                                     {selected && (
                                       <span
@@ -1053,8 +955,7 @@ const stateMap = states.reduce((acc, state) => {
                         </div>
                       </Combobox>
                     </div>
-
-<div></div>
+                    <div></div>
                     {/* First Name */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1063,14 +964,13 @@ const stateMap = states.reduce((acc, state) => {
                       <input
                         type="text"
                         name="FirstName"
-                        value={customerFormData.CustomerFirstName}
+                        value={customerFormData.FirstName}
                         onChange={handleCustomerFormChange}
                         className={`p-1 w-full border rounded-md ${
                           error ? "border-red-500" : "border-gray-400"
                         }`}
                       />
                     </div>
-
                     {/* Last Name */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1079,14 +979,13 @@ const stateMap = states.reduce((acc, state) => {
                       <input
                         type="text"
                         name="LastName"
-                        value={customerFormData.CustomerLastName}
+                        value={customerFormData.LastName}
                         onChange={handleCustomerFormChange}
                         className={`p-1 w-full border rounded-md ${
                           error ? "border-red-500" : "border-gray-400"
                         }`}
                       />
                     </div>
-
                     {/* Phone Number */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1102,7 +1001,6 @@ const stateMap = states.reduce((acc, state) => {
                         }`}
                       />
                     </div>
-
                     {/* Email */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1111,30 +1009,27 @@ const stateMap = states.reduce((acc, state) => {
                       <input
                         type="email"
                         name="Email"
-                        value={customerFormData.CustomerEmail}
+                        value={customerFormData.Email}
                         onChange={handleCustomerFormChange}
                         className={`p-1 w-full border rounded-md ${
                           error ? "border-red-500" : "border-gray-400"
                         }`}
                       />
                     </div>
-    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
                         Alternate Phone Number
                       </label>
                       <input
                         type="text"
                         name="Alternative_PhoneNumber"
-                        value={customerFormData.Alternative_PhoneNumber
-                        }
+                        value={customerFormData.Alternative_PhoneNumber}
                         onChange={handleCustomerFormChange}
                         className={`p-1 w-full border rounded-md ${
                           error ? "border-red-500" : "border-gray-400"
                         }`}
                       />
                     </div>
-  
-
                     {/* Password */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1150,9 +1045,6 @@ const stateMap = states.reduce((acc, state) => {
                         }`}
                       />
                     </div>
-
-                   
-
                     {/* Gender */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1219,8 +1111,6 @@ const stateMap = states.reduce((acc, state) => {
                         </div>
                       </Combobox>
                     </div>
-
-
                     <div className="flex flex-col gap-4">
                       {/* Referred By Field */}
                       <div className="flex items-center gap-4">
@@ -1273,7 +1163,7 @@ const stateMap = states.reduce((acc, state) => {
                           </Combobox>
                         </div>
                       </div>
-                      
+
                       {/* Conditional Rendering for Reference */}
                       {ReferedBy === "Reference" && (
                         <div className="flex flex-col gap-4">
@@ -1285,8 +1175,8 @@ const stateMap = states.reduce((acc, state) => {
                             <div className="w-full">
                               <Combobox
                                 as="div"
-                                value={selectedReferenceSubOption}
-                                onChange={handleReferenceSubOptionChange}
+                                value={SubReference}
+                                onChange={handleSubReferenceChange}
                               >
                                 <div className="relative">
                                   <Combobox.Input
@@ -1393,8 +1283,6 @@ const stateMap = states.reduce((acc, state) => {
                         <p className="mt-2 text-red-600 text-xs">{error}</p>
                       )}
                     </div>
-
-                    
                     {/* Comments */}
                     <div className="flex items-center gap-4">
                       <label className="w-1/3 text-xs font-medium text-gray-700">
@@ -1408,8 +1296,9 @@ const stateMap = states.reduce((acc, state) => {
                         rows="3"
                       />
                     </div>
-<div></div>
- <div></div>        <div className="mt-6 flex justify-end gap-4">
+                    <div></div>
+                    <div></div>{" "}
+                    <div className="mt-6 flex justify-end gap-4">
                       {/* <button
                         type="submit"
                         onClick={handleCustomerFormSubmit}
@@ -1417,13 +1306,14 @@ const stateMap = states.reduce((acc, state) => {
                       >
                         Save
                       </button> */}
-                          <button
-          type="submit"
-          className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          onClick={handleCustomerFormSubmit}
-        >
-          {customerFormData.CustomerID ? 'Update' : 'Add'} {/* Conditional button text */}
-        </button>
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={handleCustomerFormSubmit}
+                      >
+                        {customerFormData.CustomerID ? "Update" : "Add"}{" "}
+                        {/* Conditional button text */}
+                      </button>
                       <button
                         type="button"
                         onClick={handleCancel}
@@ -1431,46 +1321,20 @@ const stateMap = states.reduce((acc, state) => {
                       >
                         Cancel
                       </button>
-                    </div>  
-
-
-                   
-                     {/* <div className="flex justify-end gap-2 col-span-2">
-                      <button
-                        type="submit"
-                        className="button-base save-btn"
-                        onClick={handleCustomerFormSubmit}
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleCancel}
-                        className="button-base cancel-btn"
-                      >
-                        Cancel
-                      </button>
-                    </div> */}
+                    </div>
                     {showPopup && (
-                  
-        <SuccessPopup
-          message={popupMessage}
-          onClose={() => setShowPopup(false)} 
-          />
-        )}
-                     {isLoading && (   
-        <LoadingAnimation />
-    
-    )}
+                      <SuccessPopup
+                        message={popupMessage}
+                        onClose={() => setShowPopup(false)}
+                      />
+                    )}
+                    {isLoading && <LoadingAnimation />}
                   </div>
                 )}
                 {activeStep === 1 && (
                   <div>
-                  
-   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                 
-
-<div className="flex items-center gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                      <div className="flex items-center gap-4">
                         <label className="w-1/3 text-xs font-medium text-gray-700">
                           Address Line 1
                         </label>
@@ -1583,37 +1447,29 @@ const stateMap = states.reduce((acc, state) => {
                               </Combobox.Button>
 
                               <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {states
-                                  .filter((state) =>
-                                    state.StateName.toLowerCase().includes(
-                                      query.toLowerCase()
-                                    )
-                                  ) // Filter based on query
-                                  .map((state) => (
-                                    <Combobox.Option
-                                      key={state.StateID}
-                                      value={state}
-                                      className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                    >
-                                      <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                                        {state.StateName}
-                                      </span>
-                                      <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                        <CheckIcon
-                                          className="h-5 w-5"
-                                          aria-hidden="true"
-                                        />
-                                      </span>
-                                    </Combobox.Option>
-                                  ))}
+                                {filteredStates.map((state) => (
+                                  <Combobox.Option
+                                    key={state.StateID}
+                                    value={state}
+                                    className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
+                                  >
+                                    <span className="block truncate font-normal group-data-[selected]:font-semibold">
+                                      {state.StateName}
+                                    </span>
+                                    <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                      <CheckIcon
+                                        className="h-5 w-5"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </Combobox.Option>
+                                ))}
                               </Combobox.Options>
                             </div>
                           </Combobox>
                         </div>
                       </div>
 
-                   
-                 
                       <div className="flex items-center gap-4">
                         <label className="w-1/3 text-xs font-medium text-gray-700">
                           City
@@ -1640,7 +1496,7 @@ const stateMap = states.reduce((acc, state) => {
                               </Combobox.Button>
 
                               <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {cities
+                                {filteredCities
                                   .filter((city) =>
                                     city.CityName.toLowerCase().includes(
                                       query.toLowerCase()
@@ -1684,42 +1540,30 @@ const stateMap = states.reduce((acc, state) => {
                         />
                       </div>
 
-                 
-                                   <div></div>
-                 
-                                     <div className="mt-6 flex justify-end gap-4">
-                                       {/* <button
-                                         type="submit"
-                                         onClick={() => {
-                                          handleAddressFormSubmit(customerId); 
-                                        }}
-                                         className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                       >
-                                         Save
-                                       </button> */}
-                                         <button
-          type="submit"
-          className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          onClick={() => {
-            handleAddressFormSubmit(customerId); 
-          }}
-        >
-          {addressFormData.AddressID ? 'Update' : 'Add'} {/* Conditional button text */}
-        </button>
-                                       <button
-                                         type="button"
-                                         onClick={handleCancel}
-                                         className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
-                                       >
-                                         Cancel
-                                       </button>
-                                     </div>
-                                     {isLoading && (   
-        <LoadingAnimation />
-    
-    )}
-                                   </div>
-                     <TableContainer
+                      <div></div>
+
+                      <div className="mt-6 flex justify-end gap-4">
+                        <button
+                          type="submit"
+                          className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => {
+                            handleAddressFormSubmit(customerId);
+                          }}
+                        >
+                          {addressFormData.AddressID ? "Update" : "Add"}{" "}
+                          {/* Conditional button text */}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancel}
+                          className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                      {isLoading && <LoadingAnimation />}
+                    </div>
+                    <TableContainer
                       component={Paper}
                       sx={{ width: "90%", margin: "0 auto", mt: 4 }}
                     >
@@ -1735,52 +1579,73 @@ const stateMap = states.reduce((acc, state) => {
                           </TableRow>
                         </TableHead>
 
-<TableBody>
-  {addressTableData && addressTableData.length > 0 ? (
-    addressTableData.map((address, index) => (
-      <TableRow key={index}>
-        <StyledTableCell>{address.AddressLine1 || ""}</StyledTableCell>
-        <StyledTableCell>{address.AddressLine2 || ""}</StyledTableCell>
-        <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
-        <StyledTableCell>{stateMap[address.StateID] || "N/A"}</StyledTableCell>
-        <StyledTableCell>{address.ZipCode || ""}</StyledTableCell>
-        <StyledTableCell>
-          <div className="button-container">
-            <button
-              type="button"
-              onClick={() => handleEdit(address.AddressID)}
-              className="button edit-button"
-            >
-              <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDelete(address.AddressID, customerId)}
-              className="button delete-button"
-            >
-              <MdOutlineCancel aria-hidden="true" className="h-4 w-4" />
-              Delete
-            </button>
-          </div>
-        </StyledTableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-  <StyledTableCell colSpan={6} style={{ textAlign: 'center' }}>No addresses found</StyledTableCell>
-</TableRow>
-
-  )}
-</TableBody>
-
-
-                        
+                        <TableBody>
+                          {addressTableData && addressTableData.length > 0 ? (
+                            addressTableData.map((address, index) => (
+                              <TableRow key={index}>
+                                <StyledTableCell>
+                                  {address.AddressLine1 || ""}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {address.AddressLine2 || ""}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {cityMap[address.CityID] || "N/A"}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {stateMap[address.StateID] || "N/A"}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {address.ZipCode || ""}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <div className="button-container">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleEdit(address.AddressID)
+                                      }
+                                      className="button edit-button"
+                                    >
+                                      <AiOutlineEdit
+                                        aria-hidden="true"
+                                        className="h-4 w-4"
+                                      />
+                                      Edit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleDelete(
+                                          address.AddressID,
+                                          customerId
+                                        )
+                                      }
+                                      className="button delete-button"
+                                    >
+                                      <MdOutlineCancel
+                                        aria-hidden="true"
+                                        className="h-4 w-4"
+                                      />
+                                      Delete
+                                    </button>
+                                  </div>
+                                </StyledTableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <StyledTableCell
+                                colSpan={6}
+                                style={{ textAlign: "center" }}
+                              >
+                                No addresses found
+                              </StyledTableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
                       </Table>
-                    </TableContainer> 
-
-
-
+                    </TableContainer>
                   </div>
                 )}
 
@@ -1800,31 +1665,42 @@ const stateMap = states.reduce((acc, state) => {
                           </TableRow>
                         </TableHead>
 
-
-  <TableBody>
-        {Array.isArray(orders) && orders.length > 0 ? (
-          orders.map((order) => (
-            <StyledTableRow key={order.OrderID}>
-              <StyledTableCell>{order.OrderNumber}</StyledTableCell>
-              <StyledTableCell>
-                {new Date(order.OrderDate).toLocaleDateString()}
-              </StyledTableCell>
-              <StyledTableCell>${order.TotalAmount}</StyledTableCell>
-              <StyledTableCell>{order.OrderStatus}</StyledTableCell>
-            </StyledTableRow>
-          ))
-        ) : (
-          <TableRow>
-          <StyledTableCell colSpan={6} style={{ textAlign: 'center' }}>No orders found</StyledTableCell>
-        </TableRow>
-        )}
-      </TableBody>
+                        <TableBody>
+                          {Array.isArray(orders) && orders.length > 0 ? (
+                            orders.map((order) => (
+                              <StyledTableRow key={order.OrderID}>
+                                <StyledTableCell>
+                                  {order.OrderNumber}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {new Date(
+                                    order.OrderDate
+                                  ).toLocaleDateString()}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  ${order.TotalAmount}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {order.OrderStatus}
+                                </StyledTableCell>
+                              </StyledTableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <StyledTableCell
+                                colSpan={6}
+                                style={{ textAlign: "center" }}
+                              >
+                                No orders found
+                              </StyledTableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
                       </Table>
                     </TableContainer>
 
                     {/* Cancel Button aligned to the left */}
                     <div className="mt-4 flex justify-end">
-                    
                       <button
                         type="button"
                         onClick={handleCancel}
@@ -1833,10 +1709,7 @@ const stateMap = states.reduce((acc, state) => {
                         Cancel
                       </button>
                     </div>
-                    {isLoading && (   
-        <LoadingAnimation />
-    
-    )}
+                    {isLoading && <LoadingAnimation />}
                   </>
                 )}
               </Box>
@@ -1853,7 +1726,6 @@ const stateMap = states.reduce((acc, state) => {
                 >
                   Back
                 </Button>
-               
 
                 <Button
                   onClick={() => handleNext()}

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
@@ -38,7 +36,7 @@ import {
   GETALLSTORES_API,
   CUSTOMERID_API,
   ADDRESS_API,
-  ORDERBYCUSTOMERID_API
+  ORDERBYCUSTOMERID_API,
 } from "../../Constants/apiRoutes";
 import {
   StyledTableCell,
@@ -46,6 +44,7 @@ import {
   TablePaginationActions,
 } from "../CustomTablePagination";
 import { GrFormView } from "react-icons/gr";
+import { DataContext } from "../../Context/DataContext";
 
 function Customers() {
   const [page, setPage] = useState(0);
@@ -57,15 +56,24 @@ function Customers() {
   const [paginatedPeople, setPaginatedPeople] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedStore, setSelectedStore] = useState("");
   // const { setCustomerDetails } = useContext(CustomerContext);
-  const { customerDetails, setCustomerDetails ,setAddressDetails} = useContext(CustomerContext);
+  const { customerDetails, setCustomerDetails, setAddressDetails } =
+    useContext(CustomerContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [storeNames, setStoreNames] = useState([]);
+
+  // const [storeNames, setStoreNames] = useState([]);
+
   const [customers] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
-const [orders, setOrders] = useState([]); // State to hold the fetched orders
-
+  const [orders, setOrders] = useState([]); // State to hold the fetched orders
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
 
   const getAllCustomers = async (pageNum, pageSize) => {
     console.log("Final API URL:", GETALLCUSTOMERS_API);
@@ -73,7 +81,6 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
     try {
       const response = await axios.get(GETALLCUSTOMERS_API, {
         params: {
-         
           page: pageNum + 1,
           pageSize: pageSize,
           limit: pageSize,
@@ -91,54 +98,18 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
     }
   };
 
- 
   useEffect(() => {
     fetchCustomers();
   }, [page, rowsPerPage, searchName]);
 
-  // const fetchCustomers = async () => {
-  //   try {
-  //     const { customers, totalCount } = await getAllCustomers(
-  //       page,
-  //       rowsPerPage,
-  //       searchName
-  //     );
-  //     setCustomers(customers);
-  //     setPaginatedPeople(customers);
-
-  //     // Only update filtered customers if no search is active
-  //     if (!isSearching) {
-  //       setFilteredCustomers(customers); // Set initial filtered customers to all fetched data
-  //     }
-
-  //     setTotalCustomers(totalCount);
-  //   } catch (error) {
-  //     console.error("Failed to fetch customers", error);
-  //   }
-  // };
-
-  // const searchItems = (searchValue) => {
-  //   setSearchName(searchValue);
-
-  //   if (searchValue === "") {
-  //     setIsSearching(false); // Reset search mode
-  //     setFilteredCustomers(paginatedPeople); // Show all customers when search is cleared
-  //   } else {
-  //     setIsSearching(true); // Enable search mode
-  //     const filteredData = paginatedPeople.filter((item) => {
-  //       return Object.values(item)
-  //         .join("")
-  //         .toLowerCase()
-  //         .includes(searchValue.toLowerCase());
-  //     });
-  //     setFilteredCustomers(filteredData);
-  //   }
-  // };
-
   // Fetch customers from API
   const fetchCustomers = async () => {
     try {
-      const { customers, totalCount } = await getAllCustomers(page, rowsPerPage, searchName);
+      const { customers, totalCount } = await getAllCustomers(
+        page,
+        rowsPerPage,
+        searchName
+      );
       setCustomers(customers);
       setPaginatedPeople(customers);
 
@@ -155,7 +126,7 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
 
   useEffect(() => {
     fetchCustomers(); // Fetch customers on component mount or whenever page/rowsPerPage changes
-  }, [page, rowsPerPage]); 
+  }, [page, rowsPerPage]);
 
   // Filter customers based on selected store
   useEffect(() => {
@@ -165,7 +136,7 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
       );
       setFilteredCustomers(filtered);
     } else {
-      setFilteredCustomers(customers); 
+      setFilteredCustomers(customers);
     }
   }, [selectedStore, customers]);
 
@@ -188,7 +159,6 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
     }
   };
 
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -198,27 +168,12 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
     setPage(0);
   };
 
-  // const getCustomerById = async (customerId) => {
-  //   try {
-  //     console.log("customers", customerId);
-  //     const response = await axios.get(
-  //       // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${customerId}`
-  //       `${GETALLCUSTOMERSBYID_API}/${customerId}`
-  //     );
-
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error fetching customer:", error);
-  //     throw error;
-  //   }
-  // };
-
   const getCustomerById = async (customerId) => {
     try {
       console.log("customers", customerId);
       const response = await axios.get(
         // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${customerId}`
-       `${CUSTOMERID_API}/${customerId}`
+        `${CUSTOMERID_API}/${customerId}`
       );
 
       return response.data;
@@ -227,12 +182,12 @@ const [orders, setOrders] = useState([]); // State to hold the fetched orders
       throw error;
     }
   };
-const getCustomerAddressById = async (customerId) => {
+  const getCustomerAddressById = async (customerId) => {
     try {
       console.log("customers", customerId);
       const response = await axios.get(
         // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${customerId}`
-       `${ADDRESS_API}/${customerId}`
+        `${ADDRESS_API}/${customerId}`
       );
 
       return response.data;
@@ -241,32 +196,9 @@ const getCustomerAddressById = async (customerId) => {
       throw error;
     }
   };
-  // Function to fetch customer by ID using CUSTOMERID_API
-// const getCustomerById = async (customerId) => {
-//   try {
-//     console.log("Fetching customer with ID:", customerId);
-
-//     // Fetch customer details from CUSTOMERID_API
-//     const customerResponse = await axios.get(`${CUSTOMERID_API}/${customerId}`);
-//     const customerData = customerResponse.data?.customer || {};
-
-//     console.log("Customer Data fetched:", customerData);
-
-//     // Check if the customer has addresses
-//     if (customerData.CustomerID) {
-//       // Fetch addresses from ADDRESS_API using the CustomerID
-//       const addressResponse = await axios.get(`${ADDRESS_API}/${customerData.CustomerID}`);
-//       const addresses = addressResponse.data?.Addresses || [];
-
-//       console.log("Addresses fetched:", addresses);
-//     } 
-//   } catch (error) {
-//     console.error("Error fetching customer or addresses:", error);
-//   }
-// };
 
   const deleteCustomerById = async (customerId) => {
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
       const response = await axios.delete(
         // `https://imlystudios-backend-mqg4.onrender.com/api/customers/deleteCustomer/${customerId}`
@@ -277,23 +209,23 @@ const getCustomerAddressById = async (customerId) => {
     } catch (error) {
       console.error("Error deleting user:", error);
       throw error;
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleEditClick = async (customerId) => {
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
-      const customerDetails = await getCustomerById(customerId); 
-      const addressDetails = await getCustomerAddressById(customerId); 
-    
+      const customerDetails = await getCustomerById(customerId);
+      const addressDetails = await getCustomerAddressById(customerId);
+
       setCustomerDetails(customerDetails);
       setAddressDetails(addressDetails);
       navigate("/Customerform");
     } catch (error) {
       console.error("Error fetching customer details:", error);
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -328,461 +260,293 @@ const getCustomerAddressById = async (customerId) => {
     setCustomerDetails(null);
     navigate("/Customerform");
   };
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get(GETALLSTORES_API);
-        console.log("API Response:", response.data);
 
-        // Extract the Stores array from the API response
-        const storesData = response.data.Stores || [];
+  const handleViewOrdersClick = async (customerId) => {
+    setIsLoading(true);
+    try {
+      // Fetch orders for the selected customer
+      const response = await axios.get(
+        `${ORDERBYCUSTOMERID_API}/${customerId}`
+      );
+      const customerDetails = await getCustomerById(customerId);
+      const addressDetails = await getCustomerAddressById(customerId);
+      setCustomerDetails(customerDetails);
+      setAddressDetails(addressDetails);
 
-        // Check if it's an array and set store names
-        setStoreNames(Array.isArray(storesData) ? storesData : []);
-      } catch (error) {
-        console.error("Error fetching stores:", error);
-      }
-    };
+      // Assuming your response contains an array of orders
+      setOrders(response.data); // Set the orders in state
 
-    fetchStores();
-  }, []);
+      // Log fetched orders
+      console.log("Fetched Orders:", response.data);
 
-
-useEffect(() => {
-  if (selectedStore?.StoreID) {
-    const filtered = Customers.filter(
-      (customer) => customer.StoreID === selectedStore.StoreID
-    );
-    setFilteredCustomers(filtered);
-  } else {
-    setFilteredCustomers(Customers); 
-  }
-}, [selectedStore, Customers]);
-
-
-const handleViewOrdersClick = async (customerId) => {
-  setIsLoading(true); 
-  try {
-    // Fetch orders for the selected customer
-    const response = await axios.get(`${ORDERBYCUSTOMERID_API}/${customerId}`);
-    const customerDetails = await getCustomerById(customerId); 
-    const addressDetails = await getCustomerAddressById(customerId); 
-    setCustomerDetails(customerDetails);
-    setAddressDetails(addressDetails);
-    
-    // Assuming your response contains an array of orders
-    setOrders(response.data); // Set the orders in state
-
-    // Log fetched orders
-    console.log("Fetched Orders:", response.data);
-
-    // Navigate to the Customer form with activeStep state
-    navigate("/Customerform", { state: { activeStep: 2, orders: response.data } });
-    
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    // Handle error, e.g., show a toast notification
-  }finally {
-    setIsLoading(false);
-  }
-};
-
-
+      // Navigate to the Customer form with activeStep state
+      navigate("/Customerform", {
+        state: { activeStep: 2, orders: response.data },
+      });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      // Handle error, e.g., show a toast notification
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     // <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
     <div className="main-container">
-      {/* <div className="mt-6 bg-white p-6 rounded-lg shadow-md "> */}
-      {/* // <div className="mt-6 p-6 rounded-lg"> */}
-      {/* <div className="flex flex-wrap items-center justify-between w-full">
-    <h2 className="pl-4 text-xl font-semibold">Customers</h2>
+      <div className="body-container">
+        <h2 className="heading">Customers</h2>
+        <div className="search-button-group">
+          <ul className="button-list">
+            <li>
+              <button
+                type="button"
+                className="action-button"
+                onClick={handleAddCustomerClick}
+              >
+                <FaPlus aria-hidden="true" className="icon" />
+                Add Customers
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="action-button"
+                onClick={handleExportCustomersData}
+              >
+                <FaTable aria-hidden="true" className="icon" />
+                Export Customers
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-   
-    <ul className="flex flex-wrap items-center gap-2 p-2 justify-center w-full sm:w-auto sm:justify-end">
-      <li>
-        <button
-          type="button"
-          className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          onClick={handleAddCustomerClick}
-        >
-          <FaPlus aria-hidden="true" className="-ml-0.5 h-4 w-4" />
-          Add Customers
-        </button>
-      </li>
-      <li>
-        <button
-          type="button"
-          className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          onClick={handleExportCustomersData}
-        >
-          <FaTable aria-hidden="true" className="-ml-0.5 h-4 w-4" />
-          Export Customers
-        </button>
-      </li>
-    </ul>
-  </div> */}
-    <div className="body-container">
-          <h2 className="heading">Customers</h2>
-          <div className="search-button-group">
-            <ul className="button-list">
-              <li>
-                <button
-                  type="button"
-                  className="action-button"
-                  onClick={handleAddCustomerClick}
+      <div className="flex-container">
+        <div className="combobox-container">
+          <Combobox value={selectedStore} onChange={setSelectedStore}>
+            <div className="combobox-wrapper">
+              <Combobox.Input
+                className="combobox-input"
+                displayValue={(store) => store?.StoreName || "Select Store ID"}
+                placeholder="Select Store Name"
+              />
+              <Combobox.Button className="combobox-button">
+                <ChevronUpDownIcon
+                  className="combobox-icon"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+              <Combobox.Options className="combobox-options">
+                {/* Add "Select Store ID" option */}
+                <Combobox.Option
+                  key="select-store-id"
+                  className={({ active }) =>
+                    active ? "combobox-option-active" : "combobox-option"
+                  }
+                  value={{ StoreID: null, StoreName: "Select Store ID" }}
                 >
-                  <FaPlus aria-hidden="true" className="icon" />
-                   Add Customers
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  className="action-button"
-                  onClick={handleExportCustomersData}
-                >
-                  <FaTable aria-hidden="true" className="icon" />
-                  Export Customers
-                </button>
-              </li>
-            </ul>
-          </div>
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={
+                          selected
+                            ? "combobox-option-text font-semibold"
+                            : "combobox-option-text font-normal"
+                        }
+                      >
+                        Select Store ID
+                      </span>
+                      {selected && (
+                        <span
+                          className={
+                            active
+                              ? "combobox-option-selected-icon active-selected-icon"
+                              : "combobox-option-selected-icon"
+                          }
+                        >
+                          <CheckIcon
+                            className="combobox-check-icon"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+
+                {/* Render all store options */}
+                {stores.map((store) => (
+                  <Combobox.Option
+                    key={store.StoreID}
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={store}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          {store.StoreName}
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </div>
+          </Combobox>
         </div>
 
-<div className="flex-container">
-  {/* <div className="combobox-container">
-    <Combobox value={selectedStore} onChange={setSelectedStore}>
-      <div className="combobox-wrapper">
-        <Combobox.Input
-          className="combobox-input"
-          displayValue={(store) => store?.StoreName || ""}
-          placeholder="Select Store Name"
-        />
-        <Combobox.Button className="combobox-button">
-          <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
-        </Combobox.Button>
-        <Combobox.Options className="combobox-options">
-          {storeNames.map((store) => (
-            <Combobox.Option
-              key={store.StoreID}
-              className={({ active }) =>
-                active ? "combobox-option-active" : "combobox-option"
-              }
-              value={store}
-            >
-              {({ selected, active }) => (
-                <>
-                  <span
-                    className={
-                      selected ? "combobox-option-text font-semibold" : "combobox-option-text font-normal"
-                    }
-                  >
-                    {store.StoreName}{" "}
-                  </span>
-                  {selected && (
+        <div className="search-container-c-u">
+          <input
+            id="searchName"
+            type="text"
+            placeholder="Search by Name or Email or Mobile"
+            value={searchName}
+            onChange={(e) => searchItems(e.target.value)}
+            className="search-input"
+          />
+          <div className="search-icon-container-c-u">
+            <IoIosSearch />
+          </div>
+        </div>
+      </div>
+
+      <TableContainer component={Paper} className="mt-4">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell style={{ width: "25%" }}>Name</StyledTableCell>
+              <StyledTableCell style={{ width: "20%" }}>Email</StyledTableCell>
+              <StyledTableCell style={{ width: "15%" }}>
+                Mobile No
+              </StyledTableCell>
+              <StyledTableCell style={{ width: "15%" }}>Gender</StyledTableCell>
+              {/* <StyledTableCell style={{ width: "20%" }}>Actions</StyledTableCell> */}
+              <StyledTableCell style={{ width: "20%" }} align="center">
+                Actions
+              </StyledTableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {filteredCustomers.length > 0 ? (
+              filteredCustomers.map((person, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>{person.CustomerFirstName}</span>
+                      <span>{person.CustomerLastName}</span>
+                    </div>
+                  </StyledTableCell>
+                  <StyledTableCell>{person.CustomerEmail}</StyledTableCell>
+                  <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
+                  <StyledTableCell>
                     <span
-                      className={
-                        active ? "combobox-option-selected-icon active-selected-icon" : "combobox-option-selected-icon"
-                      }
+                      className={`w-[68px] text-center gender-pill ${
+                        person.Gender === "M"
+                          ? "gender-male"
+                          : person.Gender === "F"
+                          ? "gender-female"
+                          : "gender-na"
+                      }`}
                     >
-                      <CheckIcon className="combobox-check-icon" aria-hidden="true" />
+                      {person.Gender === null
+                        ? "N/A"
+                        : person.Gender === "M"
+                        ? "Male"
+                        : "Female"}
                     </span>
-                  )}
-                </>
-              )}
-            </Combobox.Option>
-          ))}
-        </Combobox.Options>
-      </div>
-    </Combobox>
-  </div> */}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <div className="button-container">
+                      <button
+                        type="button"
+                        onClick={() => handleEditClick(person.CustomerID)}
+                        className="button edit-button"
+                      >
+                        <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteClick(person.CustomerID)}
+                        className="button delete-button"
+                      >
+                        <MdOutlineCancel
+                          aria-hidden="true"
+                          className="h-4 w-4"
+                        />
+                        Delete
+                      </button>
 
-<div className="combobox-container">
-  <Combobox value={selectedStore} onChange={setSelectedStore}>
-    <div className="combobox-wrapper">
-      <Combobox.Input
-        className="combobox-input"
-        displayValue={(store) => store?.StoreName || "Select Store ID"}
-        placeholder="Select Store Name"
-      />
-      <Combobox.Button className="combobox-button">
-        <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
-      </Combobox.Button>
-      <Combobox.Options className="combobox-options">
-        {/* Add "Select Store ID" option */}
-        <Combobox.Option
-          key="select-store-id"
-          className={({ active }) =>
-            active ? "combobox-option-active" : "combobox-option"
-          }
-          value={{ StoreID: null, StoreName: "Select Store ID" }}
-        >
-          {({ selected, active }) => (
-            <>
-              <span
-                className={
-                  selected
-                    ? "combobox-option-text font-semibold"
-                    : "combobox-option-text font-normal"
-                }
-              >
-                Select Store ID
-              </span>
-              {selected && (
-                <span
-                  className={
-                    active
-                      ? "combobox-option-selected-icon active-selected-icon"
-                      : "combobox-option-selected-icon"
-                  }
-                >
-                  <CheckIcon className="combobox-check-icon" aria-hidden="true" />
-                </span>
-              )}
-            </>
-          )}
-        </Combobox.Option>
-
-        {/* Render all store options */}
-        {storeNames.map((store) => (
-          <Combobox.Option
-            key={store.StoreID}
-            className={({ active }) =>
-              active ? "combobox-option-active" : "combobox-option"
-            }
-            value={store}
-          >
-            {({ selected, active }) => (
-              <>
-                <span
-                  className={
-                    selected
-                      ? "combobox-option-text font-semibold"
-                      : "combobox-option-text font-normal"
-                  }
-                >
-                  {store.StoreName}
-                </span>
-                {selected && (
-                  <span
-                    className={
-                      active
-                        ? "combobox-option-selected-icon active-selected-icon"
-                        : "combobox-option-selected-icon"
-                    }
-                  >
-                    <CheckIcon className="combobox-check-icon" aria-hidden="true" />
-                  </span>
-                )}
-              </>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleViewOrdersClick(person.CustomerID);
+                          setActiveStep(2);
+                        }}
+                        className="button view-button w-32 whitespace-nowrap" /* Prevents text from splitting */
+                      >
+                        <GrFormView aria-hidden="true" className="h-5 w-5" />
+                        View Orders
+                      </button>
+                    </div>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            ) : (
+              <StyledTableRow>
+                <StyledTableCell colSpan={5} align="center">
+                  No customers found.
+                </StyledTableCell>
+              </StyledTableRow>
             )}
-          </Combobox.Option>
-        ))}
-      </Combobox.Options>
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 20, 25]}
+                colSpan={6}
+                count={totalCustomers}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
+          <LoadingAnimation />
+        </div>
+      )}
     </div>
-  </Combobox>
-</div>
-
-
-  <div className="search-container-c-u">
-    <input
-      id="searchName"
-      type="text"
-      placeholder="Search by Name or Email or Mobile"
-      value={searchName}
-      onChange={(e) => searchItems(e.target.value)}
-      className="search-input"
-    />
-    <div className="search-icon-container-c-u">
-      <IoIosSearch />
-    </div>
-  </div>
-</div>
-
-
-<TableContainer component={Paper} className="mt-4">
-  <Table>
-    <TableHead>
-      <TableRow>
-        <StyledTableCell style={{ width: "25%" }}>Name</StyledTableCell>
-        <StyledTableCell style={{ width: "20%" }}>Email</StyledTableCell>
-        <StyledTableCell style={{ width: "15%" }}>Mobile No</StyledTableCell>
-        <StyledTableCell style={{ width: "15%" }}>Gender</StyledTableCell>
-        {/* <StyledTableCell style={{ width: "20%" }}>Actions</StyledTableCell> */}
-        <StyledTableCell style={{ width: "20%" }} align="center">Actions</StyledTableCell>
-
-       
-
-      </TableRow>
-    </TableHead>
-    {/* <TableBody>
-      {filteredCustomers.map((person, index) => (
-        <StyledTableRow key={index}>
-          <StyledTableCell>
-            <div className="flex items-center space-x-2">
-              <span>{person.FirstName}</span>
-              <span>{person.LastName}</span>
-            </div>
-          </StyledTableCell>
-          <StyledTableCell>{person.Email}</StyledTableCell>
-          <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
-          <StyledTableCell>
-            <span
-              className={`w-[68px] text-center gender-pill ${
-                person.Gender === "M"
-                  ? "gender-male"
-                  : person.Gender === "F"
-                  ? "gender-female"
-                  : "gender-na"
-              }`}
-            >
-              {person.Gender === null
-                ? "N/A"
-                : person.Gender === "M"
-                ? "Male"
-                : "Female"}
-            </span>
-          </StyledTableCell>
-          <StyledTableCell>
-            <div className="button-container">
-              <button
-                type="button"
-                onClick={() => handleEditClick(person.CustomerID)}
-                className="button edit-button"
-              >
-                <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
-                Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDeleteClick(person.CustomerID)}
-                className="button delete-button"
-              >
-                <MdOutlineCancel aria-hidden="true" className="h-4 w-4" />
-                Delete
-              </button>
-            </div>
-          </StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody> */}
-    <TableBody>
-  {filteredCustomers.length > 0 ? (
-    filteredCustomers.map((person, index) => (
-      <StyledTableRow key={index}>
-        <StyledTableCell>
-          <div className="flex items-center space-x-2">
-            <span>{person.CustomerFirstName}</span>
-            <span>{person.CustomerLastName}</span>
-          </div>
-        </StyledTableCell>
-        <StyledTableCell>{person.CustomerEmail}</StyledTableCell>
-        <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
-        <StyledTableCell>
-          <span
-            className={`w-[68px] text-center gender-pill ${
-              person.Gender === "M"
-                ? "gender-male"
-                : person.Gender === "F"
-                ? "gender-female"
-                : "gender-na"
-            }`}
-          >
-            {person.Gender === null
-              ? "N/A"
-              : person.Gender === "M"
-              ? "Male"
-              : "Female"}
-          </span>
-        </StyledTableCell>
-        <StyledTableCell>
-          <div className="button-container">
-            <button
-              type="button"
-              onClick={() => handleEditClick(person.CustomerID)}
-              className="button edit-button"
-            >
-              <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDeleteClick(person.CustomerID)}
-              className="button delete-button"
-            >
-              <MdOutlineCancel aria-hidden="true" className="h-4 w-4" />
-              Delete
-            </button>
-            {/* <button
-              type="button"
-              onClick={() => handleDeleteClick(person.CustomerID)}
-              className="button delete-button"
-            >
-             <GrFormView aria-hidden="true" className="h-4 w-4" />
-             View Orders
-            </button> */}
-          {/* <button
-  type="button"
-  onClick={() => {
-    handleViewOrdersClick(person.CustomerID);
-    setActiveStep(2); 
-  }}
-  className="button view-button"
->
-  <GrFormView aria-hidden="true" className="h-5 w-5" />
-  View Orders
-</button> */}
-<button
-  type="button"
-  onClick={() => {
-    handleViewOrdersClick(person.CustomerID);
-    setActiveStep(2);
-  }}
-  className="button view-button w-32 whitespace-nowrap" /* Prevents text from splitting */
->
-  <GrFormView aria-hidden="true" className="h-5 w-5" />
-  View Orders
-</button>
-
-
-
-          </div>
-        </StyledTableCell>
-      </StyledTableRow>
-    ))
-  ) : (
-    <StyledTableRow>
-      <StyledTableCell colSpan={5} align="center">
-        No customers found.
-      </StyledTableCell>
-    </StyledTableRow>
-  )}
-</TableBody>
-    <TableFooter>
-      <TableRow>
-        <TablePagination
-          rowsPerPageOptions={[10, 20, 25]}
-          colSpan={6}
-          count={totalCustomers}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          ActionsComponent={TablePaginationActions}
-        />
-      </TableRow>
-    </TableFooter>
-  </Table>
-</TableContainer> 
-
-
-
-        {isLoading && (
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-        <LoadingAnimation />
-      </div>
-    )}
-      </div>
     // </div>
   );
 }
