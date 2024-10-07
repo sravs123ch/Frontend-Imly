@@ -27,10 +27,6 @@ import DialogActions from "@mui/material/DialogActions";
 import {
   CREATEORUPDATE_STORES_API,
   STOREUSERSBYSTORE_ID_API,
-  GETALLSTOREUSERSBYSTORE_ID_API,
-  COUNTRIES_API,
-  STATES_API,
-  CITIES_API,
   GETALLUSERS_API,
   CREATEORUPDATE_MAPSTOREUSER,
   GET_MAPSTOREUSERBY_USERID,
@@ -122,17 +118,15 @@ function StoreForm() {
         console.log("Store data in edit mode:", store);
 
         // Find country, state, and city names by matching the IDs from the store
-
-        const selectedCity = cities.find(
-          (city) => city.CityName === store.CityName
+        const selectedCountry = countries.find(
+          (country) => country.CountryName === store.CountryName
         );
         const selectedState = states.find(
           (state) => state.StateName === store.StateName
         );
-        const selectedCountry = countries.find(
-          (country) => country.CountryName === store.CountryName
+        const selectedCity = cities.find(
+          (city) => city.CityName === store.CityName
         );
-
         // Set form data based on store details
         setFormData({
           TenantID: store.TenantID || 1,
@@ -151,6 +145,9 @@ function StoreForm() {
           CityName: selectedCity?.CityName || "",
           ZipCode: store.ZipCode || "",
         });
+        setSelectedCountry(selectedCountry);
+        setSelectedState(selectedState);
+        setSelectedCity(selectedCity);
       }
     };
 

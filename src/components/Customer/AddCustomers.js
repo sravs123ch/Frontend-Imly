@@ -65,6 +65,7 @@ function AddCustomers() {
   const [SubReference, setSubReference] = useState(null);
   const [selectedSocialMediaPlatform, setSelectedSocialMediaPlatform] =
     useState(null);
+
   const [query, setQuery] = useState("");
 
   const handleSubReferenceChange = (option) => {
@@ -193,18 +194,33 @@ function AddCustomers() {
       );
       setReferedBy(selectedReferral || "");
 
-      // Set the selected gender
-      const selectedGender = genderOptions.find(
-        (gender) => gender.id === customer?.Gender
+      // Set the selected SubReference in edit mode
+      const selectedSubReference = ["Director", "Employee", "Existing"].find(
+        (option) => option === customer?.SubReference
       );
-      setSelectedGender(selectedGender || "");
+      setSubReference(selectedSubReference || "");
 
-      // Set the selected store based on the StoreID
+      if (!selectedSubReference) {
+        const socialMediaPlatforms = ["Facebook", "Instagram", "Twitter"];
+        const selectedSocialMediaPlatform = socialMediaPlatforms.find(
+          (platform) => platform === customer?.SubReference
+        );
+        setSubReference(selectedSocialMediaPlatform || "");
+      } else {
+        setSubReference(selectedSubReference || "");
+      }
+
       const selectedStore = stores.find(
         (store) => store.StoreID === customer?.StoreID
       );
       console.log(selectedStore, "Sstore");
       setSelectedStore(selectedStore || null);
+
+      // Set the selected gender
+      const selectedGender = genderOptions.find(
+        (gender) => gender.id === customer?.Gender
+      );
+      setSelectedGender(selectedGender || "");
 
       const firstAddress = location.state?.addressDetails || addressDetails;
       console.log("firstAddress ", firstAddress);
@@ -271,7 +287,7 @@ function AddCustomers() {
     customerDetails?.customer,
     addressDetails,
     genderOptions,
-    ,
+    stores,
   ]);
   const handleReferralTypeChange = (type) => {
     setReferedBy(type); // Set the selected referral type
@@ -1237,8 +1253,8 @@ function AddCustomers() {
                             <div className="w-full">
                               <Combobox
                                 as="div"
-                                value={selectedSocialMediaPlatform}
-                                onChange={handleSocialMediaPlatformChange}
+                                value={SubReference}
+                                onChange={handleSubReferenceChange}
                               >
                                 <div className="relative">
                                   <Combobox.Input
