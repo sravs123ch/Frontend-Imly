@@ -369,10 +369,10 @@ function StoreForm() {
       }
     };
 
-    // Only fetch when the search query has 3 or more characters
-    if (searchQuery.length >= 3) {
-      fetchUsers(searchQuery);
-    }
+    // // Only fetch when the search query has 3 or more characters
+    // if (searchQuery.length >= 3) {
+    // }
+    fetchUsers(searchQuery);
   }, [searchQuery]);
 
   const mapStoreUser = async (selectedUser) => {
