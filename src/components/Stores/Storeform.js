@@ -121,6 +121,18 @@ function StoreForm() {
 
         console.log("Store data in edit mode:", store);
 
+        // Find country, state, and city names by matching the IDs from the store
+
+        const selectedCity = cities.find(
+          (city) => city.CityName === store.CityName
+        );
+        const selectedState = states.find(
+          (state) => state.StateName === store.StateName
+        );
+        const selectedCountry = countries.find(
+          (country) => country.CountryName === store.CountryName
+        );
+
         // Set form data based on store details
         setFormData({
           TenantID: store.TenantID || 1,
@@ -131,35 +143,14 @@ function StoreForm() {
           Phone: store.Phone || "",
           AddressLine1: store.AddressLine1 || "",
           AddressLine2: store.AddressLine2 || "",
-          CountryID: store.CountryID || "",
-          StateID: store.StateID || "",
-          CityID: store.CityID || "",
+          CountryID: selectedCountry?.CountryID || "",
+          CountryName: selectedCountry?.CountryName || "",
+          StateID: selectedState?.StateID || "",
+          StateName: selectedState?.StateName || "",
+          CityID: selectedCity?.CityID || "",
+          CityName: selectedCity?.CityName || "",
           ZipCode: store.ZipCode || "",
         });
-
-        // Fetch users by StoreID
-        if (store.StoreID) {
-          fetchUsersByStoreId(store.StoreID); // Pass StoreID to fetch users
-        }
-
-        if (store.StateID) {
-          fetchStatesByCountry(store.CountryID).then(() => {
-            const selectedState = states.find(
-              (state) => state.StateID === store.StateID
-            );
-            setSelectedState(selectedState);
-            fetchCitiesByState(store.StateID);
-          });
-        }
-
-        if (store.CityID) {
-          fetchCitiesByState(store.StateID).then(() => {
-            const selectedCity = cities.find(
-              (city) => city.CityID === store.CityID
-            );
-            setSelectedCity(selectedCity);
-          });
-        }
       }
     };
 
@@ -169,7 +160,9 @@ function StoreForm() {
     location.state?.storeDetails?.store,
     storeDetails?.store,
     countries,
-  ]); // Add required dependencies
+    states,
+    cities,
+  ]);
 
   const fetchUsersByStoreId = async (storeId) => {
     try {
@@ -210,9 +203,6 @@ function StoreForm() {
         }
       );
 
-      // Log the entire API response to understand its structure
-      console.log("API Response:", response.data);
-
       return {
         stores: response.data.Stores || [], // Correctly access the 'Stores' field
         totalCount: response.data.totalItems || 0, // Use 'totalItems' for total count
@@ -237,13 +227,11 @@ function StoreForm() {
 
     try {
       // Log form data
-      console.log("Store Form Data:", formData);
 
       // Create or update the store
       const response = await axios.post(apiUrl, formData);
 
       // Log the response
-      console.log("Store Response:", response);
 
       // Check if the response is successful
       if (response.StatusCode === "SUCCESS") {
@@ -262,7 +250,6 @@ function StoreForm() {
           }
         );
       }
-      console.log(toast.success);
       // Redirect to the Stores page
       navigate("/Stores");
     } catch (error) {
@@ -365,8 +352,6 @@ function StoreForm() {
           }
         );
 
-        console.log("API Response Data:", response.data);
-
         const data = response.data;
         const userArray = data.users || []; // Correctly access the 'users' array
 
@@ -376,7 +361,6 @@ function StoreForm() {
             ...item, // Spread the user object to include all user details
           }));
           setUsers(usersData);
-          console.log("Users Data:", usersData);
         } else {
           console.error(
             "API response does not contain user data in an array:",
@@ -426,8 +410,6 @@ function StoreForm() {
 
       // Check if the response is successful
       if (response.status === 200) {
-        console.log("User mapped successfully:", response.data);
-
         // Fetch the updated users by StoreID
         await fetchUsersByStoreId(storeID);
 
@@ -444,12 +426,15 @@ function StoreForm() {
     const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
 
-    // Filter users client-side only if query length is 3 or more characters
-    if (query.length >= 3) {
+    // Start loading when search begins
+    setLoading(true);
+
+    // Simulate a delay (optional) to visualize the loading animation
+    setTimeout(() => {
       const filtered = users.filter((user) => {
-        const firstName = user.FirstName?.toLowerCase() || "";
-        const lastName = user.LastName?.toLowerCase() || "";
-        const email = user.Email?.toLowerCase() || "";
+        const firstName = user.FirstName?.trim().toLowerCase() || "";
+        const lastName = user.LastName?.trim().toLowerCase() || "";
+        const email = user.Email?.trim().toLowerCase() || "";
 
         return (
           firstName.includes(query) ||
@@ -457,18 +442,18 @@ function StoreForm() {
           email.includes(query)
         );
       });
+
       setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers([]); // Clear results if the search query is less than 3 characters
-    }
+
+      // Stop loading after filtering
+      setLoading(false);
+    }, 500); // Optional delay for visualizing the loading state
   };
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
   const handleCustomerSelect = (customer) => {
-    console.log("Selected customer:", customer);
-
     // Check if the user is already in the table
     const isUserInTable = tableUsers.some(
       (user) => user.CustomerID === customer.CustomerID
@@ -483,6 +468,7 @@ function StoreForm() {
     setSearchQuery("");
     setFilteredUsers([]); // Clear the dropdown after selection
   };
+
   // Close the modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -499,58 +485,6 @@ function StoreForm() {
     setSelectedUsers([user]); // Select the user to be added
   };
 
-  const fetchStatesByCountry = async (countryId) => {
-    if (!countryId) return;
-
-    try {
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getStatesByCountry?$filter=CountryID eq ${countryId}`
-
-        `${STATES_API}/${countryId}`
-      );
-      if (response.data.status === "SUCCESS") {
-        const stateData = response.data.data;
-        setStates(stateData);
-
-        // Create stateMap
-        const stateMapData = stateData.reduce((map, state) => {
-          map[state.StateName] = state.StateID;
-          return map;
-        }, {});
-        setStateMap(stateMapData);
-
-        console.log("Fetched states:", stateData);
-      }
-    } catch (error) {
-      console.error("Error fetching states:", error);
-    }
-  };
-
-  const fetchCitiesByState = async (stateId) => {
-    if (!stateId) return;
-
-    try {
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getCitiesByState?$filter=StateID eq ${stateId}`
-        `${CITIES_API}/${stateId}`
-      );
-      if (response.data.status === "SUCCESS") {
-        const cityData = response.data.data;
-        setCities(cityData);
-
-        // Create cityMap
-        const cityMapData = cityData.reduce((map, city) => {
-          map[city.CityName] = city.CityID;
-          return map;
-        }, {});
-        setCityMap(cityMapData);
-
-        console.log("Fetched cities:", cityData);
-      }
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-    }
-  };
   const handleCountryChange = (selectedCountry) => {
     if (!selectedCountry) return;
 
@@ -632,10 +566,6 @@ function StoreForm() {
         (user) => user.MapStoreUserID !== MapStoreUserID
       );
       setTableUsers(updatedUsers);
-
-      console.log(
-        `User with MapStoreUserID ${MapStoreUserID} removed successfully.`
-      );
     } catch (error) {
       console.error("Error removing user:", error);
     }
@@ -643,8 +573,6 @@ function StoreForm() {
 
   // Handle click event on user selection
   const handleUserClick = (user) => {
-    console.log(`Selected user: ${user.FirstName} ${user.LastName}`);
-
     // Call the mapStoreUser function with the selected user's data
     mapStoreUser(user);
   };
@@ -781,9 +709,15 @@ function StoreForm() {
                       <div className="w-full">
                         <Combobox
                           as="div"
-                          value={selectedCountry}
-                          onChange={handleCountryChange}
-                          // onChange={setSelectedCountry}
+                          value={selectedCountry} // Bind the selected country object here
+                          onChange={(newCountry) => {
+                            handleCountryChange(newCountry); // Handle country change (updates the state)
+                            setFormData((prevFormData) => ({
+                              ...prevFormData,
+                              CountryID: newCountry.CountryID,
+                              CountryName: newCountry.CountryName,
+                            }));
+                          }}
                         >
                           <div className="relative">
                             <Combobox.Input
@@ -801,7 +735,7 @@ function StoreForm() {
                             </Combobox.Button>
 
                             <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                              {countries
+                              {countries // Access countries data correctly
                                 .filter((country) =>
                                   country.CountryName.toLowerCase().includes(
                                     query.toLowerCase()
@@ -826,6 +760,7 @@ function StoreForm() {
                                 ))}
                             </Combobox.Options>
                           </div>
+                          {console.log(countries)}
                         </Combobox>
                       </div>
                     </div>
@@ -971,7 +906,7 @@ function StoreForm() {
                       className="button-base save-btn"
                       onClick={handleFormSubmit}
                     >
-                      Save
+                      {isEditMode ? "Update" : "Save"}
                     </button>
                     <button
                       type="button"
@@ -1022,7 +957,12 @@ function StoreForm() {
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                           >
-                            {filteredUsers.length > 0 ? (
+                            {loading ? (
+                              <div className="flex justify-center p-4">
+                                <LoadingAnimation />{" "}
+                                {/* Display loading animation when loading */}
+                              </div>
+                            ) : filteredUsers.length > 0 ? (
                               <>
                                 <div className="mb-2 text-sm text-gray-600 px-2">
                                   {filteredUsers.length} Result
@@ -1056,8 +996,12 @@ function StoreForm() {
                                 ))}
                               </>
                             ) : (
-                              <div className="p-2 text-gray-500">
-                                No results found.
+                              <div className="flex justify-center p-4 text-gray-500">
+                                {loading ? (
+                                  <LoadingAnimation />
+                                ) : (
+                                  "No results found."
+                                )}
                               </div>
                             )}
                           </div>
@@ -1126,7 +1070,7 @@ function StoreForm() {
                         className="button-base save-btn"
                         onClick={handleFormSubmit}
                       >
-                        Save
+                        {isEditMode ? "Update" : "Save"}
                       </button>
                       <button
                         type="button"

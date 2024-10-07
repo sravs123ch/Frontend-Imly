@@ -67,7 +67,11 @@ function AddCustomers() {
     useState(null);
   const [query, setQuery] = useState("");
 
-  const handleSubReferenceChange = (option) => setSubReference(option);
+  const handleSubReferenceChange = (option) => {
+    setSubReference(option);
+    setCustomerFormData({ ...customerFormData, SubReference: option });
+  };
+
   const handleSocialMediaPlatformChange = (platform) =>
     setSelectedSocialMediaPlatform(platform);
   const handleRefereeNameChange = (e) =>
@@ -92,6 +96,7 @@ function AddCustomers() {
     Comments: "",
     Alternative_PhoneNumber: "",
     ReferedBy: "",
+    SubReference: "",
   });
 
   const [addressFormData, setAddressFormData] = useState({
@@ -1299,19 +1304,12 @@ function AddCustomers() {
                     <div></div>
                     <div></div>{" "}
                     <div className="mt-6 flex justify-end gap-4">
-                      {/* <button
-                        type="submit"
-                        onClick={handleCustomerFormSubmit}
-                        className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      >
-                        Save
-                      </button> */}
                       <button
                         type="submit"
                         className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         onClick={handleCustomerFormSubmit}
                       >
-                        {customerFormData.CustomerID ? "Update" : "Add"}{" "}
+                        {customerFormData.CustomerID ? "Update" : "Save"}{" "}
                         {/* Conditional button text */}
                       </button>
                       <button
@@ -1550,7 +1548,7 @@ function AddCustomers() {
                             handleAddressFormSubmit(customerId);
                           }}
                         >
-                          {addressFormData.AddressID ? "Update" : "Add"}{" "}
+                          {addressFormData.AddressID ? "Update" : "Save"}{" "}
                           {/* Conditional button text */}
                         </button>
                         <button
