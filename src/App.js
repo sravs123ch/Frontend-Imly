@@ -40,6 +40,7 @@ import DataProvider from "./Context/DataContext";
 import Testing from "./components/Testing/Testing";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useAuth } from "./Context/AuthContext";
+import Tasks from "./components/Tasks/Tasks";
 
 function App() {
   const location = useLocation();
@@ -244,6 +245,14 @@ function App() {
                               element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                   <Testing />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/tasks"
+                              element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                  <Tasks />
                                 </ProtectedRoute>
                               }
                             />

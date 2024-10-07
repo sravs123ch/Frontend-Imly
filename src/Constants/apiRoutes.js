@@ -65,3 +65,5 @@ export const  DELETEMAPSTOREUSER = `${BASE_URL}/mapstoreusers/deleteMapStoreUser
 export const GET_ALL_HYSTORYID_API=`${BASE_URL}/orderhistory/order-history/`;
 export const FETCH_PERMISSION_URL = `${BASE_URL}/permissions/getAllPermissions`;
 export const CREATE_OR_UPDATE_ROLE_URL = `${BASE_URL}/permissions/createOrUpdateRolePermissions`;
+export const ORDER_STATUS_API=`${BASE_URL}/Orderstatus/getAllOrderStatus`;
+ 

@@ -58,7 +58,8 @@ const allNavigation = [
   { name: "User Roles", href: "/RoleUser", icon: UsersIcon, roles: [1, 2] },
   { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
 
-  { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1,2] },
+  { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1, 2] },
+  { name: "Tasks", href: "/tasks", icon: ShoppingBagIcon, roles: [1, 2] },
 ];
 
 const userNavigation = [
