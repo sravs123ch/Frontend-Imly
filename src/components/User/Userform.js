@@ -144,28 +144,16 @@ function Userform() {
       );
       if (selectedCountry) {
         setSelectedCountry(selectedCountry);
-        fetchStatesByCountry(selectedCountry.CountryID); // Fetch states based on selected country
       }
 
       // Fetch states and then set state and city
       if (user.Address?.StateID) {
-        fetchStatesByCountry(user.Address.CountryID).then(() => {
-          const selectedState = states.find(
-            (state) => state.StateID === user.Address.StateID
-          );
-          setSelectedState(selectedState);
-          fetchCitiesByState(user.Address.StateID); // Fetch cities based on selected state
-        });
+        setSelectedState(selectedState);
       }
 
       // Fetch cities and set the selected city
       if (user.Address?.CityID) {
-        fetchCitiesByState(user.Address.StateID).then(() => {
-          const selectedCity = cities.find(
-            (city) => city.CityID === user.Address.CityID
-          );
-          setSelectedCity(selectedCity);
-        });
+        setSelectedCity(selectedCity);
       }
     }
   }, [

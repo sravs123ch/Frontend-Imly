@@ -144,6 +144,7 @@ function User() {
   };
 
   const getUserById = async (userId) => {
+    const token = localStorage.getItem("token");
     setIsLoading(true); // Set isLoading to true before making the network call
     try {
       const response = await axios.get(`${GETALLUSERSBYID_API}/${userId}`, {
@@ -162,6 +163,7 @@ function User() {
   };
 
   const deleteUserById = async (userId) => {
+    const token = localStorage.getItem("token");
     setIsLoading(true); // Set isLoading to true before making the network call
     try {
       const response = await axios.delete(`${DELETEUSERSBYID_API}/${userId}`, {

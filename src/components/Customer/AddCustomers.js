@@ -229,14 +229,6 @@ function AddCustomers() {
         setAddressTableData(firstAddress.Addresses);
       }
 
-      // Fetch states by country and cities by state based on the first address
-      if (firstAddress?.Addresses?.[0]?.CountryID) {
-        // fetchStatesByCountry(firstAddress.Addresses[0].CountryID);
-      }
-      if (firstAddress?.Addresses?.[0]?.StateID) {
-        // fetchCitiesByState(firstAddress.Addresses[0].StateID);
-      }
-
       // Set the selected country, state, and city based on the first address
       setSelectedCountry(firstAddress?.Addresses?.[0]?.CountryID || null);
       setSelectedState(firstAddress?.Addresses?.[0]?.StateID || null);
@@ -484,13 +476,6 @@ function AddCustomers() {
       if (updatedCustomer && Array.isArray(updatedCustomer)) {
         console.log("Setting address table data:", updatedCustomer);
         setAddressTableData(updatedCustomer); // Set updated addresses in the table
-      }
-
-      if (updatedCustomer?.Addresses?.[0]?.CountryID) {
-        fetchStatesByCountry(updatedCustomer.Addresses[0].CountryID);
-      }
-      if (updatedCustomer?.Addresses?.[0]?.StateID) {
-        fetchCitiesByState(updatedCustomer.Addresses[0].StateID);
       }
 
       // Set the selected country, state, and city
@@ -785,13 +770,6 @@ function AddCustomers() {
       if (updatedCustomer && Array.isArray(updatedCustomer)) {
         console.log("Setting address table data:", updatedCustomer);
         setAddressTableData(updatedCustomer); // Set updated addresses in the table
-      }
-
-      if (updatedCustomer?.Addresses?.[0]?.CountryID) {
-        fetchStatesByCountry(updatedCustomer.Addresses[0].CountryID);
-      }
-      if (updatedCustomer?.Addresses?.[0]?.StateID) {
-        fetchCitiesByState(updatedCustomer.Addresses[0].StateID);
       }
     } catch (error) {
       if (error.response) {
