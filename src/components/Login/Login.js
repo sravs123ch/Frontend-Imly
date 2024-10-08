@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Logo from "../../assests/Images/imly-logo-new.jpg";
 import image from "../../assests/Images/imly-two.png";
 import { useNavigate } from "react-router-dom";
@@ -17,31 +17,33 @@ const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [citiesData, setCitiesData] = useState([]);
-  const [statesData, setStatesData] = useState([]);
-  const [countriesData, setCountriesData] = useState([]);
   const { login } = useAuth();
 
-  // Fetch data from the APIs
-
+  // Fetch data from the APIs if not present in local storage
   const fetchApiData = async () => {
-    try {
-      const resCities = await fetch(CITIES_API);
-      const resStates = await fetch(STATES_API);
-      const resCountries = await fetch(COUNTRIES_API);
-      const cities = await resCities.json();
-      const states = await resStates.json();
-      const countries = await resCountries.json();
-      // Store in state
-      setCitiesData(cities);
-      setStatesData(states);
-      setCountriesData(countries);
-      // Store in localStorage
-      localStorage.setItem("citiesData", JSON.stringify(cities));
-      localStorage.setItem("statesData", JSON.stringify(states));
-      localStorage.setItem("countriesData", JSON.stringify(countries));
-    } catch (error) {
-      console.error("Error fetching API data:", error);
+    const storedCitiesData = localStorage.getItem("citiesData");
+    const storedStatesData = localStorage.getItem("statesData");
+    const storedCountriesData = localStorage.getItem("countriesData");
+
+    if (!storedCitiesData || !storedStatesData || !storedCountriesData) {
+      try {
+        const resCities = storedCitiesData
+          ? JSON.parse(storedCitiesData)
+          : await fetch(CITIES_API).then((res) => res.json());
+        const resStates = storedStatesData
+          ? JSON.parse(storedStatesData)
+          : await fetch(STATES_API).then((res) => res.json());
+        const resCountries = storedCountriesData
+          ? JSON.parse(storedCountriesData)
+          : await fetch(COUNTRIES_API).then((res) => res.json());
+
+        // Store in localStorage
+        localStorage.setItem("citiesData", JSON.stringify(resCities));
+        localStorage.setItem("statesData", JSON.stringify(resStates));
+        localStorage.setItem("countriesData", JSON.stringify(resCountries));
+      } catch (error) {
+        console.error("Error fetching API data:", error);
+      }
     }
   };
 
@@ -63,41 +65,27 @@ const Login = () => {
         console.log("Login successful:", data);
         const { token } = data;
 
-        // Decode the JWT token
         const decodedToken = jwtDecode(token);
         const roleID = decodedToken.RoleID;
 
-        // Set user role and token
-        login(token, roleID); // Adjust this based on your auth context
-        // Fetch API data and store in localStorage
-        await fetchApiData(); // Assuming this fetches some data
+        login(token, roleID);
 
-        // Fetch all stores with parameters
-        const params = {
-          pageNumber: 1, // You can replace this with the actual page number
-          pageSize: 1000, // You can replace this with the actual page size
-        };
+        // Fetch cities, states, and countries data if not present
+        await fetchApiData();
 
-        const storeResponse = await fetch(
-          `${GETALLSTORES_API}?${new URLSearchParams(params).toString()}`
-        );
-        const storesData = await storeResponse.json(); // Parse the stores data
-        // Only save the Stores array to local storage
-        const stores = storesData.Stores || []; // Ensure you get the Stores array
-        localStorage.setItem("storesData", JSON.stringify(stores)); // Store the Stores array
+        const storedStoresData = localStorage.getItem("storesData");
+        if (!storedStoresData) {
+          const params = {
+            pageNumber: 1,
+            pageSize: 1000,
+          };
 
-        // Store other data in localStorage if needed
-        const storedCitiesData = localStorage.getItem("citiesData");
-        const storedStatesData = localStorage.getItem("statesData");
-        const storedCountriesData = localStorage.getItem("countriesData");
-        if (!storedCitiesData) {
-          localStorage.setItem("citiesData", JSON.stringify(citiesData));
-        }
-        if (!storedStatesData) {
-          localStorage.setItem("statesData", JSON.stringify(statesData));
-        }
-        if (!storedCountriesData) {
-          localStorage.setItem("countriesData", JSON.stringify(countriesData));
+          const storeResponse = await fetch(
+            `${GETALLSTORES_API}?${new URLSearchParams(params).toString()}`
+          );
+          const storesData = await storeResponse.json();
+          const stores = storesData.Stores || [];
+          localStorage.setItem("storesData", JSON.stringify(stores));
         }
 
         // Redirect based on role or other criteria
@@ -111,7 +99,6 @@ const Login = () => {
       setError("An error occurred during login");
     }
   };
-
 
   return (
     <>
@@ -211,4 +198,5 @@ const Login = () => {
     </>
   );
 };
+
 export default Login;
