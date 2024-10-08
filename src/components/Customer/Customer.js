@@ -146,20 +146,7 @@ function Customers() {
   // Search customers based on the search bar
   const searchItems = (searchValue) => {
     setSearchName(searchValue);
-
-    if (searchValue === "") {
-      setIsSearching(false); // Reset search mode
-      setFilteredCustomers(customers); // Show all customers when search is cleared
-    } else {
-      setIsSearching(true); // Enable search mode
-      const filteredData = filteredCustomers.filter((item) => {
-        return Object.values(item)
-          .join("")
-          .toLowerCase()
-          .includes(searchValue.toLowerCase());
-      });
-      setFilteredCustomers(filteredData);
-    }
+    fetchCustomers();
   };
 
   const handleChangePage = (event, newPage) => {

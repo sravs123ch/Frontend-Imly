@@ -55,9 +55,6 @@ function Stores() {
         }
       );
 
-      // Log the entire API response to understand its structure
-      console.log("API Response:", response.data);
-
       return {
         stores: response.data.Stores || [], // Correctly access the 'Stores' field
         totalCount: response.data.totalItems || 0, // Use 'totalItems' for total count
@@ -69,7 +66,7 @@ function Stores() {
   };
 
   const fetchStores = async () => {
-    setIsLoading(true); // Set isLoading to true before making the network call
+    setIsLoading(true);
     try {
       const { stores, totalCount } = await getAllStores(
         page,
@@ -78,20 +75,19 @@ function Stores() {
       );
 
       setPaginatedPeople(stores);
-      console.log("Fetched stores:", stores);
-      console.log("Total stores count:", totalCount);
+
       setStores(stores);
       setTotalStores(totalCount);
-      // Only update filtered customers if no search is active
+
       if (!isSearching) {
-        setFilteredStores(stores); // Set initial filtered customers to all fetched data
+        setFilteredStores(stores);
       }
 
       setTotalStores(totalCount);
     } catch (error) {
       console.error("Failed to fetch stores", error);
     } finally {
-      setIsLoading(false); // Set isLoading to false in the finally block
+      setIsLoading(false);
     }
   };
 
@@ -100,19 +96,16 @@ function Stores() {
   }, [page, rowsPerPage, searchName]);
 
   const handleChangePage = (event, newPage) => {
-    console.log("Current page:", page);
-    console.log("Requested page:", newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log("Rows per page changed to:", event.target.value);
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0
+    setPage(0);
   };
 
   const getStoreById = async (storeId) => {
-    setIsLoading(true); // Set isLoading to true before making the network call
+    setIsLoading(true);
     try {
       const response = await axios.get(`${GETALLSTORESBYID_API}/${storeId}`);
       return response.data;
@@ -120,12 +113,12 @@ function Stores() {
       console.error("Error fetching store:", error);
       throw error;
     } finally {
-      setIsLoading(false); // Set isLoading to false in the finally block
+      setIsLoading(false);
     }
   };
 
   const deleteStoreById = async (storeId) => {
-    setIsLoading(true); // Set isLoading to true before making the network call
+    setIsLoading(true);
     try {
       const response = await axios.delete(
         `${DELETESTORESSBYID_API}/${storeId}`
@@ -135,7 +128,7 @@ function Stores() {
       console.error("Error deleting store:", error);
       throw error;
     } finally {
-      setIsLoading(false); // Set isLoading to false in the finally block
+      setIsLoading(false);
     }
   };
 
@@ -144,7 +137,7 @@ function Stores() {
     try {
       const storeDetails = await getStoreById(storeId);
       setStoreDetails(storeDetails);
-      // Navigate to the update page with the store ID
+
       navigate(`/Storesform`);
     } catch (error) {
       console.error("Error handling edit:", error);
@@ -156,7 +149,7 @@ function Stores() {
   const handleDelete = async (storeId) => {
     try {
       await deleteStoreById(storeId);
-      fetchStores(); // Refresh store list after deletion
+      fetchStores();
     } catch (error) {
       console.error("Error handling delete:", error);
     }

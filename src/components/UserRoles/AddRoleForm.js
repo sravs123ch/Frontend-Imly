@@ -3,11 +3,12 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 // import Popup from "../../components/Popup/Popup";
+
 import Select from "react-select";
 import { FETCH_PERMISSION_URL } from "../../Constants/apiRoutes";
 import { CREATE_OR_UPDATE_ROLE_URL } from "../../Constants/apiRoutes";
 import { DataContext } from "../../Context/DataContext";
-
+import { toast, ToastContainer } from "react-toastify";
 const AddRoleForm = () => {
   const [roleName, setRoleName] = useState("");
   const [storeId, setStoreId] = useState("0");
@@ -15,8 +16,6 @@ const AddRoleForm = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
 
   const { storesData } = useContext(DataContext);
   const [stores, setStores] = useState([]);
@@ -104,18 +103,15 @@ const AddRoleForm = () => {
 
     try {
       const response = await axios.post(CREATE_OR_UPDATE_ROLE_URL, roleData);
-      setModalMessage("Role saved successfully!");
+      toast.success("Role saved successfully!");
+      setTimeout(() => {
+        navigate("/roleuser");
+      }, 5500);
     } catch (error) {
-      setModalMessage("Error saving role. Please try again.");
+      toast.error("Error saving role. Please try again.");
     } finally {
       setIsLoading(false);
-      setIsModalOpen(true);
     }
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    navigate("/roleuser");
   };
 
   const handleClose = () => {
@@ -140,6 +136,7 @@ const AddRoleForm = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-72 w-auto">
       <div className="mt-6  p-6 rounded-lg ">
+        <ToastContainer />
         {/* <div className="mt-6 bg-white p-6 rounded-lg shadow-md"> */}
         <h2 className="heading">Add Role</h2>
         <hr className="border-gray-300 my-4 mb-4" />
@@ -229,10 +226,6 @@ const AddRoleForm = () => {
           {isLoading && <LoadingAnimation />}
         </div>
       </div>
-
-      {/* {isModalOpen && (
-        // <Popup message={modalMessage} onClose={handleCloseModal} />
-      )} */}
     </div>
   );
 };

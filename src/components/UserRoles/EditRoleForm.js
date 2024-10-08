@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
-// import Modal from "../../components/Popup/Popup";
 import Select from "react-select";
 import { FETCH_PERMISSION_URL } from "../../Constants/apiRoutes";
 import { DataContext } from "../../Context/DataContext";
+import { toast, ToastContainer } from "react-toastify";
 
 const EditRoleForm = () => {
   const location = useLocation();
@@ -18,11 +18,9 @@ const EditRoleForm = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Indicates loading during form submission
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { storesData } = useContext(DataContext);
   const [stores, setStores] = useState([]);
-  const [selectedStore, setSelectedStore] = useState("");
   useEffect(() => {
     if (storesData) {
       setStores(storesData || []);
@@ -64,6 +62,10 @@ const EditRoleForm = () => {
 
     fetchRolePermissions();
   }, [roleId, storeId]);
+
+  const handleClose = () => {
+    navigate("/roleuser");
+  };
 
   const handleCheckboxChange = (moduleName, permissionId) => {
     setPermissionsByModule((prevState) => {
@@ -114,22 +116,15 @@ const EditRoleForm = () => {
       setIsLoading(true); // Start loading animation during form submission
       const response = await axios.post(updateRoleUrl, payload);
 
-      setSuccessMessage("Role updated successfully");
+      toast.success("Role updated successfully!");
       setTimeout(() => {
-        navigate("/roleuser"); // Redirect after success
-      }, 1500);
-      setIsModalOpen(true);
+        navigate("/roleuser");
+      }, 5500);
     } catch (error) {
-      console.error("Failed to update role permissions:", error);
-      alert("Error updating role");
+      toast.error("Error updating role. Please try again.");
     } finally {
       setIsLoading(false); // Stop loading animation after form submission
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false); // Close modal
-    navigate("/roleuser"); // Navigate to UserRole page on close
   };
 
   // Show loading animation when page is loading or form is submitting
@@ -147,6 +142,7 @@ const EditRoleForm = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-72 w-auto">
       <div className="mt-6 p-6 rounded-lg ">
+        <ToastContainer />
         <h2 className="text-xl font-semibold mb-6">Edit Role</h2>
 
         <hr className="border-gray-300 my-4 mt-6" />
@@ -239,9 +235,6 @@ const EditRoleForm = () => {
           </button>
           {isLoading && <LoadingAnimation />}
         </div>
-
-        {/* Modal for success message */}
-        {/* {isModalOpen && <Modal message={successMessage} onClose={handleClose} />} */}
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import {
 } from "../../Constants/apiRoutes";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 import { DataContext } from "../../Context/DataContext";
+import { toast, ToastContainer } from "react-toastify";
 
 const genderOptions = [
   { id: "M", name: "Male" },
@@ -57,12 +58,10 @@ function Userform() {
     }
   );
 
-  // const [countries, setCountries] = useState([]);
   const [countryMap, setCountryMap] = useState({});
   const [StoreMap, setStoreMap] = useState({});
-  // const [states, setStates] = useState([]);
   const [stateMap, setStateMap] = useState({});
-  // const [cities, setCities] = useState([]);
+
   const [cityMap, setCityMap] = useState({});
 
   const [query, setQuery] = useState("");
@@ -99,7 +98,16 @@ function Userform() {
     if (isEditMode) {
       const user = location.state?.userDetails?.user || userDetails?.user;
 
-      // Set the form data with the user information
+      const selectedCountry = countries.find(
+        (country) => country.CountryName === user.CountryName
+      );
+      const selectedState = states.find(
+        (state) => state.StateName === user.StateName
+      );
+      const selectedCity = cities.find(
+        (city) => city.CityName === user.CityName
+      );
+
       setFormData({
         FirstName: user.FirstName || "",
         LastName: user.LastName || "",
@@ -116,6 +124,9 @@ function Userform() {
         StoreID: user.StoreID || "",
         Comments: user.Comments || "",
       });
+      setSelectedCountry(selectedCountry);
+      setSelectedState(selectedState);
+      setSelectedCity(selectedCity);
 
       const selectedStore = stores.find(
         (store) => store.StoreID === user.StoreID
@@ -137,24 +148,6 @@ function Userform() {
       // Set Gender
       const selectedGender = genderOptions.find((g) => g.id === user.Gender);
       setSelectedGender(selectedGender);
-
-      // Set Country
-      const selectedCountry = countries.find(
-        (country) => country.CountryID === user.Address.CountryID
-      );
-      if (selectedCountry) {
-        setSelectedCountry(selectedCountry);
-      }
-
-      // Fetch states and then set state and city
-      if (user.Address?.StateID) {
-        setSelectedState(selectedState);
-      }
-
-      // Fetch cities and set the selected city
-      if (user.Address?.CityID) {
-        setSelectedCity(selectedCity);
-      }
     }
   }, [
     isEditMode,
@@ -215,7 +208,6 @@ function Userform() {
     try {
       const formDataToSend = new FormData();
 
-      // Append all formData fields to the new FormData object
       Object.keys(formData).forEach((key) => {
         if (key === "ProfileImage" && formData[key]) {
           formDataToSend.append(key, formData[key]);
@@ -229,9 +221,7 @@ function Userform() {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
 
-      const apiUrl =
-        // "https://imlystudios-backend-mqg4.onrender.com/api/users/createOrUpdateUser";
-        CREATEORUPDATE_USERS_API;
+      const apiUrl = CREATEORUPDATE_USERS_API; // API URL
       const isEditMode = Boolean(formData.UserID); // Check if UserID exists to determine if it's an update
 
       const method = isEditMode ? "put" : "post"; // Choose method based on whether it's an edit or create
@@ -245,29 +235,37 @@ function Userform() {
         },
       });
 
-      console.log("Submission successful:", response.data);
-
-      // Handle response to get the filename (if applicable)
-      const { filename } = response.data;
-
-      console.log(
-        `${isEditMode ? "Updated" : "Created"} successfully: ${filename}`
-      );
-
-      navigate("/user");
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Submission failed with response error:",
-          error.response.data
-        );
-      } else if (error.request) {
-        console.error(
-          "Submission failed with no response received:",
-          error.request
-        );
+      // Check the response status code and message
+      if (response.data.StatusCode === "SUCCESS") {
+        toast.success("Role saved successfully!");
+        setTimeout(() => {
+          navigate("/user");
+        }, 5500); // Delay before navigation
       } else {
-        console.error("Submission failed with error:", error.message);
+        // Handle other cases like errors or unexpected statuses
+        toast.error(response.data.message || "An unexpected error occurred.");
+      }
+    } catch (error) {
+      console.error("Store submission failed:", error);
+
+      if (error.response) {
+        const errorMessage =
+          error.response.data.message || "An error occurred.";
+
+        if (error.response.data.StatusCode === "ERROR" && errorMessage) {
+          toast.error(errorMessage);
+        } else {
+          toast.error(
+            `Failed to ${
+              isEditMode ? "update" : "create"
+            } store: ${errorMessage}`
+          );
+        }
+      } else if (error.request) {
+        toast.error("No response received from server.");
+      } else {
+        console.error("Error in setting up request:", error.message);
+        toast.error("Error: " + error.message);
       }
     } finally {
       setIsLoading(false); // Hide loading animation
@@ -345,6 +343,7 @@ function Userform() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+        <ToastContainer />
         <form onSubmit={handleFormSubmit}>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold mb-4 px-24">Users</h2>

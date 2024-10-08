@@ -40,7 +40,6 @@
 // import TableFooter from '@mui/material/TableFooter';
 // import TablePagination from '@mui/material/TablePagination';
 
-
 // const categories = [
 //   { id: 1, name: "Walk-in", subOptions: ["Newspaper ad"] },
 //   {
@@ -55,7 +54,6 @@
 //   },
 // ];
 // const steps = ["Order Details", "Order Status", "payments"];
-
 
 // function AddOrders() {
 //   const { customerDetails } = useContext(CustomerContext);
@@ -97,7 +95,7 @@
 //   const [selectedTab, setSelectedTab] = useState('address');
 //   // const[totalAddresses,setTotalAddresses]=useState();
 //   // const[totalOrders,setTotalOrders]=useState();
-  
+
 //   const handleTabChange = (tab) => setSelectedTab(tab);
 
 //   useEffect(() => {
@@ -123,15 +121,15 @@
 //         console.log("Edit mode is active, skipping data fetch.");
 //         return; // Exit the function if in edit mode
 //       }
-  
+
 //       console.log("Fetching data in normal mode...");
-  
+
 //       let page = 1;
-//       let pageSize = 10; 
-      
+//       let pageSize = 10;
+
 //       let allResults = [];
 //       let hasMoreData = true;
-  
+
 //       while (hasMoreData) {
 //         const response = await axios.get(
 //           GETALLCUSTOMERS_API,
@@ -143,10 +141,10 @@
 //             },
 //           }
 //         );
-  
+
 //         const customers = response.data.customers;
 //         allResults = [...allResults, ...customers];
-  
+
 //         // Determine if there are more pages to fetch
 //         if (customers.length < pageSize) {
 //           hasMoreData = false;
@@ -154,7 +152,7 @@
 //           page++;
 //         }
 //       }
-  
+
 //       // Filter the combined results
 //       const filteredUsers = allResults.filter((customer) => {
 //         return (
@@ -172,12 +170,12 @@
 //           (customer.Zipcode && customer.Zipcode.toLowerCase().includes(value.toLowerCase()))
 //         );
 //       });
-  
+
 //       setResults(filteredUsers);
 //     } catch (error) {
 //       console.error("Error fetching users:", error);
 //     }
-//   };  
+//   };
 
 // // const handleAutoFill = () => {
 // //   if (!selectedCustomer) {
@@ -189,7 +187,6 @@
 // //   const addresses = selectedCustomer.Addresses && selectedCustomer.Addresses.length > 0 ? selectedCustomer.Addresses[0] : {};
 // //   const { Country, State, City, AddressLine1, AddressLine2, ZipCode, PhoneNumber, AddressID } = addresses;
 // //   console.log("address",addresses.AddressID);
- 
 
 // //   // Step 1: Set customer details
 // //   setOrderDetails((prevDetails) => ({
@@ -198,9 +195,9 @@
 // //     CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
 // //     CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
 // //     CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
-// //     customerPhone: selectedCustomer.PhoneNumber || prevDetails.customerPhone || "", 
-// //     StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "", 
-// //     StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "", 
+// //     customerPhone: selectedCustomer.PhoneNumber || prevDetails.customerPhone || "",
+// //     StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
+// //     StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
 // //     AddressID: AddressID || prevDetails.AddressID || "",
 // //     AddressLine1: AddressLine1 || "",
 // //     AddressLine2: AddressLine2 || "",
@@ -211,14 +208,13 @@
 // //   }));
 // //   // Set the selected store based on the StoreID
 // //   const selectedStore = storeOptions.find(
-// //     (store) => store.StoreID === selectedCustomer.StoreID || "", 
+// //     (store) => store.StoreID === selectedCustomer.StoreID || "",
 // //   );
 // //   setSelectedStore(selectedStore || null);
 
 // //   // Optionally close dialog
 // //   setIsDialogOpen(false);
 // // };
-
 
 // const handleAutoFill = (selectedAddressID) => {
 //   if (!selectedCustomer) {
@@ -260,9 +256,9 @@
 
 //   // Step 2: Set the selected store based on the StoreID
 //   const selectedStore = storeOptions.find(
-//     (store) => store.StoreID === selectedCustomer.StoreID || "", 
+//     (store) => store.StoreID === selectedCustomer.StoreID || "",
 //   );
-  
+
 //   setSelectedStore(selectedStore || null);
 
 //   // Optionally close dialog
@@ -284,7 +280,6 @@
 //     }
 //   }, [orderId]);
 
-
 //   useEffect(() => {
 //     AOS.init({ duration: 1000 });
 //   }, []);
@@ -301,7 +296,6 @@
 //     setSearchValue(value);
 //     fetchData(value); // Trigger the search based on input value
 //   };
-
 
 //   // Assuming 'selectedCustomer' is set when a customer is selected from the search
 // useEffect(() => {
@@ -384,7 +378,7 @@
 //     OrderStatus: "",
 //     TotalQuantity: 1,
 //     OrderBy: "",
-    
+
 //     DeliveryDate: "",
 //     // CustomerFirstName: "",
 //     // CustomerLastName: "",
@@ -436,7 +430,7 @@
 //   const [isLoading, setIsLoading] = useState(false);
 //   const isStepOptional = (step) => step === 1;
 //   const isStepSkipped = (step) => skipped.has(step);
-//   const [IsEditMode, setIsEditMode] = useState(false); 
+//   const [IsEditMode, setIsEditMode] = useState(false);
 
 //   const handleNext = () => {
 //     let newSkipped = skipped;
@@ -639,35 +633,34 @@
 //   //         console.log("Timeout executed after order creation or update");
 //   //         handleNext();
 //   //       }, 5000); // 5 seconds delay
-      
+
 //   //       fetchOrdersByCustomerId(orderID); // Fetch the order details for editing after submission
 //   //     }
 //   //     // if (orderID) {
 //   //     //   // Wait for 5 seconds before proceeding to the next step
 //   //     //   setTimeout(() => {
 //   //     //     console.log("Timeout executed after order creation or update");
-        
+
 //   //     //   }, 5000); // 5 seconds delay
-      
+
 //   //     //   // Fetch the order details for editing after submission
 //   //     //   fetchOrdersByCustomerId(orderID).then((response) => {
 //   //     //     // Assuming fetchOrdersByCustomerId returns the order details
 //   //     //     console.log("Order details fetched: ", response);
-      
+
 //   //     //     // Set the order details into state (if needed)
 //   //     //     setOrderDetails(response?.order || {});
-      
+
 //   //     //     // Explicitly set the edit mode to true
 //   //     //     setIsEditMode(true); // Ensure we enter edit mode
 //   //     //   }).catch((error) => {
 //   //     //     console.error("Error fetching order details:", error);
 //   //     //   });
 //   //     // }
-      
+
 //   //   } catch (error) {
 //   //     // Error handling
 //   //     console.error(isUpdate ? "Error updating order:" : "Error creating order:", error);
-
 
 //   //     // Show error toast
 //   //     toast.error(isUpdate ? "Order update failed!" : "Order creation failed!", {
@@ -779,7 +772,6 @@
 //   //     // Error handling
 //   //     console.error(isUpdate ? "Error updating order:" : "Error creating order:", error);
 
-
 //   //     // Show error toast
 //   //     toast.error(isUpdate ? "Order update failed!" : "Order creation failed!", {
 //   //       position: "top-right",
@@ -792,7 +784,6 @@
 //   //     });
 
 //   //   }
-
 
 //   //   // Reset images and form state
 //   //   setImages([]);
@@ -807,11 +798,11 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     setIsLoading(true);
-  
+
 //     // Check if it's an update or a new order
 //     const isUpdate = orderDetails.OrderID ? true : false;
 //     console.log("Order details before submission:", orderDetails);
-  
+
 //     // Updating order details before submission
 //     setOrderDetails((prevDetails) => ({
 //       ...prevDetails,
@@ -821,7 +812,7 @@
 //       StoreID: selectedCustomer?.StoreID || "",
 //       StoreCode: selectedCustomer?.StoreCode || "",
 //     }));
-  
+
 //     // Prepare raw JSON data for API
 //     const data = {
 //       ...orderDetails,
@@ -830,11 +821,11 @@
 //       subOption: selectedSubOption || "",
 //       pdfFile: pdfFile ? pdfFile.name : "", // Store PDF file name
 //     };
-  
+
 //     try {
 //       // Log data being sent to the API
 //       console.log("Data being sent to the API:", data);
-  
+
 //       // Send POST request to the API
 //       const response = await axios.post(
 //         'https://imly-b2y.onrender.com/api/orders/createOrderOrUpdate',
@@ -845,21 +836,21 @@
 //           },
 //         }
 //       );
-  
+
 //       // Log full response object for debugging
 //       console.log("API Response:", response);
-  
+
 //       const generatedId = response.data?.OrderID;
 //       if (!generatedId) {
 //         throw new Error("OrderID is missing from the API response.");
 //       }
-  
+
 //       const orderDate = orderDetails.OrderDate;
 //       console.log("Order Date:", orderDate);
-  
+
 //       setOrderID(generatedId);
 //       setOrderDate(orderDate);
-  
+
 //       // Show success toast
 //       if (isUpdate) {
 //         toast.success("Order updated successfully!", {
@@ -882,7 +873,7 @@
 //           progress: undefined,
 //         });
 //       }
-  
+
 //       // Handle next step after order creation or update
 //       if (generatedId) {
 //         setTimeout(() => {
@@ -893,7 +884,7 @@
 //     } catch (error) {
 //       // Log the actual error message for debugging
 //       console.error(isUpdate ? "Error updating order:" : "Error creating order:", error?.response?.data || error.message);
-  
+
 //       // Show error toast
 //       toast.error(isUpdate ? "Order update failed!" : "Order creation failed!", {
 //         position: "top-right",
@@ -905,7 +896,7 @@
 //         progress: undefined,
 //       });
 //     }
-  
+
 //     // Reset images and form state
 //     setImages([]);
 //     setImagePreviews([]);
@@ -914,8 +905,7 @@
 //     setShowAlert(true);
 //     setIsLoading(false);
 //   };
-  
-  
+
 //   const handleCancel = () => {
 //     setOrderDetails({
 //       TenantID: 1,
@@ -979,7 +969,7 @@
 //   const amountToBePaid = orderDetails.TotalAmount - orderDetails.AdvanceAmount;
 //   const remainder = amountToBePaid / orderDetails.installments;
 //   const [showSearchCard, setShowSearchCard] = useState(false);
-//   const [storeOptions, setStoreOptions] = useState([]); 
+//   const [storeOptions, setStoreOptions] = useState([]);
 //   const getFirstAddress = (addresses) => {
 //     // Assuming addresses is a comma-separated string or array of addresses
 //     if (Array.isArray(addresses)) {
@@ -1158,7 +1148,6 @@
 //   };
 
 //   const [stateQuery, setStateQuery] = useState(""); // Define state for the query input
-
 
 //   useEffect(() => {
 //     const fetchLocationData = async (CountryID, StateID, CityID) => {
@@ -1473,8 +1462,8 @@
 // const [orderPage, setOrderPage] = useState(0);
 // const [orderRowsPerPage, setOrderRowsPerPage] = useState(2); // Default rows per page for orders
 // const totalOrders = orders?.length || 0; // Total number of orders
-// const [hasSelected, setHasSelected] = useState(false); 
-// const [hasUserSelected, setHasUserSelected] = useState(false); 
+// const [hasSelected, setHasSelected] = useState(false);
+// const [hasUserSelected, setHasUserSelected] = useState(false);
 // // const [orderDetails, setOrderDetails] = useState({ Type: '' });
 // const [Type]=useState();
 // // Handle address pagination change
@@ -1561,7 +1550,6 @@
 // //   setHasUserSelected(true); // Update selection state
 // // };
 
-
 // const handleUserSelect = (selectedUser) => {
 //   setOrderDetails((prevDetails) => ({
 //     ...prevDetails,
@@ -1588,8 +1576,6 @@
 //   acc[state.StateID] = state.StateName;
 //   return acc;
 // }, {});
-
-
 
 //   return (
 //     <>
@@ -1678,7 +1664,6 @@
 //   </div>
 // </div>
 
-
 //     </>
 //   )}
 // </div>
@@ -1698,7 +1683,6 @@
 //   <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
 //   <IoIosSearch aria-label="Search Icon" />
 // </div>
-
 
 //       {/* Only show the dropdown when searchValue is not empty and input is focused */}
 //       <div
@@ -1736,14 +1720,14 @@
 //                   <span>{result.CustomerEmail}{result.AddressID}</span>
 //                 </div>
 //               </div>
-              
+
 //             ))}
 //           </>
 //         ) : (
 //           <div className="p-2 overflow-clip text-gray-500">No results found.</div>
 //         )}
 //       </div>
-    
+
 // <div className="flex z-10 flex-wrap items-center justify-center w-full gap-2"> {/* Reduced gap */}
 //   {/* Store Combobox */}
 //   <div className="-mt-2 p-0 w-full max-w-[84%] ml-16"> {/* Reduced margin top, width adjusted to 90%, left margin added */}
@@ -1789,15 +1773,11 @@
 //   </div>
 // </div>
 
-
-
 // </div>
 
 //     </>
 //   )}
 // </div>
-
-
 
 // {/* {isDialogOpen && selectedCustomer && (
 //   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
@@ -1844,12 +1824,11 @@
 //   </div>
 // )} */}
 
- 
 //   {/* Dialog for Selected Customer Details */}
 //   {/* {isDialogOpen && selectedCustomer && (
 //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
 //       <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 relative">
-      
+
 //         <div className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
 //           <h2 className="text-3xl font-bold text-white">Customer Details</h2>
 //           <button className="flex items-center justify-center text-white" onClick={handleClose}>
@@ -1886,8 +1865,6 @@
 //     <p className="text-gray-700 text-lg leading-tight">{selectedCustomer.CustomerEmail}</p>
 //   </div>
 // </div>
-
-
 
 //         {/* Tabs for Address and Orders */}
 //         <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mt-6">
@@ -1934,7 +1911,7 @@
 //       {selectedCustomer?.Addresses &&
 //         selectedCustomer.Addresses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((address, index) => (
 //           <TableRow key={index}>
-          
+
 //             <StyledTableCell>{address.AddressLine1 || ""}</StyledTableCell>
 //             <StyledTableCell>{address.AddressLine2 || ""}</StyledTableCell>
 //              {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
@@ -1945,9 +1922,9 @@
 //             <StyledTableCell>
 //               <div className="button-container">
 //                 {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
-//                 <button 
-//   type="button" 
-//   onClick={() => { handleAutoFill(address.AddressID); handleClose(); }} 
+//                 <button
+//   type="button"
+//   onClick={() => { handleAutoFill(address.AddressID); handleClose(); }}
 //   className="button select-button">
 //   Select
 // </button>
@@ -1975,17 +1952,15 @@
 //   </Table>
 // </TableContainer>
 
-
 //               </div>
 //             </div>
 //           )}
 
-      
 //           {selectedTab === 'order' && (
 //   <div>
 //     {/* <strong className="text-gray-800 text-lg">Orders:</strong> */}
 //     <div className="mt-2">
-   
+
 // <TableContainer component={Paper} sx={{ width: "100%", margin: "0 auto", mt: 2 }}>
 //   <Table>
 //     <TableHead>
@@ -2041,7 +2016,7 @@
 //               handleClose(); // Close the dialog
 //             }}
 //           >
-          
+
 //           Close
 //           </button>
 //         </div>
@@ -2061,8 +2036,6 @@
 //       </div>
 //     </div>
 //   )}
-
-
 
 // </div>
 //                     <div className="flex gap-10 border border-gray-300 rounded-md">
@@ -2170,7 +2143,7 @@
 //                           </p>
 //                         )}
 //                       </div>
-//                        {isEditMode && ( 
+//                        {isEditMode && (
 //                       <div>
 //                         <label className="block text-xs font-medium text-gray-700">
 //                           Order Date
@@ -2191,7 +2164,7 @@
 //                           </p>
 //                         )}
 //                       </div>
-//                      )}  
+//                      )}
 //                       <div>
 //                         <label className="block text-xs font-medium text-gray-700">
 //                           Expected Delivery Date
@@ -2218,13 +2191,12 @@
 //                           Designer Name
 //                         </label>
 
-              
 //                         <div className="relative">
 //       <input
 //         type="search"
 //         name="DesginerName"
 //         // value={searchUserValue}
-//         value={orderDetails.DesginerName || searchUserValue} 
+//         value={orderDetails.DesginerName || searchUserValue}
 //         onChange={handleUserChange}
 //         onFocus={() => setIsUserFocused(true)}
 //         // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
@@ -2241,7 +2213,7 @@
 //       </div>
 
 //       {/* Dropdown for filtered users */}
-//       {isUserFocused && searchUserValue && searchUserValue.length >= 1 && ( 
+//       {isUserFocused && searchUserValue && searchUserValue.length >= 1 && (
 //         <div
 //           className={`absolute flex flex-col top-full mt-1 border rounded-lg p-2 w-full bg-white z-10`}
 //           style={{
@@ -2298,7 +2270,7 @@
 //     </p>
 //   )}
 // </div>
-                     
+
 //                       </div>
 //                       <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4" >
 
@@ -2546,9 +2518,9 @@
 //                       </div>
 // </div>
 //                     </div>
-                    
+
 //                     {/* <div className="flex gap-10 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
-                      
+
 //                       <div className="sm:pt-2 w-full space-y-2 p-4">
 //                       <div className="flex  text-sm  font-medium text-gray-700">
 //                         <h2>Customer Information</h2>
@@ -2599,14 +2571,13 @@
 //   </div>
 // </div>
 //                     </div> */}
-                    
 
 //  <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
- 
+
 //   <div className="flex justify-left text-lg font-medium text-gray-700">
 //     <h2>Customer Information</h2>
 //   </div>
- 
+
 //   <div className="flex gap-10">
 //     <div className="sm:pt-2 w-full space-y-2 p-4">
 //       <div className="flex text-sm sm:text-xs font-medium text-gray-700">
@@ -2641,7 +2612,7 @@
 //     <span className="w-1/2">Address Line 2</span>
 //     <span className="mr-20">:</span>
 //     <span className="w-1/2">{orderDetails.AddressLine2}</span>
-   
+
 //   </div>
 //   <div className="flex text-sm sm:text-xs font-medium text-gray-700">
 //     <span className="w-1/2">Country</span>
@@ -2666,8 +2637,7 @@
 // </div>
 
 //   </div>
-// </div> 
-
+// </div>
 
 //                   </>
 //                 )}
@@ -2862,8 +2832,6 @@
 
 // export default AddOrders;
 
-
-
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { CustomerContext } from "../../Context/customerContext";
 import Box from "@mui/material/Box";
@@ -2873,15 +2841,22 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { IoIosCall, IoMdMail } from "react-icons/io";
-import { useNavigate, useLocation } from 'react-router-dom';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import StatusBadge from './Statuses';
-import { CREATE_ORDERS, COUNTRIES_API,GETALLUSERS_API,STATES_API, CITIES_API, SEARCH_CUSTOMERS, GETALLCUSTOMERS_API, GETALLSTORES_API ,ORDERBYCUSTOMERID_API} from "../../Constants/apiRoutes";
+import { useNavigate, useLocation } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import StatusBadge from "./Statuses";
 import {
-  MdArrowBackIosNew,
-  MdOutlineArrowForwardIos,
-} from "react-icons/md";
+  CREATE_ORDERS,
+  COUNTRIES_API,
+  GETALLUSERS_API,
+  STATES_API,
+  CITIES_API,
+  SEARCH_CUSTOMERS,
+  GETALLCUSTOMERS_API,
+  GETALLSTORES_API,
+  ORDERBYCUSTOMERID_API,
+} from "../../Constants/apiRoutes";
+import { MdArrowBackIosNew, MdOutlineArrowForwardIos } from "react-icons/md";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -2892,20 +2867,25 @@ import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
 import { OrderContext } from "../../Context/orderContext";
 import { IdContext } from "../../Context/IdContext";
-import Step3 from './payment';
-import Step2 from './orderStatus';
+import Step3 from "./payment";
+import Step2 from "./orderStatus";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 import {
   StyledTableCell,
   StyledTableRow,
   TablePaginationActions,
 } from "../CustomTablePagination";
-import { Table, TableHead, TableRow, TableBody, TableCell } from '@mui/material';
-import { TableContainer, Paper } from '@mui/material';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+} from "@mui/material";
+import { TableContainer, Paper } from "@mui/material";
 import { IoMdCloseCircle } from "react-icons/io";
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 const categories = [
   { id: 1, name: "Walk-in", subOptions: ["Newspaper ad"] },
@@ -2922,7 +2902,6 @@ const categories = [
 ];
 const steps = ["Order Details", "Order Status", "payments"];
 
-
 function AddOrders() {
   const { customerDetails } = useContext(CustomerContext);
   const handleCustomerSelect = (customer) => {
@@ -2937,8 +2916,7 @@ function AddOrders() {
     setSelectedCustomer(customer); // Set selected customer
     setIsDialogOpen(true);
     setIsFocused(false); // Close the popup after autofill
-    setSearchValue("");// Clear the search input after selection
-
+    setSearchValue(""); // Clear the search input after selection
   };
   const handleStepClick = (index) => {
     setActiveStep(index); // Set the active step to the clicked step
@@ -2957,13 +2935,14 @@ function AddOrders() {
   const location = useLocation();
   const { orderId } = location.state || {}; // Get orderId from location state
   const [order, setOrder] = useState(null);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertType, setAlertType] = useState('success');
-  const { generatedId, setGeneratedId, orderDate, setOrderDate } = useContext(IdContext);
-  const [selectedTab, setSelectedTab] = useState('address');
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const { generatedId, setGeneratedId, orderDate, setOrderDate } =
+    useContext(IdContext);
+  const [selectedTab, setSelectedTab] = useState("address");
   // const[totalAddresses,setTotalAddresses]=useState();
   // const[totalOrders,setTotalOrders]=useState();
-  
+
   const handleTabChange = (tab) => setSelectedTab(tab);
 
   useEffect(() => {
@@ -2989,30 +2968,27 @@ function AddOrders() {
         console.log("Edit mode is active, skipping data fetch.");
         return; // Exit the function if in edit mode
       }
-  
+
       console.log("Fetching data in normal mode...");
-  
+
       let page = 1;
-      let pageSize = 10; 
-      
+      let pageSize = 10;
+
       let allResults = [];
       let hasMoreData = true;
-  
+
       while (hasMoreData) {
-        const response = await axios.get(
-          GETALLCUSTOMERS_API,
-          {
-            params: {
-              limit: pageSize,
-              page: page,
-              searchText: value,
-            },
-          }
-        );
-  
+        const response = await axios.get(GETALLCUSTOMERS_API, {
+          params: {
+            limit: pageSize,
+            page: page,
+            searchText: value,
+          },
+        });
+
         const customers = response.data.customers;
         allResults = [...allResults, ...customers];
-  
+
         // Determine if there are more pages to fetch
         if (customers.length < pageSize) {
           hasMoreData = false;
@@ -3020,134 +2996,174 @@ function AddOrders() {
           page++;
         }
       }
-  
+
       // Filter the combined results
       const filteredUsers = allResults.filter((customer) => {
         return (
-          value &&
-          customer &&
-          (customer.CustomerFirstName && customer.CustomerFirstName.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.CustomerLastName && customer.CustomerLastName.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.CustomerEmail && customer.CustomerEmail.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.PhoneNumber && customer.PhoneNumber.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.AddressLine1 && customer.AddressLine1.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.AddressLine2 && customer.AddressLine2.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.City && customer.City.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.State && customer.State.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.Country && customer.Country.toLowerCase().includes(value.toLowerCase())) ||
-          (customer.Zipcode && customer.Zipcode.toLowerCase().includes(value.toLowerCase()))
+          (value &&
+            customer &&
+            customer.CustomerFirstName &&
+            customer.CustomerFirstName.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.CustomerLastName &&
+            customer.CustomerLastName.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.CustomerEmail &&
+            customer.CustomerEmail.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.PhoneNumber &&
+            customer.PhoneNumber.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.AddressLine1 &&
+            customer.AddressLine1.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.AddressLine2 &&
+            customer.AddressLine2.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.City &&
+            customer.City.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.State &&
+            customer.State.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.Country &&
+            customer.Country.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.Zipcode &&
+            customer.Zipcode.toLowerCase().includes(value.toLowerCase()))
         );
       });
-  
+
       setResults(filteredUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  };  
+  };
 
-// const handleAutoFill = () => {
-//   if (!selectedCustomer) {
-//     console.error("No customer selected.");
-//     return;
-//   }
+  // const handleAutoFill = () => {
+  //   if (!selectedCustomer) {
+  //     console.error("No customer selected.");
+  //     return;
+  //   }
 
-//   // Assuming customer.Addresses is an array with the address details
-//   const addresses = selectedCustomer.Addresses && selectedCustomer.Addresses.length > 0 ? selectedCustomer.Addresses[0] : {};
-//   const { Country, State, City, AddressLine1, AddressLine2, ZipCode, PhoneNumber, AddressID } = addresses;
+  //   // Assuming customer.Addresses is an array with the address details
+  //   const addresses = selectedCustomer.Addresses && selectedCustomer.Addresses.length > 0 ? selectedCustomer.Addresses[0] : {};
+  //   const { Country, State, City, AddressLine1, AddressLine2, ZipCode, PhoneNumber, AddressID } = addresses;
 
-//   // Step 1: Set customer details
-//   setOrderDetails((prevDetails) => ({
-//     ...prevDetails,
-//     CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
-//     CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
-//     CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
-//     CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
-//     customerPhone: selectedCustomer.PhoneNumber || prevDetails.customerPhone || "", 
-//     StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "", 
-//     StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "", 
-//     AddressID: AddressID || prevDetails.AddressID || "",
-    
-//     AddressLine1: AddressLine1 || "",
-//     AddressLine2: AddressLine2 || "",
-//     ZipCode: ZipCode || "",
-//     Country: Country || "",
-//     State: State || "",
-//     CityName: City || "",
-//   }));
-//   // Set the selected store based on the StoreID
-//   const selectedStore = storeOptions.find(
-//     (store) => store.StoreID === selectedCustomer.StoreID || "", 
-//   );
-//   setSelectedStore(selectedStore || null);
+  //   // Step 1: Set customer details
+  //   setOrderDetails((prevDetails) => ({
+  //     ...prevDetails,
+  //     CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
+  //     CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
+  //     CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
+  //     CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
+  //     customerPhone: selectedCustomer.PhoneNumber || prevDetails.customerPhone || "",
+  //     StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
+  //     StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
+  //     AddressID: AddressID || prevDetails.AddressID || "",
 
-//   // Optionally close dialog
-//   setIsDialogOpen(false);
-// };
+  //     AddressLine1: AddressLine1 || "",
+  //     AddressLine2: AddressLine2 || "",
+  //     ZipCode: ZipCode || "",
+  //     Country: Country || "",
+  //     State: State || "",
+  //     CityName: City || "",
+  //   }));
+  //   // Set the selected store based on the StoreID
+  //   const selectedStore = storeOptions.find(
+  //     (store) => store.StoreID === selectedCustomer.StoreID || "",
+  //   );
+  //   setSelectedStore(selectedStore || null);
 
+  //   // Optionally close dialog
+  //   setIsDialogOpen(false);
+  // };
 
-const handleAutoFill = (selectedAddressID) => {
-  if (!selectedCustomer) {
-    console.error("No customer selected.");
-    return;
-  }
+  const handleAutoFill = (selectedAddressID) => {
+    if (!selectedCustomer) {
+      console.error("No customer selected.");
+      return;
+    }
 
-  // Find the address that matches the selected AddressID
-  const selectedAddress = selectedCustomer.Addresses?.find(address => address.AddressID === selectedAddressID);
+    // Find the address that matches the selected AddressID
+    const selectedAddress = selectedCustomer.Addresses?.find(
+      (address) => address.AddressID === selectedAddressID
+    );
 
-  if (!selectedAddress) {
-    console.error("No matching address found for the given AddressID:", selectedAddressID);
-    return;
-  }
+    if (!selectedAddress) {
+      console.error(
+        "No matching address found for the given AddressID:",
+        selectedAddressID
+      );
+      return;
+    }
 
-  // Destructure address properties with fallback
-  const { Country = "", State = "", City = "", AddressLine1 = "", AddressLine2 = "", ZipCode = "", PhoneNumber = "", AddressID = "" } = selectedAddress;
+    // Destructure address properties with fallback
+    const {
+      Country = "",
+      State = "",
+      City = "",
+      AddressLine1 = "",
+      AddressLine2 = "",
+      ZipCode = "",
+      PhoneNumber = "",
+      AddressID = "",
+    } = selectedAddress;
 
-  console.log("Address details for autofill:", selectedAddress);
+    console.log("Address details for autofill:", selectedAddress);
 
-  // Step 1: Set customer details into orderDetails state
-  setOrderDetails((prevDetails) => ({
-    ...prevDetails,
-    CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
-    CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
-    CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
-    CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
-    customerPhone: selectedCustomer.PhoneNumber || prevDetails.customerPhone || "",
-    StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
-    StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
-    AddressID: AddressID || prevDetails.AddressID || "", // Ensure AddressID is set correctly
-    AddressLine1: AddressLine1 || "",
-    AddressLine2: AddressLine2 || "",
-    ZipCode: ZipCode || "",
-    Country: Country || "",
-    State: State || "",
-    CityName: City || "",
-  }));
+    // Step 1: Set customer details into orderDetails state
+    setOrderDetails((prevDetails) => ({
+      ...prevDetails,
+      CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
+      CustomerFirstName:
+        selectedCustomer.CustomerFirstName ||
+        prevDetails.CustomerFirstName ||
+        "",
+      CustomerLastName:
+        selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
+      CustomerEmail:
+        selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
+      customerPhone:
+        selectedCustomer.PhoneNumber || prevDetails.customerPhone || "",
+      StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
+      StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
+      AddressID: AddressID || prevDetails.AddressID || "", // Ensure AddressID is set correctly
+      AddressLine1: AddressLine1 || "",
+      AddressLine2: AddressLine2 || "",
+      ZipCode: ZipCode || "",
+      Country: Country || "",
+      State: State || "",
+      CityName: City || "",
+    }));
 
-  // Step 2: Set the selected store based on the StoreID
-  const selectedStore = storeOptions.find(
-    (store) => store.StoreID === selectedCustomer.StoreID || "", 
-  );
-  
-  setSelectedStore(selectedStore || null);
+    // Step 2: Set the selected store based on the StoreID
+    const selectedStore = storeOptions.find(
+      (store) => store.StoreID === selectedCustomer.StoreID || ""
+    );
 
-  // Optionally close dialog
-  setIsDialogOpen(false);
-};
-useEffect(() => {
+    setSelectedStore(selectedStore || null);
+
+    // Optionally close dialog
+    setIsDialogOpen(false);
+  };
+  useEffect(() => {
     if (orderId) {
-      fetch(`https://imlystudios-backend-mqg4.onrender.com/api/orders/getOrderById/${orderId}`)
+      fetch(
+        `https://imlystudios-backend-mqg4.onrender.com/api/orders/getOrderById/${orderId}`
+      )
         .then((response) => response.json())
         .then((data) => {
           setOrder(data.order); // Set order data
         })
         .catch((error) => {
-          console.error('Error fetching order:', error);
-          setAlertMessage('Failed to load order details');
-          setAlertType('error');
+          console.error("Error fetching order:", error);
+          setAlertMessage("Failed to load order details");
+          setAlertType("error");
         });
     }
   }, [orderId]);
-
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -3158,7 +3174,7 @@ useEffect(() => {
   };
   const handleClose = () => {
     setIsDialogOpen(false);
-  }
+  };
 
   const handleSearchInput = (e) => {
     const { value } = e.target;
@@ -3166,27 +3182,28 @@ useEffect(() => {
     fetchData(value); // Trigger the search based on input value
   };
 
-
   // Assuming 'selectedCustomer' is set when a customer is selected from the search
-useEffect(() => {
-  if (selectedCustomer?.CustomerID) {
-    // Fetch orders for the selected customer
-    fetchOrdersByCustomerId(selectedCustomer.CustomerID);
-  }
-}, [selectedCustomer]);
+  useEffect(() => {
+    if (selectedCustomer?.CustomerID) {
+      // Fetch orders for the selected customer
+      fetchOrdersByCustomerId(selectedCustomer.CustomerID);
+    }
+  }, [selectedCustomer]);
 
-// Fetch orders based on selected customer ID
-const fetchOrdersByCustomerId = async (customerId) => {
-  try {
-    if (!customerId) return; // Ensure customerId exists
-    const response = await axios.get(`${ORDERBYCUSTOMERID_API}/${customerId}`);
-    setOrders(response.data.orders || []); // Set fetched orders
-    console.log("Fetched Orders:", response.data.orders);
-  } catch (err) {
-    console.error("Error fetching orders:", err);
-    setError("Failed to fetch orders.");
-  }
-};
+  // Fetch orders based on selected customer ID
+  const fetchOrdersByCustomerId = async (customerId) => {
+    try {
+      if (!customerId) return; // Ensure customerId exists
+      const response = await axios.get(
+        `${ORDERBYCUSTOMERID_API}/${customerId}`
+      );
+      setOrders(response.data.orders || []); // Set fetched orders
+      console.log("Fetched Orders:", response.data.orders);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to fetch orders.");
+    }
+  };
 
   useEffect(() => {
     // Hide the popup if clicked outside
@@ -3201,7 +3218,8 @@ const fetchOrdersByCustomerId = async (customerId) => {
     };
   }, []);
 
-  const { orderIdDetails, setOrderIdDetails, getOrderById } = useContext(OrderContext);
+  const { orderIdDetails, setOrderIdDetails, getOrderById } =
+    useContext(OrderContext);
   const [searchValue, setSearchValue] = useState("");
 
   const [activeStep, setActiveStep] = useState(0);
@@ -3220,8 +3238,8 @@ const fetchOrdersByCustomerId = async (customerId) => {
     query === ""
       ? categories
       : categories.filter((category) =>
-        category.name.toLowerCase().includes(query.toLowerCase())
-      );
+          category.name.toLowerCase().includes(query.toLowerCase())
+        );
 
   const subOptions = selectedCategory
     ? categories.find((cat) => cat.id === selectedCategory.id)?.subOptions || []
@@ -3229,8 +3247,8 @@ const fetchOrdersByCustomerId = async (customerId) => {
   const currentDate = new Date().toISOString().split("T")[0];
 
   const [orderDetails, setOrderDetails] = useState({
-   Type: "",
-   StoreCode:"",
+    Type: "",
+    StoreCode: "",
     TenantID: 1,
     CustomerID: selectedCustomer.CustomerID,
     OrderDate: "",
@@ -3248,7 +3266,7 @@ const fetchOrdersByCustomerId = async (customerId) => {
     OrderStatus: "",
     TotalQuantity: 1,
     OrderBy: "",
-    
+
     DeliveryDate: "",
     // CustomerFirstName: "",
     // CustomerLastName: "",
@@ -3268,8 +3286,7 @@ const fetchOrdersByCustomerId = async (customerId) => {
     DesginerName: "",
     // UploadImages: "",
     // choosefiles: "",
-    StoreID: selectedCustomer.StoreID||"",
-
+    StoreID: selectedCustomer.StoreID || "",
   });
   useEffect(() => {
     if (customerDetails) {
@@ -3320,7 +3337,7 @@ const fetchOrdersByCustomerId = async (customerId) => {
   const addDays = (date, days) => {
     let result = new Date(date);
     result.setDate(result.getDate() + days);
-    return result.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
+    return result.toISOString().split("T")[0]; // Format as 'YYYY-MM-DD'
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -3345,16 +3362,16 @@ const fetchOrdersByCustomerId = async (customerId) => {
           // Clear any previous error
           setErrors((prevErrors) => ({
             ...prevErrors,
-            ExpectedDurationDays: '',
+            ExpectedDurationDays: "",
           }));
-        } else if (value === '') {
+        } else if (value === "") {
           // Clear DeliveryDate if ExpectedDurationDays is cleared
-          updatedDetails.DeliveryDate = '';
+          updatedDetails.DeliveryDate = "";
         } else {
           // Set an error message if the value is not a valid number
           setErrors((prevErrors) => ({
             ...prevErrors,
-            ExpectedDurationDays: 'Please enter a valid number of days.',
+            ExpectedDurationDays: "Please enter a valid number of days.",
           }));
         }
       }
@@ -3381,16 +3398,16 @@ const fetchOrdersByCustomerId = async (customerId) => {
           // Clear any previous error
           setErrors((prevErrors) => ({
             ...prevErrors,
-            ExpectedDurationDays: '',
+            ExpectedDurationDays: "",
           }));
-        } else if (value === '') {
+        } else if (value === "") {
           // Clear DeliveryDate if ExpectedDurationDays is cleared
-          updatedDetails.DeliveryDate = '';
+          updatedDetails.DeliveryDate = "";
         } else {
           // Set an error message if the value is not a valid number
           setErrors((prevErrors) => ({
             ...prevErrors,
-            ExpectedDurationDays: 'Please enter a valid number of days.',
+            ExpectedDurationDays: "Please enter a valid number of days.",
           }));
         }
       }
@@ -3421,13 +3438,15 @@ const fetchOrdersByCustomerId = async (customerId) => {
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setImages(newImages);
     setImagePreviews(newPreviews);
-  }
+  };
   // const isEditMode = Boolean(
   //   location.state?.orderIdDetails?.order || orderIdDetails?.order
   // );
   const isEditMode = Boolean(
-    orderDetails.OrderID || location.state?.orderIdDetails?.order || orderIdDetails?.order
-);
+    orderDetails.OrderID ||
+      location.state?.orderIdDetails?.order ||
+      orderIdDetails?.order
+  );
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -3508,14 +3527,13 @@ const fetchOrdersByCustomerId = async (customerId) => {
   //     if (generatedId) {
   //       setTimeout(() => {
   //         console.log("Timeout executed after order creation or update");
-         
+
   //       }, 5000);
   //       // 3 seconds delay
   //     }
   //   } catch (error) {
   //     // Error handling
   //     console.error(isUpdate ? "Error updating order:" : "Error creating order:", error);
-
 
   //     // Show error toast
   //     toast.error(isUpdate ? "Order update failed!" : "Order creation failed!", {
@@ -3568,7 +3586,6 @@ const fetchOrdersByCustomerId = async (customerId) => {
   //   //   StoreCode:"",
   //   // });
 
-
   //   // Reset images and form state
   //   setImages([]);
   //   setImagePreviews([]);
@@ -3579,70 +3596,68 @@ const fetchOrdersByCustomerId = async (customerId) => {
 
   // };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
+    // Determine if this is an update or a new order
+    const isUpdate = orderDetails.OrderID ? true : false;
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-
-  // Determine if this is an update or a new order
-  const isUpdate = orderDetails.OrderID ? true : false;
-
-  // Update order details
-  setOrderDetails((prevDetails) => ({
+    // Update order details
+    setOrderDetails((prevDetails) => ({
       ...prevDetails,
       TenantID: 1,
       CustomerID: selectedCustomer?.CustomerID || "",
       AddressID: selectedCustomer?.AddressID || "",
       StoreID: selectedCustomer?.StoreID || "",
       StoreCode: selectedCustomer?.StoreCode || "",
-  }));
+    }));
 
-  // Prepare data for API submission
-  const data = {
+    // Prepare data for API submission
+    const data = {
       ...orderDetails,
       UploadImages: imagePreviews,
       category: selectedCategory?.name || "",
       subOption: selectedSubOption || "",
       pdfFile: pdfFile ? pdfFile.name : "", // Handle PDF file
-  };
+    };
 
-  try {
+    try {
       const response = await axios.post(
-          'https://imly-b2y.onrender.com/api/orders/createOrderOrUpdate',
-          data,
-          {
-              headers: {
-                  "Content-Type": "application/json",
-              },
-          }
+        "https://imly-b2y.onrender.com/api/orders/createOrderOrUpdate",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      const responsedata=response.data;
+      const responsedata = response.data;
       const generatedId = response.data.OrderID;
       console.log("Generated Order ID:", generatedId); // Check generated ID
 
       // Display success toast
       if (isUpdate) {
-          toast.success("Order updated successfully!");
+        toast.success("Order updated successfully!");
       } else {
-          toast.success("Order created successfully!");
+        toast.success("Order created successfully!");
       }
 
       // Enable edit mode after successful order creation or update
       if (generatedId) {
-          const updatedOrderDetails = {
-              ...orderDetails,
-              OrderID: generatedId,
-          };
+        const updatedOrderDetails = {
+          ...orderDetails,
+          OrderID: generatedId,
+        };
 
-          setOrderDetails(updatedOrderDetails); // Update order details with the new ID
+        setOrderDetails(updatedOrderDetails); // Update order details with the new ID
 
-          // Set the orderIdDetails state for edit mode
-          setOrderIdDetails({ order: updatedOrderDetails });
+        // Set the orderIdDetails state for edit mode
+        setOrderIdDetails({ order: updatedOrderDetails });
 
-          setIsEditMode(true); // Activate edit mode
-          setOrderDetails(responsedata);
-          console.log("Edit mode activated"); // Confirm edit mode activation
+        setIsEditMode(true); // Activate edit mode
+        setOrderDetails(responsedata);
+        console.log("Edit mode activated"); // Confirm edit mode activation
       }
 
       // Reset the form and states if needed
@@ -3651,14 +3666,16 @@ const handleSubmit = async (e) => {
       setSelectedSubOption("");
       setActiveStep(0);
       setShowAlert(true);
-
-  } catch (error) {
-      console.error(isUpdate ? "Error updating order:" : "Error creating order:", error);
+    } catch (error) {
+      console.error(
+        isUpdate ? "Error updating order:" : "Error creating order:",
+        error
+      );
       toast.error(isUpdate ? "Order update failed!" : "Order creation failed!");
-  } finally {
+    } finally {
       setIsLoading(false);
-  }
-};
+    }
+  };
 
   const handleCancel = () => {
     setOrderDetails({
@@ -3717,19 +3734,19 @@ const handleSubmit = async (e) => {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [countryMap, setCountryMap] = useState({});
-  const [ setStateMap] = useState({});
-  const [ setCityMap] = useState({});
+  const [setStateMap] = useState({});
+  const [setCityMap] = useState({});
   const [addresses, setAddresses] = useState([]);
   const amountToBePaid = orderDetails.TotalAmount - orderDetails.AdvanceAmount;
   const remainder = amountToBePaid / orderDetails.installments;
   const [showSearchCard, setShowSearchCard] = useState(false);
-  const [storeOptions, setStoreOptions] = useState([]); 
+  const [storeOptions, setStoreOptions] = useState([]);
   const getFirstAddress = (addresses) => {
     // Assuming addresses is a comma-separated string or array of addresses
     if (Array.isArray(addresses)) {
       return addresses[0]; // Return the first address if it's an array
     }
-    return addresses.split(',')[0]; // Return the first address from a comma-separated string
+    return addresses.split(",")[0]; // Return the first address from a comma-separated string
   };
   const handleDateChanging = (e) => {
     const { value } = e.target;
@@ -3860,18 +3877,20 @@ const handleSubmit = async (e) => {
     setOrderDetails({ ...orderDetails, socialMediaPlatform: value });
   };
 
-  useEffect(() => {
-    if (customerDetails) {
-      setOrderDetails((prevDetails) => ({
-        ...prevDetails,
-        CustomerID: customerDetails.customerId,
-        CustomerFirstName: customerDetails.CustomerFirstName,
-        CustomerLastName: customerDetails.CustomerLastName,
-        CustomerEmail: customerDetails.CustomerEmail,
-        customerPhone: customerDetails.customerPhone,
-      }));
-    }
-  }, [customerDetails],
+  useEffect(
+    () => {
+      if (customerDetails) {
+        setOrderDetails((prevDetails) => ({
+          ...prevDetails,
+          CustomerID: customerDetails.customerId,
+          CustomerFirstName: customerDetails.CustomerFirstName,
+          CustomerLastName: customerDetails.CustomerLastName,
+          CustomerEmail: customerDetails.CustomerEmail,
+          customerPhone: customerDetails.customerPhone,
+        }));
+      }
+    },
+    [customerDetails]
     // console.log(customerDetails)
   );
 
@@ -3903,16 +3922,15 @@ const handleSubmit = async (e) => {
 
   const [stateQuery, setStateQuery] = useState(""); // Define state for the query input
 
-
   useEffect(() => {
     const fetchLocationData = async (CountryID, StateID, CityID) => {
       try {
         // Fetch Country by CountryID
         if (CountryID && countries.length > 0) {
-          const country = countries.find(c => c.CountryID === CountryID);
+          const country = countries.find((c) => c.CountryID === CountryID);
           console.log("Country Found:", country);
           if (country) {
-            setOrderDetails(prevDetails => ({
+            setOrderDetails((prevDetails) => ({
               ...prevDetails,
               CountryName: country.CountryName,
             }));
@@ -3927,10 +3945,10 @@ const handleSubmit = async (e) => {
           console.log("State Response:", stateResponse.data);
           if (stateResponse.data.status === "SUCCESS") {
             const stateData = stateResponse.data.data;
-            const state = stateData.find(s => s.StateID === StateID);
+            const state = stateData.find((s) => s.StateID === StateID);
             console.log("State Found:", state);
             if (state) {
-              setOrderDetails(prevDetails => ({
+              setOrderDetails((prevDetails) => ({
                 ...prevDetails,
                 StateName: state.StateName,
               }));
@@ -3946,10 +3964,10 @@ const handleSubmit = async (e) => {
           console.log("City Response:", cityResponse.data);
           if (cityResponse.data.status === "SUCCESS") {
             const cityData = cityResponse.data.data;
-            const city = cityData.find(c => c.CityID === CityID);
+            const city = cityData.find((c) => c.CityID === CityID);
             console.log("City Found:", city);
             if (city) {
-              setOrderDetails(prevDetails => ({
+              setOrderDetails((prevDetails) => ({
                 ...prevDetails,
                 CityName: city.CityName,
               }));
@@ -3974,20 +3992,20 @@ const handleSubmit = async (e) => {
       // // Default to the primary address (first address in the array)
       // const primaryAddress = addresses[0] || {};
       // Set basic order details along with the primary address
-      setOrderDetails(prevDetails => ({
+      setOrderDetails((prevDetails) => ({
         ...prevDetails,
         OrderID: order.OrderID || "",
         OrderNumber: order.OrderNumber || "",
         CustomerID: order.CustomerID || "",
-        AddressID:order.AddressID||"",
+        AddressID: order.AddressID || "",
         OrderDate: order.OrderDate || "",
-        Type:order.Type||"",
+        Type: order.Type || "",
         TotalQuantity: order.TotalQuantity || "",
         TotalAmount: order.TotalAmount || "",
         OrderStatus: order.OrderStatus || "",
         DeliveryDate: order.DeliveryDate || "",
         Type: order.Type || "",
-        AdvanceAmount:order.AdvanceAmount||"",
+        AdvanceAmount: order.AdvanceAmount || "",
         Comments: order.Comments || "",
         DesginerName: order.DesginerName || "",
         ReferedBy: order.ReferedBy || "",
@@ -4002,14 +4020,14 @@ const handleSubmit = async (e) => {
         CustomerEmail: order.CustomerEmail || "",
         customerPhone: order.PhoneNumber || "",
         AddressID: order.AddressID || "",
-        TenantID:1,
+        TenantID: 1,
         AddressLine1: order.AddressLine1 || "",
         AddressLine2: order.AddressLine2 || "",
         CityName: order.CityName || "",
         State: order.State || "",
-        Country: order.Country|| "",
+        Country: order.Country || "",
         StateID: order.State || "",
-        CountryID: order.Country|| "",
+        CountryID: order.Country || "",
         ZipCode: order.ZipCode || "",
         CreatedAt: order.CreatedAt || "",
         UpdatedAt: order.UpdatedAt || "",
@@ -4027,21 +4045,21 @@ const handleSubmit = async (e) => {
       // Ensure country, state, city, gender, and role options exist before finding values
       if (countries && order?.CountryID) {
         const selectedCountry = countries.find(
-          (country) => country.CountryID === order.CountryID||""
+          (country) => country.CountryID === order.CountryID || ""
         );
         setSelectedCountry(selectedCountry || {});
       }
 
       if (states && order?.StateID) {
         const selectedState = states.find(
-          (state) => state.StateID === order.StateID||""
+          (state) => state.StateID === order.StateID || ""
         );
         setSelectedState(selectedState || {});
       }
 
       if (cities && order?.CityID) {
         const selectedCity = cities.find(
-          (city) => city.CityID === order.CityID||""
+          (city) => city.CityID === order.CityID || ""
         );
         setSelectedCity(selectedCity || {});
       }
@@ -4050,7 +4068,7 @@ const handleSubmit = async (e) => {
       if (order?.CountryID && !states?.length) {
         fetchStatesByCountry(order.CountryID).then((fetchedStates) => {
           const state = fetchedStates?.find(
-            (s) => s.StateID === order.StateID||""
+            (s) => s.StateID === order.StateID || ""
           );
           setSelectedState(state || {});
         });
@@ -4060,7 +4078,7 @@ const handleSubmit = async (e) => {
       if (order?.StateID && !cities?.length) {
         fetchCitiesByState(order.StateID).then((fetchedCities) => {
           const city = fetchedCities?.find(
-            (c) => c.CityID === order.CityID||""
+            (c) => c.CityID === order.CityID || ""
           );
           setSelectedCity(city || {});
         });
@@ -4149,13 +4167,14 @@ const handleSubmit = async (e) => {
   const handleCountryChange = (selectedCountry) => {
     if (!selectedCountry) return;
 
-    const countryID = countryMap[selectedCountry.CountryName] || selectedCountry.CountryID;
+    const countryID =
+      countryMap[selectedCountry.CountryName] || selectedCountry.CountryID;
 
     setSelectedCountry(selectedCountry);
     setOrderDetails({
       ...orderDetails,
       CountryID: countryID,
-      CountryName: selectedCountry.CountryName
+      CountryName: selectedCountry.CountryName,
     });
     fetchStatesByCountry(countryID);
   };
@@ -4169,7 +4188,7 @@ const handleSubmit = async (e) => {
     setOrderDetails({
       ...orderDetails,
       StateID: stateID,
-      StateName: state.StateName
+      StateName: state.StateName,
     });
     fetchCitiesByState(stateID);
   };
@@ -4183,7 +4202,7 @@ const handleSubmit = async (e) => {
     setOrderDetails({
       ...orderDetails,
       CityID: cityID,
-      CityName: city.CityName
+      CityName: city.CityName,
     });
   };
 
@@ -4198,8 +4217,8 @@ const handleSubmit = async (e) => {
 
         // Extract the Stores array from the API response
         const storesData = response.data.Stores || [];
- // Set the store options in state
- setStoreOptions(Array.isArray(storesData) ? storesData : []);
+        // Set the store options in state
+        setStoreOptions(Array.isArray(storesData) ? storesData : []);
       } catch (error) {
         console.error("Error fetching stores:", error);
       }
@@ -4209,135 +4228,132 @@ const handleSubmit = async (e) => {
   }, []);
 
   // Address Table Pagination States
-const [page, setPage] = useState(0);
-const [rowsPerPage, setRowsPerPage] = useState(2); // Default rows per page for addresses
-const totalAddresses = selectedCustomer?.Addresses?.length || 0; // Total number of addresses
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(2); // Default rows per page for addresses
+  const totalAddresses = selectedCustomer?.Addresses?.length || 0; // Total number of addresses
 
-// Order Table Pagination States
-const [orderPage, setOrderPage] = useState(0);
-const [orderRowsPerPage, setOrderRowsPerPage] = useState(2); // Default rows per page for orders
-const totalOrders = orders?.length || 0; // Total number of orders
-const [hasSelected, setHasSelected] = useState(false); 
-const [hasUserSelected, setHasUserSelected] = useState(false); 
-// const [orderDetails, setOrderDetails] = useState({ Type: '' });
-const [Type]=useState();
-// Handle address pagination change
-const handleChangePage = (event, newPage) => {
-  setPage(newPage);
-};
+  // Order Table Pagination States
+  const [orderPage, setOrderPage] = useState(0);
+  const [orderRowsPerPage, setOrderRowsPerPage] = useState(2); // Default rows per page for orders
+  const totalOrders = orders?.length || 0; // Total number of orders
+  const [hasSelected, setHasSelected] = useState(false);
+  const [hasUserSelected, setHasUserSelected] = useState(false);
+  // const [orderDetails, setOrderDetails] = useState({ Type: '' });
+  const [Type] = useState();
+  // Handle address pagination change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-const handleChangeRowsPerPage = (event) => {
-  setRowsPerPage(parseInt(event.target.value, 10));
-  setPage(0); // Reset to the first page
-};
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page
+  };
 
-// Handle order pagination change
-const handleOrderPageChange = (event, newPage) => {
-  setOrderPage(newPage);
-};
+  // Handle order pagination change
+  const handleOrderPageChange = (event, newPage) => {
+    setOrderPage(newPage);
+  };
 
-const handleOrderRowsPerPageChange = (event) => {
-  setOrderRowsPerPage(parseInt(event.target.value, 10));
-  setOrderPage(0); // Reset to the first page
-};
-const [searchUserValue, setSearchUserValue]=useState();
-const [isUserFocused, setIsUserFocused]=useState();
+  const handleOrderRowsPerPageChange = (event) => {
+    setOrderRowsPerPage(parseInt(event.target.value, 10));
+    setOrderPage(0); // Reset to the first page
+  };
+  const [searchUserValue, setSearchUserValue] = useState();
+  const [isUserFocused, setIsUserFocused] = useState();
 
-// Function to fetch users from API
-const getAllUsers = async (pageNum, pageSize, search = "") => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const response = await axios.get(
-      // "https://imlystudios-backend-mqg4.onrender.com/api/users/getAllUsers",
-      GETALLUSERS_API,
-      {
-        params: {
-          page: pageNum + 1,
-          limit: pageSize,
-          SearchText: search,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  // Function to fetch users from API
+  const getAllUsers = async (pageNum, pageSize, search = "") => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
       }
-    );
 
-    return {
-      users: response.data.users,
-      totalCount: response.data.totalItems,
-    };
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    throw error;
-  }
-};
+      const response = await axios.get(
+        // "https://imlystudios-backend-mqg4.onrender.com/api/users/getAllUsers",
+        GETALLUSERS_API,
+        {
+          params: {
+            page: pageNum + 1,
+            limit: pageSize,
+            SearchText: search,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-const handleUserChange = (e) => {
-  const value = e.target.value;
-  setSearchUserValue(value);
+      return {
+        users: response.data.users,
+        totalCount: response.data.totalItems,
+      };
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  };
 
-  // Call the API to get users only if the input has more than 0 characters
-  if (value.trim().length > 0) {
-    getAllUsers(0, 10, value)
-      .then(response => {
-        setResults(response.users || []); // Use empty array as fallback
-      })
-      .catch(error => {
-        console.error("Error fetching users:", error);
-        setResults([]); // Clear results on error
-      });
-  } else {
-    setResults([]); // Clear results if input is empty
-  }
-};
+  const handleUserChange = (e) => {
+    const value = e.target.value;
+    setSearchUserValue(value);
 
-// const handleUserSelect = (result) => {
-//   // Logic to handle user selection
-//   console.log("User selected:", result);
-//   setSearchUserValue(`${result.FirstName} ${result.LastName}`); // Update input with selected name
-//   setResults([]);
-//   setIsUserFocused(false); // Optionally close dropdown
-//   setHasUserSelected(true); // Update selection state
-// };
+    // Call the API to get users only if the input has more than 0 characters
+    if (value.trim().length > 0) {
+      getAllUsers(0, 10, value)
+        .then((response) => {
+          setResults(response.users || []); // Use empty array as fallback
+        })
+        .catch((error) => {
+          console.error("Error fetching users:", error);
+          setResults([]); // Clear results on error
+        });
+    } else {
+      setResults([]); // Clear results if input is empty
+    }
+  };
 
+  // const handleUserSelect = (result) => {
+  //   // Logic to handle user selection
+  //   console.log("User selected:", result);
+  //   setSearchUserValue(`${result.FirstName} ${result.LastName}`); // Update input with selected name
+  //   setResults([]);
+  //   setIsUserFocused(false); // Optionally close dropdown
+  //   setHasUserSelected(true); // Update selection state
+  // };
 
-const handleUserSelect = (selectedUser) => {
-  setOrderDetails((prevDetails) => ({
-    ...prevDetails,
-    DesginerName: `${selectedUser.FirstName} ${selectedUser.LastName}`,  // Set Designer Name
-  }));
+  const handleUserSelect = (selectedUser) => {
+    setOrderDetails((prevDetails) => ({
+      ...prevDetails,
+      DesginerName: `${selectedUser.FirstName} ${selectedUser.LastName}`, // Set Designer Name
+    }));
 
-  setSearchUserValue(`${selectedUser.FirstName} ${selectedUser.LastName}`); // Update the input value
-  setIsUserFocused(false); // Close dropdown
-};
+    setSearchUserValue(`${selectedUser.FirstName} ${selectedUser.LastName}`); // Update the input value
+    setIsUserFocused(false); // Close dropdown
+  };
 
-const setType = (newType) => {
-  setOrderDetails((prevDetails) => ({
-    ...prevDetails,
-    Type: newType,
-  }));
-};
+  const setType = (newType) => {
+    setOrderDetails((prevDetails) => ({
+      ...prevDetails,
+      Type: newType,
+    }));
+  };
 
-const cityMap = cities.reduce((acc, city) => {
-  acc[city.CityID] = city.CityName;
-  return acc;
-}, {});
+  const cityMap = cities.reduce((acc, city) => {
+    acc[city.CityID] = city.CityName;
+    return acc;
+  }, {});
 
-const stateMap = states.reduce((acc, state) => {
-  acc[state.StateID] = state.StateName;
-  return acc;
-}, {});
-
-
+  const stateMap = states.reduce((acc, state) => {
+    acc[state.StateID] = state.StateName;
+    return acc;
+  }, {});
 
   return (
     <>
-       <div className="main-container">
+      <div className="main-container">
         <ToastContainer />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} className="mb-1" alternativeLabel>
@@ -4346,7 +4362,7 @@ const stateMap = states.reduce((acc, state) => {
               // const labelProps = {};
               const labelProps = {
                 onClick: () => handleStepClick(index), // Add onClick handler
-                style: { cursor: 'pointer' }, // Add cursor style for pointer
+                style: { cursor: "pointer" }, // Add cursor style for pointer
               };
 
               if (isStepOptional(index)) {
@@ -4388,7 +4404,9 @@ const stateMap = states.reduce((acc, state) => {
           ) : (
             <React.Fragment>
               {activeStep === 2 && <Step3 onBack={handleBack} />}
-              {activeStep === 1 && <Step2 onBack={handleBack} onNext={handleNext} />}
+              {activeStep === 1 && (
+                <Step2 onBack={handleBack} onNext={handleNext} />
+              )}
 
               <Box
                 sx={{
@@ -4399,151 +4417,197 @@ const stateMap = states.reduce((acc, state) => {
                   // Prevent the box from exceeding the screen width
                 }}
               >
-
                 {activeStep === 0 && (
                   <>
-<div className="flex justify-left items-center ">
-<div className="relative flex flex-col w-full  bg-white  space-y-2 border border-gray-300   rounded-md mx-auto">
-<div className="flex w-full flex-col justify-end  items-center">
-  {isEditMode && (
-    <>
-  <div className=" w-full flex justify-between gap-1 sm:pt-2 space-y-1 border border-gray-300 rounded-md p-1  pt-3" >
-  <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-    <span className="w-1/3 mt-3">Order Number:</span>
-    <span className="w-1/3  mt-3">{orderDetails.OrderNumber}</span>
-  </div>
-  <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/3 mt-2">Order Status:</span>
-    <span className="w-1/3"><StatusBadge  status={orderDetails.OrderStatus}/></span>
-  </div>
-  <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-    <span className="w-1/3  mt-2">Store Name:</span>
-    <span className="w-1/3  mt-2">{orderDetails.StoreName}</span>
-  </div>
-</div>
+                    <div className="flex justify-left items-center ">
+                      <div className="relative flex flex-col w-full  bg-white  space-y-2 border border-gray-300   rounded-md mx-auto">
+                        <div className="flex w-full flex-col justify-end  items-center">
+                          {isEditMode && (
+                            <>
+                              <div className=" w-full flex justify-between gap-1 sm:pt-2 space-y-1 border border-gray-300 rounded-md p-1  pt-3">
+                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                  <span className="w-1/3 mt-3">
+                                    Order Number:
+                                  </span>
+                                  <span className="w-1/3  mt-3">
+                                    {orderDetails.OrderNumber}
+                                  </span>
+                                </div>
+                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+                                  <span className="w-1/3 mt-2">
+                                    Order Status:
+                                  </span>
+                                  <span className="w-1/3">
+                                    <StatusBadge
+                                      status={orderDetails.OrderStatus}
+                                    />
+                                  </span>
+                                </div>
+                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                  <span className="w-1/3  mt-2">
+                                    Store Name:
+                                  </span>
+                                  <span className="w-1/3  mt-2">
+                                    {orderDetails.StoreName}
+                                  </span>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        {/* Render search input only if isEditMode is false */}
+                        {!isEditMode && (
+                          <>
+                            <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
+                              <input
+                                id="searchName"
+                                type="text"
+                                placeholder="Search by Name..."
+                                value={searchValue}
+                                onChange={handleSearchInput}
+                                onFocus={() => setIsFocused(true)}
+                                className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
+                              />
+                              <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
+                                <IoIosSearch aria-label="Search Icon" />
+                              </div>
 
+                              {/* Only show the dropdown when searchValue is not empty and input is focused */}
+                              <div
+                                className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
+                                  searchValue && isFocused ? "block" : "hidden"
+                                }`}
+                                style={{
+                                  maxHeight: "200px",
+                                  minHeight: "100px",
+                                  overflowY: "auto",
+                                }}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                              >
+                                {results.length > 0 ? (
+                                  <>
+                                    <div className="mb-2 text-sm text-gray-600">
+                                      {results.length} Result
+                                      {results.length > 1 ? "s" : ""}
+                                    </div>
 
-    </>
-  )}
-</div>
-                      {/* Render search input only if isEditMode is false */}
-  {!isEditMode && (
-    <>
-<div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
-  <input
-    id="searchName"
-    type="text"
-    placeholder="Search by Name..."
-    value={searchValue}
-    onChange={handleSearchInput}
-    onFocus={() => setIsFocused(true)}
-    className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
-  />
-  <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
-  <IoIosSearch aria-label="Search Icon" />
-</div>
+                                    {/* Map over filtered results */}
+                                    {[
+                                      ...new Map(
+                                        results.map((result) => [
+                                          result.CustomerID,
+                                          result,
+                                        ])
+                                      ).values(),
+                                    ].map((result) => (
+                                      <div
+                                        className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
+                                        key={result.CustomerID}
+                                        onClick={() =>
+                                          handleCustomerSelect(result)
+                                        }
+                                      >
+                                        <span className="font-medium">
+                                          {result.CustomerFirstName}{" "}
+                                          {result.CustomerLastName}
+                                        </span>
+                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                          <IoIosCall
+                                            className="w-4 h-4 mr-1"
+                                            aria-label="Phone Icon"
+                                          />
+                                          <span>{result.PhoneNumber}</span>
+                                        </div>
+                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                          <IoMdMail
+                                            className="w-4 h-4 mr-1"
+                                            aria-label="Email Icon"
+                                          />
+                                          <span>
+                                            {result.CustomerEmail}
+                                            {result.AddressID}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </>
+                                ) : (
+                                  <div className="p-2 overflow-clip text-gray-500">
+                                    No results found.
+                                  </div>
+                                )}
+                              </div>
 
+                              <div className="flex z-10 flex-wrap items-center justify-center w-full gap-2">
+                                {" "}
+                                {/* Reduced gap */}
+                                {/* Store Combobox */}
+                                <div className="-mt-2 p-0 w-full max-w-[84%] ml-16">
+                                  {" "}
+                                  {/* Reduced margin top, width adjusted to 90%, left margin added */}
+                                  <Combobox
+                                    value={selectedStore}
+                                    onChange={setSelectedStore}
+                                  >
+                                    <div className="relative w-full">
+                                      <Combobox.Input
+                                        className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        displayValue={(store) =>
+                                          store?.StoreName || "Select Store ID"
+                                        }
+                                        placeholder="Select Store Name"
+                                      />
+                                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                        <ChevronUpDownIcon
+                                          className="h-5 w-5 text-gray-400"
+                                          aria-hidden="true"
+                                        />
+                                      </Combobox.Button>
+                                      <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                        {/* Add "Select Store ID" option */}
+                                        <Combobox.Option
+                                          key="select-store-id"
+                                          value={{
+                                            StoreID: null,
+                                            StoreName: "Select Store ID",
+                                          }}
+                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                        >
+                                          Select Store ID
+                                        </Combobox.Option>
+                                        {/* Render all store options */}
+                                        {storeNames.map((store) => (
+                                          <Combobox.Option
+                                            key={store.StoreID}
+                                            value={store}
+                                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                          >
+                                            <span className="block truncate group-data-[selected]:font-semibold">
+                                              {store.StoreName}
+                                            </span>
+                                            {selectedStore?.StoreID ===
+                                              store.StoreID && (
+                                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                                                <CheckIcon
+                                                  className="h-5 w-5"
+                                                  aria-hidden="true"
+                                                />
+                                              </span>
+                                            )}
+                                          </Combobox.Option>
+                                        ))}
+                                      </Combobox.Options>
+                                    </div>
+                                  </Combobox>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
 
-      {/* Only show the dropdown when searchValue is not empty and input is focused */}
-      <div
-        className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${searchValue && isFocused ? "block" : "hidden"}`}
-        style={{
-          maxHeight: '200px',
-          minHeight: '100px',
-          overflowY: 'auto',
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {results.length > 0 ? (
-          <>
-            <div className="mb-2 text-sm text-gray-600">
-              {results.length} Result{results.length > 1 ? "s" : ""}
-            </div>
-
-            {/* Map over filtered results */}
-            {[...new Map(results.map((result) => [result.CustomerID, result])).values()].map((result) => (
-              <div
-                className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                key={result.CustomerID}
-                onClick={() => handleCustomerSelect(result)}
-              >
-                <span className="font-medium">
-                  {result.CustomerFirstName} {result.CustomerLastName}
-                </span>
-                <div className="flex items-center text-xs md:text-sm text-gray-500">
-                  <IoIosCall className="w-4 h-4 mr-1" aria-label="Phone Icon" />
-                  <span>{result.PhoneNumber}</span>
-                </div>
-                <div className="flex items-center text-xs md:text-sm text-gray-500">
-                  <IoMdMail className="w-4 h-4 mr-1" aria-label="Email Icon" />
-                  <span>{result.CustomerEmail}{result.AddressID}</span>
-                </div>
-              </div>
-              
-            ))}
-          </>
-        ) : (
-          <div className="p-2 overflow-clip text-gray-500">No results found.</div>
-        )}
-      </div>
-    
-<div className="flex z-10 flex-wrap items-center justify-center w-full gap-2"> {/* Reduced gap */}
-  {/* Store Combobox */}
-  <div className="-mt-2 p-0 w-full max-w-[84%] ml-16"> {/* Reduced margin top, width adjusted to 90%, left margin added */}
-    <Combobox value={selectedStore} onChange={setSelectedStore}>
-      <div className="relative w-full">
-        <Combobox.Input
-          className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          displayValue={(store) => store?.StoreName || "Select Store ID"}
-          placeholder="Select Store Name"
-        />
-        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-          <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-        </Combobox.Button>
-        <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-          {/* Add "Select Store ID" option */}
-          <Combobox.Option
-            key="select-store-id"
-            value={{ StoreID: null, StoreName: "Select Store ID" }}
-            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-          >
-            Select Store ID
-          </Combobox.Option>
-          {/* Render all store options */}
-          {storeNames.map((store) => (
-            <Combobox.Option
-              key={store.StoreID}
-              value={store}
-              className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-            >
-              <span className="block truncate group-data-[selected]:font-semibold">
-                {store.StoreName}
-              </span>
-              {selectedStore?.StoreID === store.StoreID && (
-                <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                  <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                </span>
-              )}
-            </Combobox.Option>
-          ))}
-        </Combobox.Options>
-      </div>
-    </Combobox>
-  </div>
-</div>
-
-
-
-</div>
-
-    </>
-  )}
-</div>
-
-
-
-{/* {isDialogOpen && selectedCustomer && (
+                      {/* {isDialogOpen && selectedCustomer && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
     <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-2xl max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg w-full border border-gray-200 relative" data-aos="zoom-in">
       <div className="absolute top-0 left-0 right-0 bg-gray-600 p-3 sm:p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
@@ -4588,9 +4652,8 @@ const stateMap = states.reduce((acc, state) => {
   </div>
 )} */}
 
- 
-  {/* Dialog for Selected Customer Details */}
-  {/* {isDialogOpen && selectedCustomer && (
+                      {/* Dialog for Selected Customer Details */}
+                      {/* {isDialogOpen && selectedCustomer && (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 relative">
       
@@ -4602,192 +4665,363 @@ const stateMap = states.reduce((acc, state) => {
             </span>
           </button>
         </div> */}
-        {isDialogOpen && selectedCustomer && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-    <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
-      {/* Dialog Header */}
-      <div className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
-        <h2 className="text-3xl font-bold text-white">Customer Details</h2>
-        <button className="flex items-center justify-center text-white" onClick={handleClose}>
-          {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
+                      {isDialogOpen && selectedCustomer && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+                          <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
+                            {/* Dialog Header */}
+                            <div
+                              className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10"
+                              data-aos="fade-up"
+                            >
+                              <h2 className="text-3xl font-bold text-white">
+                                Customer Details
+                              </h2>
+                              <button
+                                className="flex items-center justify-center text-white"
+                                onClick={handleClose}
+                              >
+                                {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
             &#10005;
           </span> */}
+                              </button>
+                            </div>
 
-        </button>
-      </div>
+                            <div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">
+                              <div
+                                className="flex w-full max-w-md items-center justify-start gap-x-2"
+                                data-aos="fade-right"
+                              >
+                                <strong className="text-gray-700 text-lg leading-tight">
+                                  Name:
+                                </strong>
+                                <p className="text-gray-700 text-lg leading-tight">
+                                  {selectedCustomer.CustomerFirstName}{" "}
+                                  {selectedCustomer.CustomerLastName}
+                                </p>
+                              </div>
+                              <div
+                                className="flex w-full max-w-md items-center justify-start gap-x-2"
+                                data-aos="fade-right"
+                              >
+                                <strong className="text-gray-700 text-lg leading-tight">
+                                  Phone:
+                                </strong>
+                                <p className="text-gray-700 text-lg leading-tight">
+                                  {selectedCustomer.PhoneNumber}
+                                </p>
+                              </div>
+                              <div
+                                className="flex w-full max-w-md items-center justify-start gap-x-2"
+                                data-aos="fade-right"
+                              >
+                                <strong className="text-gray-700 text-lg leading-tight">
+                                  Email:
+                                </strong>
+                                <p className="text-gray-700 text-lg leading-tight">
+                                  {selectedCustomer.CustomerEmail}
+                                </p>
+                              </div>
+                            </div>
 
-<div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">
-  <div className="flex w-full max-w-md items-center justify-start gap-x-2" data-aos="fade-right">
-    <strong className="text-gray-700 text-lg leading-tight">Name:</strong>
-    <p className="text-gray-700 text-lg leading-tight">{selectedCustomer.CustomerFirstName} {selectedCustomer.CustomerLastName}</p>
-  </div>
-  <div className="flex w-full max-w-md items-center justify-start gap-x-2" data-aos="fade-right">
-    <strong className="text-gray-700 text-lg leading-tight">Phone:</strong>
-    <p className="text-gray-700 text-lg leading-tight">{selectedCustomer.PhoneNumber}</p>
-  </div>
-  <div className="flex w-full max-w-md items-center justify-start gap-x-2" data-aos="fade-right">
-    <strong className="text-gray-700 text-lg leading-tight">Email:</strong>
-    <p className="text-gray-700 text-lg leading-tight">{selectedCustomer.CustomerEmail}</p>
-  </div>
-</div>
+                            {/* Tabs for Address and Orders */}
+                            <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mt-6">
+                              <ul className="flex flex-wrap -mb-px">
+                                <li className="me-2">
+                                  <button
+                                    className={`inline-block p-4 ${
+                                      selectedTab === "address"
+                                        ? "text-blue-600 border-b-2 border-blue-600"
+                                        : "hover:text-gray-600 hover:border-gray-300"
+                                    } rounded-t-lg`}
+                                    onClick={() => handleTabChange("address")}
+                                  >
+                                    Address
+                                  </button>
+                                </li>
+                                <li className="me-2">
+                                  <button
+                                    className={`inline-block p-4 ${
+                                      selectedTab === "order"
+                                        ? "text-blue-600 border-b-2 border-blue-600"
+                                        : "hover:text-gray-600 hover:border-gray-300"
+                                    } rounded-t-lg`}
+                                    onClick={() => handleTabChange("order")}
+                                  >
+                                    Order
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
 
-
-
-        {/* Tabs for Address and Orders */}
-        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mt-6">
-          <ul className="flex flex-wrap -mb-px">
-            <li className="me-2">
-              <button
-                className={`inline-block p-4 ${selectedTab === 'address' ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-gray-600 hover:border-gray-300'} rounded-t-lg`}
-                onClick={() => handleTabChange('address')}
-              >
-                Address
-              </button>
-            </li>
-            <li className="me-2">
-              <button
-                className={`inline-block p-4 ${selectedTab === 'order' ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-gray-600 hover:border-gray-300'} rounded-t-lg`}
-                onClick={() => handleTabChange('order')}
-              >
-                Order
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* Content based on selected tab */}
-        <div className="pt-4">
-          {selectedTab === 'address' && (
-            <div>
-              {/* <strong className="text-gray-800 text-lg">No Address</strong> */}
-              <div className="mt-2 space-y-2">
-
-<TableContainer component={Paper} sx={{ width: "100%", margin: "0 auto", mt: 2 }}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>Address Line 1</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>Address Line 2</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>City Name</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>State Name</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>Zip Code</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>Actions</StyledTableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {selectedCustomer?.Addresses &&
-        selectedCustomer.Addresses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((address, index) => (
-          <TableRow key={index}>
-          
-            <StyledTableCell>{address.AddressLine1 || ""}</StyledTableCell>
-            <StyledTableCell>{address.AddressLine2 || ""}</StyledTableCell>
-             {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
+                            {/* Content based on selected tab */}
+                            <div className="pt-4">
+                              {selectedTab === "address" && (
+                                <div>
+                                  {/* <strong className="text-gray-800 text-lg">No Address</strong> */}
+                                  <div className="mt-2 space-y-2">
+                                    <TableContainer
+                                      component={Paper}
+                                      sx={{
+                                        width: "100%",
+                                        margin: "0 auto",
+                                        mt: 2,
+                                      }}
+                                    >
+                                      <Table>
+                                        <TableHead>
+                                          <TableRow>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Address Line 1
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Address Line 2
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              City Name
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              State Name
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Zip Code
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Actions
+                                            </StyledTableCell>
+                                          </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                          {selectedCustomer?.Addresses &&
+                                            selectedCustomer.Addresses.slice(
+                                              page * rowsPerPage,
+                                              page * rowsPerPage + rowsPerPage
+                                            ).map((address, index) => (
+                                              <TableRow key={index}>
+                                                <StyledTableCell>
+                                                  {address.AddressLine1 || ""}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.AddressLine2 || ""}
+                                                </StyledTableCell>
+                                                {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
              <StyledTableCell>{stateMap[address.StateID] || "N/A"}</StyledTableCell> */}
-             <StyledTableCell>{ address.City|| "N/A"}</StyledTableCell>
-             <StyledTableCell>{address.State || "N/A"}</StyledTableCell>
-            <StyledTableCell>{address.ZipCode || ""}</StyledTableCell>
-            <StyledTableCell>
-              <div className="button-container">
-                {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
-                <button 
-  type="button" 
-  onClick={() => { handleAutoFill(address.AddressID); handleClose(); }} 
-  className="button select-button">
-  Select
-  </button>
-              </div>
-            </StyledTableCell>
-          </TableRow>
-        ))
-      }
-    </TableBody>
-    <TableFooter>
-      <TableRow>
-        <TablePagination
-          rowsPerPageOptions={[2, 4, 6]}
-          colSpan={6}
-          count={totalAddresses}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          ActionsComponent={TablePaginationActions}
-        />
-      </TableRow>
-    </TableFooter>
-  </Table>
-</TableContainer>
+                                                <StyledTableCell>
+                                                  {address.City || "N/A"}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.State || "N/A"}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.ZipCode || ""}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  <div className="button-container">
+                                                    {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        handleAutoFill(
+                                                          address.AddressID
+                                                        );
+                                                        handleClose();
+                                                      }}
+                                                      className="button select-button"
+                                                    >
+                                                      Select
+                                                    </button>
+                                                  </div>
+                                                </StyledTableCell>
+                                              </TableRow>
+                                            ))}
+                                        </TableBody>
+                                        <TableFooter>
+                                          <TableRow>
+                                            <TablePagination
+                                              rowsPerPageOptions={[2, 4, 6]}
+                                              colSpan={6}
+                                              count={totalAddresses}
+                                              rowsPerPage={rowsPerPage}
+                                              page={page}
+                                              onPageChange={handleChangePage}
+                                              onRowsPerPageChange={
+                                                handleChangeRowsPerPage
+                                              }
+                                              ActionsComponent={
+                                                TablePaginationActions
+                                              }
+                                            />
+                                          </TableRow>
+                                        </TableFooter>
+                                      </Table>
+                                    </TableContainer>
+                                  </div>
+                                </div>
+                              )}
 
+                              {selectedTab === "order" && (
+                                <div>
+                                  {/* <strong className="text-gray-800 text-lg">Orders:</strong> */}
+                                  <div className="mt-2">
+                                    <TableContainer
+                                      component={Paper}
+                                      sx={{
+                                        width: "100%",
+                                        margin: "0 auto",
+                                        mt: 2,
+                                      }}
+                                    >
+                                      <Table>
+                                        <TableHead>
+                                          <TableRow>
+                                            <StyledTableCell
+                                              sx={{ whiteSpace: "nowrap" }}
+                                            >
+                                              Order Number
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{ whiteSpace: "nowrap" }}
+                                            >
+                                              Order Date
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{ whiteSpace: "nowrap" }}
+                                            >
+                                              Amount
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{
+                                                whiteSpace: "nowrap",
+                                                padding: "12px 24px",
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Order Status
+                                            </StyledTableCell>
+                                            <StyledTableCell
+                                              sx={{ whiteSpace: "nowrap" }}
+                                            >
+                                              Store Name
+                                            </StyledTableCell>
+                                          </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                          {orders &&
+                                            orders
+                                              .slice(
+                                                orderPage * orderRowsPerPage,
+                                                orderPage * orderRowsPerPage +
+                                                  orderRowsPerPage
+                                              )
+                                              .map((order) => (
+                                                <StyledTableRow
+                                                  key={order.OrderID}
+                                                >
+                                                  <StyledTableCell>
+                                                    {order.OrderNumber}
+                                                  </StyledTableCell>
+                                                  <StyledTableCell>
+                                                    {new Date(
+                                                      order.CreatedAt
+                                                    ).toLocaleDateString()}
+                                                  </StyledTableCell>{" "}
+                                                  {/* Adjusted to use CreatedAt */}
+                                                  <StyledTableCell>
+                                                    ${order.TotalAmount}
+                                                  </StyledTableCell>
+                                                  <StyledTableCell
+                                                    sx={{
+                                                      whiteSpace: "nowrap",
+                                                      padding: "12px 24px",
+                                                      textAlign: "center",
+                                                    }}
+                                                  >
+                                                    {order.OrderStatus}
+                                                  </StyledTableCell>
+                                                  <StyledTableCell>
+                                                    {order.Customer?.Store
+                                                      ?.StoreName || "N/A"}
+                                                  </StyledTableCell>{" "}
+                                                  {/* Access StoreName from Customer */}
+                                                </StyledTableRow>
+                                              ))}
+                                        </TableBody>
+                                        <TableFooter>
+                                          <TableRow>
+                                            <TablePagination
+                                              rowsPerPageOptions={[2, 4, 6]}
+                                              colSpan={6}
+                                              count={totalOrders}
+                                              rowsPerPage={orderRowsPerPage}
+                                              page={orderPage}
+                                              onPageChange={
+                                                handleOrderPageChange
+                                              }
+                                              onRowsPerPageChange={
+                                                handleOrderRowsPerPageChange
+                                              }
+                                              ActionsComponent={
+                                                TablePaginationActions
+                                              }
+                                            />
+                                          </TableRow>
+                                        </TableFooter>
+                                      </Table>
+                                    </TableContainer>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
 
-              </div>
-            </div>
-          )}
-
-      
-          {selectedTab === 'order' && (
-  <div>
-    {/* <strong className="text-gray-800 text-lg">Orders:</strong> */}
-    <div className="mt-2">
-   
-<TableContainer component={Paper} sx={{ width: "100%", margin: "0 auto", mt: 2 }}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <StyledTableCell sx={{ whiteSpace: "nowrap" }}>Order Number</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: "nowrap" }}>Order Date</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: "nowrap" }}>Amount</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>Order Status</StyledTableCell>
-        <StyledTableCell sx={{ whiteSpace: "nowrap" }}>Store Name</StyledTableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {orders && orders.slice(orderPage * orderRowsPerPage, orderPage * orderRowsPerPage + orderRowsPerPage).map((order) => (
-        <StyledTableRow key={order.OrderID}>
-          <StyledTableCell>{order.OrderNumber}</StyledTableCell>
-          <StyledTableCell>{new Date(order.CreatedAt).toLocaleDateString()}</StyledTableCell> {/* Adjusted to use CreatedAt */}
-          <StyledTableCell>${order.TotalAmount}</StyledTableCell>
-          <StyledTableCell sx={{ whiteSpace: 'nowrap', padding: '12px 24px', textAlign: 'center' }}>{order.OrderStatus}</StyledTableCell>
-          <StyledTableCell>{order.Customer?.Store?.StoreName || "N/A"}</StyledTableCell> {/* Access StoreName from Customer */}
-        </StyledTableRow>
-      ))}
-    </TableBody>
-    <TableFooter>
-      <TableRow>
-        <TablePagination
-          rowsPerPageOptions={[2, 4, 6]}
-          colSpan={6}
-          count={totalOrders}
-          rowsPerPage={orderRowsPerPage}
-          page={orderPage}
-          onPageChange={handleOrderPageChange}
-          onRowsPerPageChange={handleOrderRowsPerPageChange}
-          ActionsComponent={TablePaginationActions}
-        />
-      </TableRow>
-    </TableFooter>
-  </Table>
-</TableContainer>
-
-    </div>
-  </div>
-)}
-
-        </div>
-
-        {/* Next Button */}
-        <div className="flex justify-end mt-6">
-          <button
-            className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
-            // onClick={handleAutoFill}
-            onClick={() => {
-              handleAutoFill(); // Call your autofill logic
-              handleClose(); // Close the dialog
-            }}
-          >
-          Close
-          </button>
-        </div>
-        {/* <div className="flex justify-end mt-6">
+                            {/* Next Button */}
+                            <div className="flex justify-end mt-6">
+                              <button
+                                className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
+                                // onClick={handleAutoFill}
+                                onClick={() => {
+                                  handleAutoFill(); // Call your autofill logic
+                                  handleClose(); // Close the dialog
+                                }}
+                              >
+                                Close
+                              </button>
+                            </div>
+                            {/* <div className="flex justify-end mt-6">
   <button
     className="py-3 px-8 text-white rounded-lg hover:bg-opacity-90 transition-all shadow-lg transform hover:scale-105"
     style={{ backgroundColor: '#EFBC9B' }} // Add custom color here
@@ -4799,19 +5033,13 @@ const stateMap = states.reduce((acc, state) => {
     Next
   </button>
 </div> */}
-
-      </div>
-    </div>
-  )}
-
-
-
-</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex gap-10 border border-gray-300 rounded-md">
-
-<div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
-
-                      {/* <div>
+                      <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
+                        {/* <div>
                         <label className="block text-xs font-medium text-gray-700">
                           Project Type
                         </label>
@@ -4851,200 +5079,252 @@ const stateMap = states.reduce((acc, state) => {
                         )}
                       </div> */}
 
- <div className="mt-0 p-0 w-full max-w-full ml-0">
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Project Type
-        </label>
-        <Combobox value={orderDetails.Type} onChange={setType}>
-          <div className="relative w-full">
-            <Combobox.Input
-              className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              displayValue={(type) => type || "Select Project Type"}
-              placeholder="Select Project Type"
-            />
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-              <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-            </Combobox.Button>
-            <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {["Kitchen", "Wardrobe", "Living", "2 BHK", "3 BHK", "TV unit", "Crockery", "Shoe rack", "Vanities", "Others"].map((type) => (
-                <Combobox.Option
-                  key={type}
-                  value={type}
-                  className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                >
-                  <span className="block truncate group-data-[selected]:font-semibold">{type}</span>
-                  {Type === type && (
-                    <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                    </span>
-                  )}
-                </Combobox.Option>
-              ))}
-            </Combobox.Options>
-          </div>
-        </Combobox>
+                        <div className="mt-0 p-0 w-full max-w-full ml-0">
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Project Type
+                          </label>
+                          <Combobox
+                            value={orderDetails.Type}
+                            onChange={setType}
+                          >
+                            <div className="relative w-full">
+                              <Combobox.Input
+                                className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                displayValue={(type) =>
+                                  type || "Select Project Type"
+                                }
+                                placeholder="Select Project Type"
+                              />
+                              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                <ChevronUpDownIcon
+                                  className="h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                              </Combobox.Button>
+                              <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                {[
+                                  "Kitchen",
+                                  "Wardrobe",
+                                  "Living",
+                                  "2 BHK",
+                                  "3 BHK",
+                                  "TV unit",
+                                  "Crockery",
+                                  "Shoe rack",
+                                  "Vanities",
+                                  "Others",
+                                ].map((type) => (
+                                  <Combobox.Option
+                                    key={type}
+                                    value={type}
+                                    className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                  >
+                                    <span className="block truncate group-data-[selected]:font-semibold">
+                                      {type}
+                                    </span>
+                                    {Type === type && (
+                                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                                        <CheckIcon
+                                          className="h-5 w-5"
+                                          aria-hidden="true"
+                                        />
+                                      </span>
+                                    )}
+                                  </Combobox.Option>
+                                ))}
+                              </Combobox.Options>
+                            </div>
+                          </Combobox>
 
-        {/* Error Handling */}
-        {errors.Type && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.Type}
-          </p>
-        )}
-      </div>
+                          {/* Error Handling */}
+                          {errors.Type && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.Type}
+                            </p>
+                          )}
+                        </div>
 
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700">
-                          Expected Duration (In Days)
-                        </label>
-                        <input
-                          type="number"
-                          name="ExpectedDurationDays"
-                          value={orderDetails.ExpectedDurationDays}
-                          onChange={handling}
-                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${errors.ExpectedDurationDays
-                            ? "border-red-500"
-                            : "border-gray-300"
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700">
+                            Expected Duration (In Days)
+                          </label>
+                          <input
+                            type="number"
+                            name="ExpectedDurationDays"
+                            value={orderDetails.ExpectedDurationDays}
+                            onChange={handling}
+                            className={` p-1  mt-2 mb-1 w-full border rounded-md ${
+                              errors.ExpectedDurationDays
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
-                        />
-                        {errors.Comments && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.ExpectedDurationDays}
-                          </p>
+                          />
+                          {errors.Comments && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.ExpectedDurationDays}
+                            </p>
+                          )}
+                        </div>
+                        {isEditMode && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700">
+                              Order Date
+                            </label>
+                            <input
+                              type="date"
+                              name="OrderDate"
+                              value={
+                                orderDetails.OrderDate
+                                  ? new Date(orderDetails.OrderDate)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
+                              onChange={handleChange}
+                              className={`p-1 mt-2 mb-1 w-full border rounded-md ${
+                                errors.OrderDate
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              }`}
+                            />
+                            {errors.OrderDate && (
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.OrderDate}
+                              </p>
+                            )}
+                          </div>
                         )}
-                      </div>
-                       {isEditMode && ( 
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700">
-                          Order Date
-                        </label>
-                        <input
-                          type="date"
-                          name="OrderDate"
-                          value={orderDetails.OrderDate ? new Date(orderDetails.OrderDate).toISOString().split('T')[0] : ""}
-                          onChange={handleChange}
-                          className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.OrderDate
-                            ? "border-red-500"
-                            : "border-gray-300"
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700">
+                            Expected Delivery Date
+                          </label>
+                          <input
+                            type="date"
+                            name="DeliveryDate"
+                            // value={orderDetails.DeliveryDate}
+                            value={
+                              orderDetails.DeliveryDate
+                                ? new Date(orderDetails.DeliveryDate)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : ""
+                            }
+                            onChange={handleDateChang}
+                            className={` p-1  mt-2 mb-1 w-full border rounded-md ${
+                              errors.DeliveryDate
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
-                        />
-                        {errors.OrderDate && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.OrderDate}
-                          </p>
-                        )}
-                      </div>
-                     )}  
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700">
-                          Expected Delivery Date
-                        </label>
-                        <input
-                          type="date"
-                          name="DeliveryDate"
-                          // value={orderDetails.DeliveryDate}
-                          value={orderDetails.DeliveryDate ? new Date(orderDetails.DeliveryDate).toISOString().split('T')[0] : ""}
-                          onChange={handleDateChang}
-                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${errors.DeliveryDate
-                            ? "border-red-500"
-                            : "border-gray-300"
+                          />
+                          {errors.DeliveryDate && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.DeliveryDate}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block mt-1 text-xs font-medium text-gray-700">
+                            Designer Name
+                          </label>
+
+                          <div className="relative">
+                            <input
+                              type="search"
+                              name="DesginerName"
+                              // value={searchUserValue}
+                              value={
+                                orderDetails.DesginerName || searchUserValue
+                              }
+                              onChange={handleUserChange}
+                              onFocus={() => setIsUserFocused(true)}
+                              // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
+                              className={`p-1 mt-2 mb-1 w-full border rounded-md ${
+                                errors.DesginerName
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              }`}
+                              placeholder="Search by User Name..."
+                            />
+                            {errors.DesginerName && (
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.DesginerName}
+                              </p>
+                            )}
+
+                            {/* Search Icon */}
+                            <div className="absolute right-3 top-5 flex items-center pointer-events-none">
+                              <IoIosSearch aria-label="Search Icon" />
+                            </div>
+
+                            {/* Dropdown for filtered users */}
+                            {isUserFocused &&
+                              searchUserValue &&
+                              searchUserValue.length >= 1 && (
+                                <div
+                                  className={`absolute flex flex-col top-full mt-1 border rounded-lg p-2 w-full bg-white z-10`}
+                                  style={{
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                  }}
+                                >
+                                  {results.length > 0 ? (
+                                    <>
+                                      <div className="mb-2 text-sm text-gray-600">
+                                        {results.length} Result
+                                        {results.length > 1 ? "s" : ""}
+                                      </div>
+
+                                      {/* Map over filtered results and show only user names */}
+                                      {results.map((result) => (
+                                        <div
+                                          className="relative cursor-pointer p-2 hover:bg-gray-100 group"
+                                          key={result.CustomerID}
+                                          onClick={() =>
+                                            handleUserSelect(result)
+                                          } // Ensure this function is defined
+                                        >
+                                          <span className="font-medium">
+                                            {result.FirstName} {result.LastName}{" "}
+                                            {/* Display only user names */}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    !hasUserSelected && ( // Only show if no selection has been made
+                                      <div className="p-2 overflow-clip text-gray-500">
+                                        No results found.
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700">
+                            Comments
+                          </label>
+                          <input
+                            type="text"
+                            name="Comments"
+                            value={orderDetails.Comments}
+                            onChange={handleChange}
+                            className={` p-1  mt-0 mb-5 w-full border rounded-md ${
+                              errors.Comments
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
-                        />
-                        {errors.DeliveryDate && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.DeliveryDate}
-                          </p>
-                        )}
+                          />
+                          {errors.Comments && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.Comments}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <label className="block mt-1 text-xs font-medium text-gray-700">
-                          Designer Name
-                        </label>
-
-              
-                        <div className="relative">
-      <input
-        type="search"
-        name="DesginerName"
-        // value={searchUserValue}
-        value={orderDetails.DesginerName || searchUserValue} 
-        onChange={handleUserChange}
-        onFocus={() => setIsUserFocused(true)}
-        // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
-        className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.DesginerName ? "border-red-500" : "border-gray-300"}`}
-        placeholder="Search by User Name..."
-      />
-      {errors.DesginerName && (
-        <p className="text-red-500 text-sm mt-1">{errors.DesginerName}</p>
-      )}
-
-      {/* Search Icon */}
-      <div className="absolute right-3 top-5 flex items-center pointer-events-none">
-        <IoIosSearch aria-label="Search Icon" />
-      </div>
-
-      {/* Dropdown for filtered users */}
-      {isUserFocused && searchUserValue && searchUserValue.length >= 1 && ( 
-        <div
-          className={`absolute flex flex-col top-full mt-1 border rounded-lg p-2 w-full bg-white z-10`}
-          style={{
-            maxHeight: '200px',
-            overflowY: 'auto',
-          }}
-        >
-          {results.length > 0 ? (
-            <>
-              <div className="mb-2 text-sm text-gray-600">
-                {results.length} Result{results.length > 1 ? "s" : ""}
-              </div>
-
-              {/* Map over filtered results and show only user names */}
-              {results.map((result) => (
-                <div
-                  className="relative cursor-pointer p-2 hover:bg-gray-100 group"
-                  key={result.CustomerID}
-                  onClick={() => handleUserSelect(result)} // Ensure this function is defined
-                >
-                  <span className="font-medium">
-                    {result.FirstName} {result.LastName} {/* Display only user names */}
-                  </span>
-                </div>
-              ))}
-            </>
-          ) : (
-            !hasUserSelected && ( // Only show if no selection has been made
-              <div className="p-2 overflow-clip text-gray-500">No results found.</div>
-            )
-          )}
-        </div>
-      )}
-    </div>
-
-                      </div>
-                      <div>
-  <label className="block text-xs font-medium text-gray-700">
-    Comments
-  </label>
-  <input
-    type="text"
-    name="Comments"
-    value={orderDetails.Comments}
-    onChange={handleChange}
-    className={` p-1  mt-0 mb-5 w-full border rounded-md ${errors.Comments
-      ? "border-red-500"
-      : "border-gray-300"
-      }`}
-  />
-  {errors.Comments && (
-    <p className="text-red-500 text-sm mt-1">
-      {errors.Comments}
-    </p>
-  )}
-</div>
-                     
-                      </div>
-                      <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4" >
-
-{/* <div>
+                      <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4">
+                        {/* <div>
   <label className="block text-xs font-medium text-gray-700">
     Comments
   </label>
@@ -5064,231 +5344,235 @@ const stateMap = states.reduce((acc, state) => {
     </p>
   )}
 </div> */}
-<div className="-mt-2">
-  <label className="block text-xs font-medium text-gray-700 mt-1">
-    Total amount
-  </label>
-  <input
-    type="number"
-    name="TotalAmount"
-    value={orderDetails.TotalAmount}
-    onChange={handleChange}
-    className={` p-1  mt-3 w-full border rounded-md ${errors.TotalAmount
-      ? "border-red-500"
-      : "border-gray-300"
-      }`}
-  />
-  {errors.TotalAmount && (
-    <p className="text-red-500 text-sm mt-1">
-      {errors.TotalAmount}
-    </p>
-  )}
-</div>
-<div>
-  <label className="block text-xs font-medium text-gray-700 mt-1">
-    Advance amount
-  </label>
+                        <div className="-mt-2">
+                          <label className="block text-xs font-medium text-gray-700 mt-1">
+                            Total amount
+                          </label>
+                          <input
+                            type="number"
+                            name="TotalAmount"
+                            value={orderDetails.TotalAmount}
+                            onChange={handleChange}
+                            className={` p-1  mt-3 w-full border rounded-md ${
+                              errors.TotalAmount
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                          />
+                          {errors.TotalAmount && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.TotalAmount}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mt-1">
+                            Advance amount
+                          </label>
 
-  <input
-    type="number"
-    name="AdvanceAmount"
-    value={orderDetails.AdvanceAmount}
-    onChange={handleChange}
-    className={` p-1  mt-3  w-full border rounded-md ${errors.AdvanceAmount
-      ? "border-red-500"
-      : "border-gray-300"
-      }`}
-  />
-  {errors.AdvanceAmount && (
-    <p className="text-red-500 text-sm mt-1">
-      {errors.AdvanceAmount}
-    </p>
-  )}
-</div>
-<div>
-  <label className="block text-xs font-medium text-gray-700 mt-1">
-    Balance amount
-  </label>
-  <input
-    type="number"
-    name="AdvanceAmount"
-    value={
-      (orderDetails.BalenceAmount =
-        orderDetails.TotalAmount -
-        orderDetails.AdvanceAmount)
-    }
-    onChange={handleChange}
-    className={`p-1  mt-3 mb-1 w-full border rounded-md`}
-  />
-</div>
-<div className="mb-3 z-10 ">
-                        <label className="block mt-3 text-xs font-medium text-gray-700">
-                          Referred By
-                        </label>
-                        <Combobox
-                          as="div"
-                          value={orderDetails.ReferedBy}
-                          onChange={handleReferralTypeChange}
-                        >
-                          <div className="relative">
-                            <Combobox.Input
-                              className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              onChange={(event) => setQuery(event.target.value)}
-                              displayValue={(type) => type || ""}
-                            />
-                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                              <ChevronUpDownIcon
-                                className="h-5 w-5  text-gray-400"
-                                aria-hidden="true"
+                          <input
+                            type="number"
+                            name="AdvanceAmount"
+                            value={orderDetails.AdvanceAmount}
+                            onChange={handleChange}
+                            className={` p-1  mt-3  w-full border rounded-md ${
+                              errors.AdvanceAmount
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                          />
+                          {errors.AdvanceAmount && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.AdvanceAmount}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mt-1">
+                            Balance amount
+                          </label>
+                          <input
+                            type="number"
+                            name="AdvanceAmount"
+                            value={
+                              (orderDetails.BalenceAmount =
+                                orderDetails.TotalAmount -
+                                orderDetails.AdvanceAmount)
+                            }
+                            onChange={handleChange}
+                            className={`p-1  mt-3 mb-1 w-full border rounded-md`}
+                          />
+                        </div>
+                        <div className="mb-3 z-10 ">
+                          <label className="block mt-3 text-xs font-medium text-gray-700">
+                            Referred By
+                          </label>
+                          <Combobox
+                            as="div"
+                            value={orderDetails.ReferedBy}
+                            onChange={handleReferralTypeChange}
+                          >
+                            <div className="relative">
+                              <Combobox.Input
+                                className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                onChange={(event) =>
+                                  setQuery(event.target.value)
+                                }
+                                displayValue={(type) => type || ""}
                               />
-                            </Combobox.Button>
-
-                            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                              {["Social Media", "Walk-In", "Reference"].map(
-                                (type, index) => (
-                                  <Combobox.Option
-                                    key={index}
-                                    value={type}
-                                    className="group z-30 relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                  >
-                                    <span className="block truncate group-data-[selected]:font-semibold">
-                                      {type}
-                                    </span>
-                                    <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                      <CheckIcon
-                                        className="h-5 w-5"
-                                        aria-hidden="true"
-                                      />
-                                    </span>
-                                  </Combobox.Option>
-                                )
-                              )}
-                            </Combobox.Options>
-                          </div>
-                        </Combobox>
-                        {/* Conditionally render the additional input fields */}
-                        {selectedReferralType === "Reference" && (
-                          <div className="mt-4">
-                            <label className="block text-xs font-medium text-gray-700">
-                              Reference Sub-option
-                            </label>
-                            <Combobox
-                              as="div"
-                              value={selectedReferenceSubOption}
-                              onChange={handleReferenceSubOptionChange}
-                            >
-                              <div className="relative">
-                                <Combobox.Input
-                                  className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                  onChange={(event) =>
-                                    setQuery(event.target.value)
-                                  }
-                                  displayValue={(option) => option || ""}
+                              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                <ChevronUpDownIcon
+                                  className="h-5 w-5  text-gray-400"
+                                  aria-hidden="true"
                                 />
-                                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                  <ChevronUpDownIcon
-                                    className="h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                  />
-                                </Combobox.Button>
+                              </Combobox.Button>
 
-                                <Combobox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                  {["Director", "Employee", "Existing"].map(
-                                    (option, index) => (
-                                      <Combobox.Option
-                                        key={index}
-                                        value={option}
-                                        className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                      >
-                                        <span className="block truncate group-data-[selected]:font-semibold">
-                                          {option}
-                                        </span>
-                                        <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                          <CheckIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      </Combobox.Option>
-                                    )
-                                  )}
-                                </Combobox.Options>
-                              </div>
-                            </Combobox>
-                          </div>
-                        )}
-                        {selectedReferralType === "Reference" &&
-                          selectedReferenceSubOption && (
+                              <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                {["Social Media", "Walk-In", "Reference"].map(
+                                  (type, index) => (
+                                    <Combobox.Option
+                                      key={index}
+                                      value={type}
+                                      className="group z-30 relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                    >
+                                      <span className="block truncate group-data-[selected]:font-semibold">
+                                        {type}
+                                      </span>
+                                      <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                        <CheckIcon
+                                          className="h-5 w-5"
+                                          aria-hidden="true"
+                                        />
+                                      </span>
+                                    </Combobox.Option>
+                                  )
+                                )}
+                              </Combobox.Options>
+                            </div>
+                          </Combobox>
+                          {/* Conditionally render the additional input fields */}
+                          {selectedReferralType === "Reference" && (
                             <div className="mt-4">
                               <label className="block text-xs font-medium text-gray-700">
-                                Referee Name
+                                Reference Sub-option
                               </label>
-                              <input
-                                type="text"
-                                name="refereeName"
-                                value={orderDetails.refereeName}
-                                onChange={handleRefereeNameChange}
-                                className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
+                              <Combobox
+                                as="div"
+                                value={selectedReferenceSubOption}
+                                onChange={handleReferenceSubOptionChange}
+                              >
+                                <div className="relative">
+                                  <Combobox.Input
+                                    className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    onChange={(event) =>
+                                      setQuery(event.target.value)
+                                    }
+                                    displayValue={(option) => option || ""}
+                                  />
+                                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                    <ChevronUpDownIcon
+                                      className="h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                  </Combobox.Button>
+
+                                  <Combobox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    {["Director", "Employee", "Existing"].map(
+                                      (option, index) => (
+                                        <Combobox.Option
+                                          key={index}
+                                          value={option}
+                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                        >
+                                          <span className="block truncate group-data-[selected]:font-semibold">
+                                            {option}
+                                          </span>
+                                          <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                            <CheckIcon
+                                              className="h-5 w-5"
+                                              aria-hidden="true"
+                                            />
+                                          </span>
+                                        </Combobox.Option>
+                                      )
+                                    )}
+                                  </Combobox.Options>
+                                </div>
+                              </Combobox>
                             </div>
                           )}
-                        {selectedReferralType === "Social Media" && (
-                          <div className="mt-4">
-                            <label className="block text-xs font-medium text-gray-700">
-                              Social Media Platform
-                            </label>
-                            <Combobox
-                              as="div"
-                              value={selectedSocialMediaPlatform}
-                              onChange={handleSocialMediaPlatformChange}
-                            >
-                              <div className="relative">
-                                <Combobox.Input
+                          {selectedReferralType === "Reference" &&
+                            selectedReferenceSubOption && (
+                              <div className="mt-4">
+                                <label className="block text-xs font-medium text-gray-700">
+                                  Referee Name
+                                </label>
+                                <input
+                                  type="text"
+                                  name="refereeName"
+                                  value={orderDetails.refereeName}
+                                  onChange={handleRefereeNameChange}
                                   className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                  onChange={(event) =>
-                                    setQuery(event.target.value)
-                                  }
-                                  displayValue={(platform) => platform || ""}
-                                 />
-                                 <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                  <ChevronUpDownIcon
-                                    className="h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                  />
-                                </Combobox.Button>
-
-                                <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                  {["Facebook", "Instagram", "Twitter"].map(
-                                    (platform, index) => (
-                                      <Combobox.Option
-                                        key={index}
-                                        value={platform}
-                                        className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                      >
-                                        <span className="block truncate group-data-[selected]:font-semibold">
-                                          {platform}
-                                        </span>
-                                        <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                          <CheckIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      </Combobox.Option>
-                                    )
-                                  )}
-                                </Combobox.Options>
+                                />
                               </div>
-                            </Combobox>
-                          </div>
-                        )}
-                        {error && (
-                          <p className="mt-0 text-red-600 text-xs">{error}</p>
-                        )}
+                            )}
+                          {selectedReferralType === "Social Media" && (
+                            <div className="mt-4">
+                              <label className="block text-xs font-medium text-gray-700">
+                                Social Media Platform
+                              </label>
+                              <Combobox
+                                as="div"
+                                value={selectedSocialMediaPlatform}
+                                onChange={handleSocialMediaPlatformChange}
+                              >
+                                <div className="relative">
+                                  <Combobox.Input
+                                    className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    onChange={(event) =>
+                                      setQuery(event.target.value)
+                                    }
+                                    displayValue={(platform) => platform || ""}
+                                  />
+                                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                    <ChevronUpDownIcon
+                                      className="h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                  </Combobox.Button>
+
+                                  <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    {["Facebook", "Instagram", "Twitter"].map(
+                                      (platform, index) => (
+                                        <Combobox.Option
+                                          key={index}
+                                          value={platform}
+                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                        >
+                                          <span className="block truncate group-data-[selected]:font-semibold">
+                                            {platform}
+                                          </span>
+                                          <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                            <CheckIcon
+                                              className="h-5 w-5"
+                                              aria-hidden="true"
+                                            />
+                                          </span>
+                                        </Combobox.Option>
+                                      )
+                                    )}
+                                  </Combobox.Options>
+                                </div>
+                              </Combobox>
+                            </div>
+                          )}
+                          {error && (
+                            <p className="mt-0 text-red-600 text-xs">{error}</p>
+                          )}
+                        </div>
                       </div>
-</div>
                     </div>
-                    
+
                     {/* <div className="flex gap-10 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
                       
                       <div className="sm:pt-2 w-full space-y-2 p-4">
@@ -5341,76 +5625,90 @@ const stateMap = states.reduce((acc, state) => {
   </div>
 </div>
                     </div> */}
-                    
 
- <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
- 
-  <div className="flex justify-left text-lg font-medium text-gray-700">
-    <h2>Customer Information</h2>
-  </div>
- 
-  <div className="flex gap-10">
-    <div className="sm:pt-2 w-full space-y-2 p-4">
-      <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-        <span className="w-1/2">First Name</span>
-        <span className="mr-20">:</span>
-        <span className="w-2/3">{orderDetails.CustomerFirstName}</span>
-      </div>
-      <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-        <span className="w-1/2">Last Name</span>
-        <span className="mr-20">:</span>
-        <span className="w-2/3">{orderDetails.CustomerLastName}</span>
-      </div>
-      <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-        <span className="w-1/2">Email</span>
-        <span className="mr-20">:</span>
-        <span className="w-2/3">{orderDetails.CustomerEmail}</span>
-      </div>
-      <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-        <span className="w-1/2">Phone</span>
-        <span className="mr-20">:</span>
-        <span className="w-2/3">{orderDetails.customerPhone}</span>
-      </div>
-    </div>
+                    <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
+                      <div className="flex justify-left text-lg font-medium text-gray-700">
+                        <h2>Customer Information</h2>
+                      </div>
 
-    <div className="sm:pt-2 w-full space-y-2 p-4">
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">Address Line 1</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.AddressLine1}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">Address Line 2</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.AddressLine2}</span>
-   
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">Country</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.Country || 'N/A'}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">State</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.State|| 'N/A'}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">City</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.CityName || 'N/A'}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/2">Zip Code</span>
-    <span className="mr-20">:</span>
-    <span className="w-1/2">{orderDetails.ZipCode}</span>
-  </div>
-</div>
+                      <div className="flex gap-10">
+                        <div className="sm:pt-2 w-full space-y-2 p-4">
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">First Name</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-2/3">
+                              {orderDetails.CustomerFirstName}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                            <span className="w-1/2">Last Name</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-2/3">
+                              {orderDetails.CustomerLastName}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                            <span className="w-1/2">Email</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-2/3">
+                              {orderDetails.CustomerEmail}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                            <span className="w-1/2">Phone</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-2/3">
+                              {orderDetails.customerPhone}
+                            </span>
+                          </div>
+                        </div>
 
-  </div>
-</div> 
-
-
+                        <div className="sm:pt-2 w-full space-y-2 p-4">
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">Address Line 1</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.AddressLine1}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">Address Line 2</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.AddressLine2}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">Country</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.Country || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">State</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.State || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">City</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.CityName || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                            <span className="w-1/2">Zip Code</span>
+                            <span className="mr-20">:</span>
+                            <span className="w-1/2">
+                              {orderDetails.ZipCode}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </>
                 )}
               </Box>
@@ -5425,13 +5723,14 @@ const stateMap = states.reduce((acc, state) => {
                     >
                       Save
                     </button> */}
-                      <button
-          type="submit"
-          className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          onClick={handleSubmit}
-        >
-          {orderDetails.OrderID ? 'Update' : 'Add'} {/* Conditional button text */}
-        </button>
+                    <button
+                      type="submit"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      onClick={handleSubmit}
+                    >
+                      {orderDetails.OrderID ? "Update" : "Add"}{" "}
+                      {/* Conditional button text */}
+                    </button>
                     <button
                       type="button"
                       onClick={handleCancel}
@@ -5447,7 +5746,6 @@ const stateMap = states.reduce((acc, state) => {
                   </div>
                 )}
               </div>
-
             </React.Fragment>
           )}
           {submittedDetails && (

@@ -1,36 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Temp = () => {
-  const handleCustomerFormChange = (e) => {
-    const { name, value } = e.target;
-    setCustomerFormData({
-      ...customerFormData,
-      [name]: value,
-    });
+const PlusToXButton = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(!isClicked);
   };
-  return (
-    <>
-      <input
-        type="text"
-        name="FirstName"
-        value={customerFormData.CustomerFirstName}
-        onChange={handleCustomerFormChange}
-        className={`p-1 w-full border rounded-md ${
-          error ? "border-red-500" : "border-gray-400"
-        }`}
-      />
 
-      <input
-        type="text"
-        name="PhoneNumber"
-        value={customerFormData.PhoneNumber}
-        onChange={handleCustomerFormChange}
-        className={`p-1 w-full border rounded-md ${
-          error ? "border-red-500" : "border-gray-400"
+  return (
+    <div className="main-container">
+      <button
+        onClick={handleClick}
+        className={`w-16 h-16 rounded-full flex items-center justify-center relative transition-all duration-300 ${
+          isClicked ? "bg-pink-500" : "bg-gray-800"
         }`}
-      />
-    </>
+      >
+        <div className="relative w-8 h-8">
+          {/* Horizontal line */}
+          <span
+            className={`block absolute h-1 w-8 bg-white rounded transition-all duration-300 ease-in-out ${
+              isClicked ? "rotate-45" : "rotate-0"
+            }`}
+          ></span>
+          {/* Vertical line */}
+          <span
+            className={`block absolute h-1 w-8 bg-white rounded transition-all duration-300 ease-in-out ${
+              isClicked ? "-rotate-45" : "rotate-90"
+            }`}
+          ></span>
+        </div>
+      </button>
+    </div>
   );
 };
 
-export default Temp;
+export default PlusToXButton;

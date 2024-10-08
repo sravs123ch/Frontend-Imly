@@ -41,6 +41,7 @@ import Testing from "./components/Testing/Testing";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useAuth } from "./Context/AuthContext";
 import Tasks from "./components/Tasks/Tasks";
+import PlusToXButton from "./components/Testing/Temp";
 
 function App() {
   const location = useLocation();
@@ -241,18 +242,18 @@ function App() {
                               }
                             />
                             <Route
-                              path="/pop"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Testing />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
                               path="/tasks"
                               element={
                                 <ProtectedRoute allowedRoles={[1]}>
                                   <Tasks />
+                                </ProtectedRoute>
+                              }
+                            />
+                            <Route
+                              path="/pop"
+                              element={
+                                <ProtectedRoute allowedRoles={[1]}>
+                                  <PlusToXButton />
                                 </ProtectedRoute>
                               }
                             />
