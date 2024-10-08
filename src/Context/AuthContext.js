@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode"; // Make sure to install jwt-decode
+import { jwtDecode } from "jwt-decode"; // Make sure to install jwt-decode
 
 const AuthContext = createContext();
 
@@ -38,12 +38,15 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("UserID");
     setIsLoggedIn(false);
     setUserRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userRole, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, userRole, login, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

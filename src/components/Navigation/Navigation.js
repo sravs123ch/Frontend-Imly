@@ -78,10 +78,6 @@ export default function Navigation() {
   const location = useLocation(); // Initialize useLocation
   const { logout } = useAuth();
 
-  // const handleSignOut = () => {
-  //   // Handle sign out logic here
-  //   navigate('/'); // Navigate to login page
-  // };
   const handleSignOut = () => {
     logout();
     navigate("/");

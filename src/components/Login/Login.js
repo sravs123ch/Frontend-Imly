@@ -47,7 +47,6 @@ const Login = () => {
     }
   };
 
-  // Inside handleLogin
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -65,10 +64,16 @@ const Login = () => {
         console.log("Login successful:", data);
         const { token } = data;
 
+        // Decode the token to get UserID and RoleID
         const decodedToken = jwtDecode(token);
         const roleID = decodedToken.RoleID;
+        const userID = decodedToken.UserID; // Assuming UserID is in the token
 
-        login(token, roleID);
+        // Store UserID in local storage
+        localStorage.setItem("UserID", userID);
+
+        // Login function from context
+        login(token, roleID, userID);
 
         // Fetch cities, states, and countries data if not present
         await fetchApiData();
