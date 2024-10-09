@@ -25,6 +25,7 @@ module.exports = {
         'custom-lightblue':"#CADCFC",
         'custom-maroon':"#fafafa",
         'custom-lightbrown': '#C07A50',
+        'custom-blue-table': '#003375',
       },
     },
   },

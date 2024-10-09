@@ -35,7 +35,7 @@
 }
 
 .action-button {
-  @apply w-full inline-flex items-center gap-x-1.5 rounded-md bg-custom-brown px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightbrown hover:text-gray-700 focus:outline-none;
+  @apply w-full inline-flex items-center gap-x-1.5 rounded-md bg-custom-blue-table px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightbrown hover:text-gray-700 focus:outline-none;
 }
 
 .icon {

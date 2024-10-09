@@ -135,7 +135,9 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     // backgroundColor: '#003375',
-    backgroundColor: '#622f0f',
+    backgroundColor: '#003375',
+    // backgroundColor: '#622f0f',
+    
     color: theme.palette.common.white,
     fontWeight: 'bold',
     width: '150px',
