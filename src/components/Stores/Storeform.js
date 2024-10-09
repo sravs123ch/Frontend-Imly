@@ -90,11 +90,15 @@ function StoreForm() {
           toast.success("User  added successfully!");
         } else {
           console.error("Failed to add user:", response.data);
-          toast.error("Failed to add user");
+          toast.error(response.data.message); // Display the error message
         }
       } catch (error) {
         console.error("Error adding user:", error);
-        toast.error("Error adding user");
+        if (error.response) {
+          toast.error(error.response.data.message); // Display the error message
+        } else {
+          toast.error("Error adding user");
+        }
       } finally {
         setIsLoading(false); // Hide loading animation
       }
