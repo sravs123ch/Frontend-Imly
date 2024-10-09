@@ -44,6 +44,65 @@ const steps = ["Store Details", "Store Users"];
 function StoreForm() {
   const location = useLocation();
 
+  const handleUserSelect = (user) => {
+    setSelectedUsers([user]);
+    setIsFocused(false);
+    setSearchQuery(`${user.FirstName} ${user.LastName}`);
+  };
+  const saveSelectedUser = async () => {
+    if (selectedUsers.length > 0) {
+      setIsLoading(true); // Show loading animation
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const store =
+          location.state?.storeDetails?.store || storeDetails?.store;
+        const storeID = store?.StoreID || "";
+
+        const payload = {
+          MapStoreUserID: 0,
+          StoreID: storeID,
+          UserID: selectedUsers[0].UserID,
+          CreatedBy: "Danny",
+          FirstName: selectedUsers[0].FirstName,
+          LastName: selectedUsers[0].LastName,
+          Email: selectedUsers[0].Email,
+          PhoneNumber: selectedUsers[0].PhoneNumber,
+        };
+
+        const response = await axios.post(
+          CREATEORUPDATE_MAPSTOREUSER,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          setTableUsers((prevUsers) => [...prevUsers, selectedUsers[0]]);
+          setSelectedUsers([]);
+          toast.success("User  added successfully!");
+        } else {
+          console.error("Failed to add user:", response.data);
+          toast.error("Failed to add user");
+        }
+      } catch (error) {
+        console.error("Error adding user:", error);
+        toast.error("Error adding user");
+      } finally {
+        setIsLoading(false); // Hide loading animation
+      }
+    } else {
+      console.error("No user selected");
+    }
+  };
+
   const navigate = useNavigate();
   const { storeDetails } = useContext(StoreContext);
   const [storeUsers, setStoreUsers] = useState([]);
@@ -891,47 +950,38 @@ function StoreForm() {
                               {/* Display loading animation when loading */}
                             </div>
                           ) : filteredUsers.length > 0 ? (
-                            <>
+                            <div>
                               <div className="mb-2 text-sm text-gray-600 px-2">
                                 {filteredUsers.length} Result
                                 {filteredUsers.length > 1 ? "s" : ""}
                               </div>
 
                               {filteredUsers.map((user) => (
-                                <div>
-                                  <div
-                                    className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                                    key={user.UserID}
-                                  >
-                                    <span className="font-medium">
-                                      {user.FirstName} {user.LastName}
-                                    </span>
-                                    <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                      <IoIosCall
-                                        className="w-4 h-4 mr-1"
-                                        aria-label="Phone Icon"
-                                      />
-                                      <span>{user.PhoneNumber}</span>
-                                    </div>
-                                    <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                      <IoMdMail
-                                        className="w-4 h-4 mr-1"
-                                        aria-label="Email Icon"
-                                      />
-                                      <span>{user.Email}</span>
-                                    </div>
-
-                                    <button
-                                      type="button"
-                                      onClick={() => handleUserClick(user)}
-                                      className="button-base save-btn mt-2"
-                                    >
-                                      Add User
-                                    </button>
+                                <div
+                                  key={user.UserID}
+                                  className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
+                                  onClick={() => handleUserSelect(user)}
+                                >
+                                  <span className="font-medium">
+                                    {user.FirstName} {user.LastName}
+                                  </span>
+                                  <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                    <IoIosCall
+                                      className="w-4 h-4 mr-1"
+                                      aria-label="Phone Icon"
+                                    />
+                                    <span>{user.PhoneNumber}</span>
+                                  </div>
+                                  <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                    <IoMdMail
+                                      className="w-4 h-4 mr-1"
+                                      aria-label="Email Icon"
+                                    />
+                                    <span>{user.Email}</span>
                                   </div>
                                 </div>
                               ))}
-                            </>
+                            </div>
                           ) : (
                             <div className="flex justify-center p-4 text-gray-500">
                               {loading ? (
@@ -944,9 +994,29 @@ function StoreForm() {
                         </div>
                       )}
                     </div>
+                    {/* Selected User */}
                   </div>
 
-                  <TableContainer component={Paper}>
+                  <div className="mt-6 flex justify-end gap-4">
+                    <button
+                      type="submit"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      onClick={saveSelectedUser}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <TableContainer
+                    component={Paper}
+                    sx={{ width: "90%", margin: "0 auto", mt: 4 }}
+                  >
                     <Table aria-label="store users table">
                       <TableHead>
                         <TableRow>
@@ -1004,14 +1074,8 @@ function StoreForm() {
                     </Table>
                   </TableContainer>
 
-                  <div className="mt-6 flex justify-end gap-4">
-                    {/* <button
-                        type="submit"
-                        className="button-base save-btn"
-                        onClick={handleFormSubmit}
-                      >
-                        {isEditMode ? "Update" : "Save"}
-                      </button> */}
+                  {/* <div className="mt-6 flex justify-end gap-4">
+                   
                     <button
                       type="button"
                       onClick={
@@ -1027,7 +1091,8 @@ function StoreForm() {
                     >
                       {activeStep === steps.length - 1 ? "Save" : "Cancel"}
                     </button>
-                  </div>
+                  </div> */}
+
                   {isLoading && <LoadingAnimation />}
                 </div>
               </div>
