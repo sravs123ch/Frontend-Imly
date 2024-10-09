@@ -229,29 +229,34 @@ function StoreForm() {
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    setFormData({
-      TenantID: 1,
-      StoreID: null,
-      StoreName: "",
-      Email: "",
-      Phone: "",
-      AddressLine1: "",
-      AddressLine2: "",
-      CityID: "",
-      StateID: "",
-      CountryID: "",
-      ZipCode: "",
-    });
-    setSelectedCountry("");
-    setSelectedState("");
-    setSelectedCity("");
-    setFilteredStates([]);
-    setFilteredCities([]);
-    setTableUsers([]);
+  const handleFinish = () => {
+    setTimeout(() => {
+      navigate("/Stores");
+    }, 500);
   };
+
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  //   setFormData({
+  //     TenantID: 1,
+  //     StoreID: null,
+  //     StoreName: "",
+  //     Email: "",
+  //     Phone: "",
+  //     AddressLine1: "",
+  //     AddressLine2: "",
+  //     CityID: "",
+  //     StateID: "",
+  //     CountryID: "",
+  //     ZipCode: "",
+  //   });
+  //   setSelectedCountry("");
+  //   setSelectedState("");
+  //   setSelectedCity("");
+  //   setFilteredStates([]);
+  //   setFilteredCities([]);
+  //   setTableUsers([]);
+  // };
 
   const isStepSkipped = (step) => false;
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
@@ -1038,11 +1043,11 @@ function StoreForm() {
               </Button>
               <Button
                 onClick={
-                  activeStep === steps.length - 1 ? handleReset : handleNext
+                  activeStep === steps.length - 1 ? handleFinish : handleNext
                 }
                 className="bg-blue-500 text-white px-4 py-2 rounded"
               >
-                {activeStep === steps.length - 1 ? "Reset Form" : "Next"}
+                {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
             </Box>
           </React.Fragment>
