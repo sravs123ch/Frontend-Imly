@@ -42,6 +42,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useAuth } from "./Context/AuthContext";
 import Tasks from "./components/Tasks/Tasks";
 import PlusToXButton from "./components/Testing/Temp";
+import { UpdatedStatusOrderProvider } from "./Context/UpdatedOrder";
 
 function App() {
   const location = useLocation();
@@ -53,219 +54,221 @@ function App() {
       {showNavigation && <Navigation />}
       <main className="flex-grow p-0gi bg-gray-100">
         <UserProvider>
-          <StoreProvider>
-            <CustomerProvider>
-              <RoleProvider>
-                <PaymentProvider>
-                  <LoadingProvider>
-                    <OrderProvider>
-                      <DataProvider>
-                        <IdProvider>
-                          <Routes>
-                            <Route path="/" element={<Login />} />
-                            <Route
-                              path="/product"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <ProductPage />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/products"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <AddProduct />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/user"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <User />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Customer"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Customer />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Orders"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Orders />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/dashboard"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Dashboard />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/add-product"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <AddEditProduct />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/OrdersAdd"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <AddOrders />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Stores"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Stores />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Reports"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Reports />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Payments"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Payments />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Paymentsform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Paymentform />
-                                </ProtectedRoute>
-                              }
-                            />
-                            {/* <Route path="/User-roleform" element={<UserRole/>} /> */}
-                            <Route
-                              path="/RoleUser"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <RoleUser />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/RoleUserAddform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <RoleUserAddForm />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Popup"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <SuccessPopup />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/RoleUserEditform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <RoleUserEditForm />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Customerform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <AddCustomers />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Userform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Userform />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Storesform"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Storesform />
-                                </ProtectedRoute>
-                              }
-                            />
+          <UpdatedStatusOrderProvider>
+            <StoreProvider>
+              <CustomerProvider>
+                <RoleProvider>
+                  <PaymentProvider>
+                    <LoadingProvider>
+                      <OrderProvider>
+                        <DataProvider>
+                          <IdProvider>
+                            <Routes>
+                              <Route path="/" element={<Login />} />
+                              <Route
+                                path="/product"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <ProductPage />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/products"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <AddProduct />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/user"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <User />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Customer"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Customer />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Orders"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Orders />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/dashboard"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Dashboard />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/add-product"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <AddEditProduct />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/OrdersAdd"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <AddOrders />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Stores"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Stores />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Reports"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Reports />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Payments"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Payments />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Paymentsform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Paymentform />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              {/* <Route path="/User-roleform" element={<UserRole/>} /> */}
+                              <Route
+                                path="/RoleUser"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <RoleUser />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/RoleUserAddform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <RoleUserAddForm />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Popup"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <SuccessPopup />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/RoleUserEditform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <RoleUserEditForm />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Customerform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <AddCustomers />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Userform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Userform />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Storesform"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Storesform />
+                                  </ProtectedRoute>
+                                }
+                              />
 
-                            <Route
-                              path="/update-order"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <UpdateOrder />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/Returns"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Returns />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/production"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Production />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/tasks"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <Tasks />
-                                </ProtectedRoute>
-                              }
-                            />
-                            <Route
-                              path="/pop"
-                              element={
-                                <ProtectedRoute allowedRoles={[1]}>
-                                  <PlusToXButton />
-                                </ProtectedRoute>
-                              }
-                            />
-                          </Routes>
-                        </IdProvider>
-                      </DataProvider>
-                    </OrderProvider>
-                  </LoadingProvider>
-                </PaymentProvider>
-              </RoleProvider>
-            </CustomerProvider>
-          </StoreProvider>
+                              <Route
+                                path="/update-order"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <UpdateOrder />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/Returns"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Returns />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/production"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Production />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/tasks"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Tasks />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/pop"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <PlusToXButton />
+                                  </ProtectedRoute>
+                                }
+                              />
+                            </Routes>
+                          </IdProvider>
+                        </DataProvider>
+                      </OrderProvider>
+                    </LoadingProvider>
+                  </PaymentProvider>
+                </RoleProvider>
+              </CustomerProvider>
+            </StoreProvider>
+          </UpdatedStatusOrderProvider>
         </UserProvider>
       </main>
     </div>

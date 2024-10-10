@@ -20,6 +20,7 @@ import {
   GET_ALL_ORDERS,
   GETALLSTORES_API,
   GETORDERBYID_API,
+  GET_ORDER_REPORT,
 } from "../../Constants/apiRoutes";
 import {
   StyledTableCell,
@@ -35,6 +36,8 @@ import { IoIosSearch } from "react-icons/io";
 import Datepicker from "react-tailwindcss-datepicker";
 import { OrderContext } from "../../Context/orderContext";
 import { DataContext } from "../../Context/DataContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
@@ -52,6 +55,7 @@ const Orders = () => {
   const [searchName, setSearchName] = useState("");
   const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const searchItems = (value) => {
     setSearchName(value);
@@ -187,13 +191,107 @@ const Orders = () => {
     navigate("/OrdersAdd");
   };
   const handleExportOrder = async () => {
+    setIsLoading(true);
+    const url = GET_ORDER_REPORT; // New API endpoint
+
+    // Define the request body (JSON format)
+    const data = {
+      StartDate: value.startDate,
+      EndDate: value.endDate,
+      StoreID: null, // Use selected store for ID
+      StatusID: null, // Ensure status is not undefined
+    };
+
     try {
-      // Assuming you have a function to fetch all orders
-      const { orders } = await getAllOrders(0, totalOrders); // Adjust parameters as needed
-      exportToExcel(orders, "orders"); // Export to Excel
+      // Make the POST request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      // Log the content type
+      const contentType = response.headers.get("Content-Type");
+      console.log("Content-Type:", contentType);
+
+      // Check if the response is okay
+      if (
+        response.ok &&
+        contentType ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      ) {
+        // Process response as a blob for the Excel file
+        const blob = await response.blob();
+        console.log(blob); // Log the blob to check its content
+
+        // Create a link element
+        const link = document.createElement("a");
+        // Set the blob URL as the href
+        link.href = window.URL.createObjectURL(blob);
+        // Set the download attribute with a filename
+        link.download = "order_report.xlsx";
+        // Append the link to the body
+        document.body.appendChild(link);
+        // Programmatically click the link to trigger the download
+        link.click();
+        // Remove the link from the document
+        link.remove();
+
+        // Show success toast
+        toast.success("Excel file downloaded successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        const errorText = await response.text(); // Get the error message from the response
+        console.error(
+          "Failed to download the file:",
+          response.status,
+          response.statusText,
+          errorText
+        );
+
+        // Parse the error text as JSON and extract the error message
+        let errorMessage = "";
+        try {
+          const parsedError = JSON.parse(errorText);
+          errorMessage = parsedError.error; // Access the error message
+        } catch (e) {
+          errorMessage = "An unexpected error occurred"; // Fallback error message
+        }
+
+        // Show error toast with backend message
+        toast.error(`Failed to download the file: ${errorMessage}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     } catch (error) {
-      console.error("Error exporting order data:", error);
+      console.error("Error while fetching the report:", error);
+      // Show error toast with error message
+      toast.error(`Error while fetching the report: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
+    setIsLoading(false);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -203,6 +301,7 @@ const Orders = () => {
 
   return (
     <div className="main-container">
+      <ToastContainer />
       <div className="body-container">
         <h2 className="heading">Orders</h2>
 
@@ -258,7 +357,6 @@ const Orders = () => {
                 className="combobox-input w-full h-full"
                 displayValue={(store) => store?.StoreName || "Select Store ID"}
                 placeholder="Select Store Name"
-                
               />
               <Combobox.Button className="combobox-button">
                 <ChevronUpDownIcon

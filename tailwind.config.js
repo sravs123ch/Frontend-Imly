@@ -27,6 +27,9 @@ module.exports = {
         'custom-lightbrown': '#C07A50',
         'custom-blue-table': '#003375',
       },
+      fontSize: {
+        'xxs': '0.625rem', // 10px
+      }
     },
   },
   plugins: [],

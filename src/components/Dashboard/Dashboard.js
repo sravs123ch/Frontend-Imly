@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Combobox } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { GETALLSTORES_API } from "../../Constants/apiRoutes";
+import Datepicker from "react-tailwindcss-datepicker";
+import axios from "axios";
 import {
   faChartLine,
   faUsers,
@@ -30,8 +35,32 @@ const Dashboard = () => {
   const [citiesData, setCitiesData] = useState([]);
   const [statesData, setStatesData] = useState([]);
   const [countriesData, setCountriesData] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  const [storeNames, setStoreNames] = useState([]);
+  const [value, setValue] = useState({
+    startDate: "",
+    endDate: "",
+  });
 
-  
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await axios.get(GETALLSTORES_API);
+        console.log("API Response:", response.data);
+
+        // Extract the Stores array from the API response
+        const storesData = response.data.Stores || [];
+
+        // Check if it's an array and set store names
+        setStoreNames(Array.isArray(storesData) ? storesData : []);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+
+    fetchStores();
+  }, []);
 
   // Example data for the charts (you can replace this with actual API data)
 
@@ -119,8 +148,110 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="p-4 ml-10 lg:ml-72 sm:p-6 bg-gray-100">
+    <div className="main-container">
       {/* Dashboard Header */}
+      <div className="flex justify-end items-center space-x-4">
+        <div className="flex flex-col items-end">
+          <div className="combobox-container flex-1">
+            <Combobox value={selectedStore} onChange={setSelectedStore}>
+              <div className="combobox-wrapper">
+                <Combobox.Input
+                  className="combobox-input w-full h-10 px-3"
+                  displayValue={(store) => store?.StoreName || "Select Store ID"}
+                  placeholder="Select Store Name"
+                />
+                <Combobox.Button className="combobox-button">
+                  <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
+                </Combobox.Button>
+                <Combobox.Options className="combobox-options">
+                  <Combobox.Option
+                    key="select-store-id"
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={{ StoreID: null, StoreName: "Select Store ID" }}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          Select Store ID
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon className="combobox-check-icon" aria-hidden="true" />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+
+                  {storeNames.map((store) => (
+                    <Combobox.Option
+                      key={store.StoreID}
+                      className={({ active }) =>
+                        active ? "combobox-option-active" : "combobox-option"
+                      }
+                      value={store}
+                    >
+                      {({ selected, active }) => (
+                        <>
+                          <span
+                            className={
+                              selected
+                                ? "combobox-option-text font-semibold"
+                                : "combobox-option-text font-normal"
+                            }
+                          >
+                            {store.StoreName}
+                          </span>
+                          {selected && (
+                            <span
+                              className={
+                                active
+                                  ? "combobox-option-selected-icon active-selected-icon"
+                                  : "combobox-option-selected-icon"
+                              }
+                            >
+                              <CheckIcon className="combobox-check-icon" aria-hidden="true" />
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
+              </div>
+            </Combobox>
+          </div>
+        </div>
+
+        <div className="w-1/4">
+          <div className="border-solid border-gray-400 border-[1px] rounded-lg w-full">
+            <Datepicker
+              popoverDirection="down"
+              showShortcuts={true}
+              showFooter={true}
+              placeholder="Start Date and End Date"
+              primaryColor={"purple"}
+              value={value}
+              onChange={(newValue) => setValue(newValue)}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-blue-500 text-white shadow rounded-lg p-4 relative">

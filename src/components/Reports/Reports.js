@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
@@ -14,15 +14,26 @@ import { Combobox } from "@headlessui/react"; // Import Combobox from Headless U
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/24/outline"; // Adjust the path b
 import axios from "axios";
 import { FaCalendarAlt } from "react-icons/fa";
-import { GETALLSTORES_API, ORDER_STATUS_API } from "../../Constants/apiRoutes";
+import {
+  GETALLSTORES_API,
+  CUSTOMER_REPORT_API,
+  ORDER_STATUS_API,
+  PAYMENT_REPORT_API,
+  GET_INVENTORY_FILE_API,
+  GET_INVENTORY_FILE_UPL_API,
+  GET_ALL_ORDERS,
+  GET_ORDER_REPORT,
+} from "../../Constants/apiRoutes";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Datepicker from "react-tailwindcss-datepicker";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
+import { DataContext } from "../../Context/DataContext";
+import { OrderContext } from "../../Context/orderContext";
 
 function ReportGenerator() {
   const [activeTab, setActiveTab] = useState("salesReport");
-  const [stores, setStores] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [orderIds, setOrderIds] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null); // Initially null
@@ -38,7 +49,6 @@ function ReportGenerator() {
   // 3. Define errors state for validation
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const [storeNames, setStoreNames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [salesReport, setSalesReport] = useState({
@@ -59,6 +69,17 @@ function ReportGenerator() {
     store: "",
   });
 
+  const { setOrderIdDetails } = useContext(OrderContext);
+
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
+
   const [customerFeedback, setCustomerFeedback] = useState({
     dateRange: { startDate: "", endDate: "" },
     productCategory: "",
@@ -66,7 +87,6 @@ function ReportGenerator() {
   });
 
   const [generatedReport, setGeneratedReport] = useState(null);
-  const [selectedStore, setSelectedStore] = useState(null);
   const [selectedStore2, setSelectedStore2] = useState(null);
   const [selectedStore3, setSelectedStore3] = useState(null);
 
@@ -219,8 +239,7 @@ function ReportGenerator() {
       return;
     }
 
-    const uploadUrl =
-      "https://imly-b2y.onrender.com/api/InventoryFile/uploadInventoryFile";
+    const uploadUrl = GET_INVENTORY_FILE_UPL_API;
 
     const formData = new FormData();
     formData.append("inventoryFile", selectedFile); // Ensure this is the correct field name
@@ -283,8 +302,8 @@ function ReportGenerator() {
   const handleFileDownload = () => {
     // Check if fileID is available from upload
     if (fileID) {
-      const downloadUrl = `https://imly-b2y.onrender.com/api/InventoryFile/getInventoryFileById/${fileID}`;
-
+      setIsLoading(true);
+      const downloadUrl = GET_INVENTORY_FILE_API(fileID);
       fetch(downloadUrl)
         .then((response) => {
           if (!response.ok) {
@@ -301,37 +320,80 @@ function ReportGenerator() {
             link.setAttribute("download", "file"); // Set the download attribute with a default filename
             document.body.appendChild(link);
             link.click(); // Trigger the download
-            document.body.removeChild(link); // Remove the link element from the DOM
+            document.body.removeChild(link);
+
+            // Show success toast message
+            toast.success("File downloaded successfully!", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
           } else {
-            alert("Download URL is not available for the uploaded file.");
+            toast.error(
+              "Download URL is not available for the uploaded file.",
+              {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              }
+            );
           }
         })
         .catch((error) => {
           console.error("Error:", error);
-          alert("Failed to download the file using the uploaded file ID.");
+          toast.error(
+            "Failed to download the file using the uploaded file ID.",
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
         });
     } else {
-      alert("No file uploaded. Please upload a file first.");
+      toast.warn("No file uploaded. Please upload a file first.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
-  };
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get(GETALLSTORES_API);
-        console.log("API Response:", response.data);
-
-        // Extract the Stores array from the API response
-        const storesData = response.data.Stores || [];
-
-        // Check if it's an array and set store names
-        setStoreNames(Array.isArray(storesData) ? storesData : []);
-      } catch (error) {
-        console.error("Error fetching stores:", error);
-      }
-    };
     setIsLoading(false);
-    fetchStores();
-  }, []);
+  };
+
+  // useEffect(() => {
+  //   const fetchStores = async () => {
+  //     try {
+  //       const response = await axios.get(GETALLSTORES_API);
+  //       console.log("API Response:", response.data);
+
+  //       // Extract the Stores array from the API response
+  //       const storesData = response.data.Stores || [];
+
+  //       // Check if it's an array and set store names
+  //       setStoreNames(Array.isArray(storesData) ? storesData : []);
+  //     } catch (error) {
+  //       console.error("Error fetching stores:", error);
+  //     }
+  //   };
+  //   setIsLoading(false);
+  //   fetchStores();
+  // }, []);
   //fe
   useEffect(() => {
     const fetchOrderStatuses = async () => {
@@ -365,16 +427,11 @@ function ReportGenerator() {
   const handleSelect = (statusID) => {
     setSelectedStatus(statusID);
   };
-  // Fix: Define orders and setOrders
-
-  // Fetch all orders
 
   useEffect(() => {
     const fetchOrderNumbers = async () => {
       try {
-        const response = await fetch(
-          "https://imly-b2y.onrender.com/api/orders/getAllOrders"
-        );
+        const response = await fetch(GET_ALL_ORDERS); // Use the constant here
         const data = await response.json();
 
         if (data.StatusCode === "SUCCESS" && Array.isArray(data.data)) {
@@ -428,7 +485,7 @@ function ReportGenerator() {
   // Define handleInputChange2 function
   const postData = async () => {
     setIsLoading(true);
-    const url = "https://imly-b2y.onrender.com/api/reports/getPaymentReport"; // API endpoint
+    const url = PAYMENT_REPORT_API; // API endpoint
 
     // Define the request body (JSON format)
     const data = {
@@ -527,7 +584,7 @@ function ReportGenerator() {
 
   const postData0 = async () => {
     setIsLoading(true);
-    const url = "https://imly-b2y.onrender.com/api/reports/getOrderReport"; // New API endpoint
+    const url = GET_ORDER_REPORT; // New API endpoint
 
     // Define the request body (JSON format)
     const data = {
@@ -634,7 +691,7 @@ function ReportGenerator() {
   };
   const postData1 = async () => {
     setIsLoading(true);
-    const url = "https://imly-b2y.onrender.com/api/reports/getCustomerReport"; // New API endpoint
+    const url = CUSTOMER_REPORT_API; // New API endpoint
 
     // Define the request body (JSON format)
     const data = {
@@ -926,7 +983,7 @@ function ReportGenerator() {
                         </Combobox.Option>
 
                         {/* Render all store options */}
-                        {storeNames.map((store) => (
+                        {stores.map((store) => (
                           <Combobox.Option
                             key={store.StoreID}
                             className={({ active }) =>
@@ -1149,7 +1206,7 @@ function ReportGenerator() {
                         </Combobox.Option>
 
                         {/* Render all store options */}
-                        {storeNames.map((store) => (
+                        {stores.map((store) => (
                           <Combobox.Option
                             key={store.StoreID}
                             className={({ active }) =>
@@ -1351,7 +1408,7 @@ function ReportGenerator() {
                         </Combobox.Option>
 
                         {/* Render all store options */}
-                        {storeNames.map((store) => (
+                        {stores.map((store) => (
                           <Combobox.Option
                             key={store.StoreID}
                             className={({ active }) =>

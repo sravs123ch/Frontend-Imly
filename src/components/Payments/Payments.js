@@ -19,7 +19,10 @@ import {
   StyledTableRow,
   TablePaginationActions,
 } from "../CustomTablePagination";
-import { GET_ALL_PAYMENTS_API } from "../../../src/Constants/apiRoutes";
+import {
+  GET_ALL_PAYMENTS_API,
+  PAYMENT_REPORT_API,
+} from "../../../src/Constants/apiRoutes";
 import LoadingAnimation from "../Loading/LoadingAnimation";
 import { Combobox } from "@headlessui/react";
 import { DataContext } from "../../Context/DataContext";
@@ -31,6 +34,7 @@ import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
 import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
 import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
+import { ToastContainer, toast } from "react-toastify";
 
 function Payment() {
   const [payments, setPayments] = useState([]);
@@ -58,7 +62,7 @@ function Payment() {
   });
 
   const fetchPayments = async () => {
-    setIsLoading(true); // Set isLoading to true before making the network call
+    setIsLoading(true);
     try {
       const { payments, totalCount } = await getAllPayments(
         page,
@@ -70,23 +74,19 @@ function Payment() {
     } catch (error) {
       console.error("Failed to fetch payments", error);
     } finally {
-      setIsLoading(false); // Set isLoading to false in the finally block
+      setIsLoading(false);
     }
   };
 
   const getAllPayments = async (pageNum, pageSize, search = "") => {
     try {
-      const response = await axios.get(
-        GET_ALL_PAYMENTS_API,
-
-        {
-          params: {
-            page: pageNum + 1,
-            limit: pageSize,
-            search: search,
-          },
-        }
-      );
+      const response = await axios.get(GET_ALL_PAYMENTS_API, {
+        params: {
+          page: pageNum + 1,
+          limit: pageSize,
+          search: search,
+        },
+      });
       return {
         payments: response.data.data || [],
         totalCount: response.data.totalRecords || 0,
@@ -95,6 +95,100 @@ function Payment() {
       console.error("Error fetching payments:", error);
       throw error;
     }
+  };
+  const handleExportPaymentsData = async () => {
+    setIsLoading(true);
+    const url = PAYMENT_REPORT_API; // API endpoint
+
+    // Define the request body (JSON format)
+    const data = {
+      StartDate: value.startDate,
+      EndDate: value.endDate,
+      StoreID: null,
+      OrderID: null,
+    };
+
+    try {
+      // Make the POST request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      // Check if the response is okay
+      if (response.ok) {
+        // Process response as a blob for the Excel file
+        const blob = await response.blob();
+
+        // Create a link element
+        const link = document.createElement("a");
+        // Set the blob URL as the href
+        link.href = window.URL.createObjectURL(blob);
+        // Set the download attribute with a filename (e.g., "payment_report.xlsx")
+        link.download = "payment_report.xlsx"; // Adjust the filename as needed
+        // Append the link to the body
+        document.body.appendChild(link);
+        // Programmatically click the link to trigger the download
+        link.click();
+        // Remove the link from the document
+        link.remove();
+
+        // Show success toast
+        toast.success("Excel file downloaded successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        const errorText = await response.text(); // Get the error message from the response
+        console.error(
+          "Failed to download the file:",
+          response.status,
+          response.statusText,
+          errorText
+        );
+
+        // Parse the error text as JSON and extract the error message
+        let errorMessage = "";
+        try {
+          const parsedError = JSON.parse(errorText);
+          errorMessage = parsedError.error; // Access the error message
+        } catch (e) {
+          errorMessage = "An unexpected error occurred"; // Fallback error message
+        }
+
+        // Show error toast with backend message
+        toast.error(`Failed to download the file: ${errorMessage}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    } catch (error) {
+      console.error("Error while fetching the report:", error);
+      // Show error toast with error message
+      toast.error(`Error while fetching the report: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -170,17 +264,9 @@ function Payment() {
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
 
-  const handleExportPaymentsData = async () => {
-    try {
-      const { payments } = await getAllPayments(0, totalPayments);
-      exportToExcel(payments, "Payments");
-    } catch (error) {
-      console.error("Error exporting payments data:", error);
-    }
-  };
-
   return (
     <div className="main-container">
+      <ToastContainer />
       <div className="body-container">
         <h2 className="heading">Payments</h2>
         <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
