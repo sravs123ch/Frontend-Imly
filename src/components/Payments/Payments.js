@@ -1,26 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
-import { useTheme } from "@mui/material/styles";
+
 import { FaPlus, FaTable } from "react-icons/fa";
 import * as XLSX from "xlsx";
-import PropTypes from "prop-types";
-import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
 import { PaymentContext } from "../../Context/paymentContext";
@@ -29,13 +19,19 @@ import {
   StyledTableRow,
   TablePaginationActions,
 } from "../CustomTablePagination";
-import {
-  GET_ALL_PAYMENTS_API,
-  GET_PAYMENTSBY_ORDERID_API,
-  GETPAYMENTSBY_PAYMETID_API,
-  CREATEORUPDATE_PAYMENTS_API,
-} from "../../../src/Constants/apiRoutes";
+import { GET_ALL_PAYMENTS_API } from "../../../src/Constants/apiRoutes";
 import LoadingAnimation from "../Loading/LoadingAnimation";
+import { Combobox } from "@headlessui/react";
+import { DataContext } from "../../Context/DataContext";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import Datepicker from "react-tailwindcss-datepicker";
+import CashIcon from "../../assests/Images/Payments/indian-rupees.svg";
+import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
+import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
+import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
+import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
+import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
+
 function Payment() {
   const [payments, setPayments] = useState([]);
   const [page, setPage] = useState(0);
@@ -46,6 +42,20 @@ function Payment() {
   const { setPaymentDetails } = useContext(PaymentContext);
   const [paginatedPeople, setPaginatedPeople] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
+
+  const [value, setValue] = useState({
+    startDate: "",
+    endDate: "",
+  });
 
   const fetchPayments = async () => {
     setIsLoading(true); // Set isLoading to true before making the network call
@@ -91,6 +101,54 @@ function Payment() {
     fetchPayments();
   }, [page, rowsPerPage, searchName]);
 
+  const getPaymentMethodIcon = (paymentMethod) => {
+    switch (paymentMethod) {
+      case "Cash":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={CashIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Credit Card":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={CreditCardIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "UPI":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={UpiIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "AmazonPay":
+        return (
+          <div className=" rounded-full">
+            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "PayPal":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Debit Card":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={DebitCardIcon} alt="Cash Icon" />
+          </div>
+        );
+
+      default:
+        return (
+          <div>
+            <strong>N/A</strong>
+          </div>
+        );
+    }
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -122,28 +180,11 @@ function Payment() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
-      <div className="mt-6 bg-white p-6 ">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
-          <h2 className="text-xl font-semibold">Payments</h2>
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="relative flex w-full sm:w-[20rem]">
-              <label htmlFor="searchName" className="sr-only">
-                Search
-              </label>
-              <input
-                id="searchName"
-                type="text"
-                placeholder="Search by CustomerName Or OrderNumber"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                className="w-full p-2 pr-10 border border-gray-300 rounded-md"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <IoIosSearch />
-              </div>
-            </div>
-
+    <div className="main-container">
+      <div className="body-container">
+        <h2 className="heading">Payments</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="search-button-group">
             <ul className="button-list">
               <li>
                 <button
@@ -168,86 +209,214 @@ function Payment() {
             </ul>
           </div>
         </div>
-        {isLoading && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-            <LoadingAnimation />
-          </div>
-        )}
-        <TableContainer component={Paper} className="mt-4">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Payment Method</StyledTableCell>
-                <StyledTableCell>Payment Date</StyledTableCell>
-                <StyledTableCell>Order ID</StyledTableCell>
-                <StyledTableCell>Customer ID</StyledTableCell>
-                <StyledTableCell>Total Amount</StyledTableCell>
-                <StyledTableCell>Payment Status</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {payments.map((payment) => (
-                <StyledTableRow key={payment.PaymentID}>
-                  <StyledTableCell>{payment.PaymentMethod}</StyledTableCell>
-                  <StyledTableCell>
-                    {new Date(payment.PaymentDate).toLocaleDateString()}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {payment.OrderID ?? "Not available"}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {payment.CustomerID ?? "Not available"}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {payment.TotalAmount
-                      ? `₹${new Intl.NumberFormat("en-IN", {
-                          maximumFractionDigits: 2,
-                        }).format(payment.TotalAmount)}`
-                      : "₹0.00"}
-                  </StyledTableCell>
-
-                  {/* Payment Status with Conditional Styling */}
-                  <StyledTableCell className="text-center">
-                    <span
-                      className={`inline-block px-2 py-1 text-xs font-semibold rounded-full
-  ${
-    payment.PaymentStatus === "Processing"
-      ? "bg-blue-200 text-blue-800"
-      : payment.PaymentStatus === "Completion"
-      ? "bg-green-200 text-green-800"
-      : payment.PaymentStatus === "Completed"
-      ? "bg-green-200 text-green-800"
-      : payment.PaymentStatus === "Dispatch"
-      ? "bg-pink-200 text-pink-800"
-      : payment.PaymentStatus === "Failed"
-      ? "bg-red-200 text-red-800"
-      : "bg-red-200 text-red-800"
-  }`}
-                    >
-                      {payment.PaymentStatus ?? "Failed"}
-                    </span>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[10, 20, 25]}
-                  colSpan={6}
-                  count={totalPayments}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
       </div>
+
+      <div className="flex flex-wrap justify-between gap-2 mt-2">
+        {/* Container for centering search box */}
+        <div className="search-container-c-u">
+          <label htmlFor="searchName" className="sr-only">
+            Search
+          </label>
+          <input
+            id="searchName"
+            type="text"
+            placeholder=" Search by Order Number / Customer Name "
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
+          />
+          <div className="search-icon-container-c-u ">
+            <IoIosSearch />
+          </div>
+        </div>
+
+        {/* Container for Combo box */}
+        <div className="combobox-container flex items-center ">
+          <Combobox value={selectedStore} onChange={setSelectedStore}>
+            <div className="combobox-wrapper  h-[40px]">
+              <Combobox.Input
+                className="combobox-input w-full h-full"
+                displayValue={(store) => store?.StoreName || "Select Store ID"}
+                placeholder="Select Store Name"
+              />
+              <Combobox.Button className="combobox-button">
+                <ChevronUpDownIcon
+                  className="combobox-icon"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+              <Combobox.Options className="combobox-options">
+                {/* Add "Select Store ID" option */}
+                <Combobox.Option
+                  key="select-store-id"
+                  className={({ active }) =>
+                    active ? "combobox-option-active" : "combobox-option"
+                  }
+                  value={{ StoreID: null, StoreName: "Select Store ID" }}
+                >
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={
+                          selected
+                            ? "combobox-option-text font-semibold"
+                            : "combobox-option-text font-normal"
+                        }
+                      >
+                        Select Store ID
+                      </span>
+                      {selected && (
+                        <span
+                          className={
+                            active
+                              ? "combobox-option-selected-icon active-selected-icon"
+                              : "combobox-option-selected-icon"
+                          }
+                        >
+                          <CheckIcon
+                            className="combobox-check-icon"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+
+                {/* Render all store options */}
+                {stores.map((store) => (
+                  <Combobox.Option
+                    key={store.StoreID}
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={store}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          {store.StoreName}
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </div>
+          </Combobox>
+        </div>
+        {/* Container for Date Pickers */}
+        <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6 ">
+          <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
+            <Datepicker
+              popoverDirection="down"
+              showShortcuts={true}
+              showFooter={true}
+              placeholder="Start Date and End Date"
+              primaryColor={"purple"}
+              value={value}
+              onChange={(newValue) => setValue(newValue)}
+            />
+          </div>
+        </div>
+      </div>
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
+          <LoadingAnimation />
+        </div>
+      )}
+      <TableContainer component={Paper} className="mt-4">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Payment Method</StyledTableCell>
+              <StyledTableCell>Payment Date</StyledTableCell>
+              <StyledTableCell>Order Number</StyledTableCell>
+              <StyledTableCell>Customer Name</StyledTableCell>
+              <StyledTableCell>Total Amount &nbsp;( &#8377; )</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {payments.map((payment) => (
+              <StyledTableRow key={payment.PaymentID}>
+                <StyledTableCell>
+                  <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
+                    {getPaymentMethodIcon(payment.PaymentMethod)}
+                    <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
+                      {payment.PaymentMethod}
+                    </div>
+                  </div>
+                </StyledTableCell>
+                <StyledTableCell>
+                  {payment.PaymentDate
+                    ? (() => {
+                        const date = new Date(payment.PaymentDate);
+                        const month = date.toLocaleString("en-US", {
+                          month: "short",
+                        });
+                        const day = String(date.getDate()).padStart(2, "0"); // Pad single-digit day
+                        const year = date.getFullYear();
+
+                        return `${month} ${day}, ${year}`;
+                      })()
+                    : "N/A"}{" "}
+                  {new Date(payment.PaymentDate)
+                    .toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                    .toUpperCase()}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {payment.OrderNumber ?? "Not available"}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {payment.CustomerName ?? "Not available"}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {payment.TotalAmount ? payment.TotalAmount : "N/A"}
+                </StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 20, 25]}
+                colSpan={6}
+                count={totalPayments}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
