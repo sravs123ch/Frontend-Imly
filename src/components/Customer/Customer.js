@@ -84,7 +84,7 @@ function Customers() {
     endDate: "",
   });
 
-  const getAllCustomers = async (pageNum, pageSize) => {
+  const getAllCustomers = async (pageNum, pageSize, searchName, storeId) => {
     console.log("Final API URL:", GETALLCUSTOMERS_API);
 
     try {
@@ -94,6 +94,7 @@ function Customers() {
           pageSize: pageSize,
           limit: pageSize,
           SearchText: searchName,
+          StoreID: storeId, // Add StoreID parameter
         },
       });
 
@@ -107,10 +108,6 @@ function Customers() {
     }
   };
 
-  useEffect(() => {
-    fetchCustomers();
-  }, [page, rowsPerPage, searchName]);
-
   // Fetch customers from API
   const fetchCustomers = async () => {
     setIsLoading(true); // Set loading state to true before fetching data
@@ -118,7 +115,8 @@ function Customers() {
       const { customers, totalCount } = await getAllCustomers(
         page,
         rowsPerPage,
-        searchName
+        searchName,
+        selectedStore?.StoreID // Pass the selected store ID
       );
       setCustomers(customers);
       setPaginatedPeople(customers);
@@ -135,16 +133,9 @@ function Customers() {
       setIsLoading(false); // Set loading state to false after fetching data
     }
   };
-
   useEffect(() => {
     fetchCustomers(); // Fetch customers on component mount or whenever page/rowsPerPage changes
-  }, [page, rowsPerPage]);
-
-  // Search customers based on the search bar
-  const searchItems = (searchValue) => {
-    setSearchName(searchValue);
-    fetchCustomers();
-  };
+  }, [page, rowsPerPage, searchName, selectedStore]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -169,10 +160,7 @@ function Customers() {
   const getCustomerAddressById = async (customerId) => {
     try {
       console.log("customers", customerId);
-      const response = await axios.get(
-        // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${customerId}`
-        `${ADDRESS_API}/${customerId}`
-      );
+      const response = await axios.get(`${ADDRESS_API}/${customerId}`);
 
       return response.data;
     } catch (error) {
@@ -224,6 +212,9 @@ function Customers() {
     } finally {
       setIsLoading(false); // Set loading state to false after deleting data
     }
+  };
+  const searchItems = (value) => {
+    setSearchName(value);
   };
 
   const exportToExcel = (data, fileName) => {
