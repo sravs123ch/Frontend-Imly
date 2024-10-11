@@ -43,6 +43,8 @@ import { useAuth } from "./Context/AuthContext";
 import Tasks from "./components/Tasks/Tasks";
 import PlusToXButton from "./components/Testing/Temp";
 import { UpdatedStatusOrderProvider } from "./Context/UpdatedOrder";
+import Test from "./components/Testing/Testing";
+import Temp from "./components/Testing/Temp";
 
 function App() {
   const location = useLocation();
@@ -256,7 +258,7 @@ function App() {
                                 path="/pop"
                                 element={
                                   <ProtectedRoute allowedRoles={[1]}>
-                                    <PlusToXButton />
+                                    <Temp />
                                   </ProtectedRoute>
                                 }
                               />

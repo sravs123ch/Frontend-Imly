@@ -1,1199 +1,289 @@
-// import React, { useState } from "react";
-
-// const PlusToXButton = () => {
-//   const [isClicked, setIsClicked] = useState(false);
-
-//   const handleClick = () => {
-//     setIsClicked(!isClicked);
-//   };
-
-//   return (
-//     <div className="main-container">
-//       <button
-//         onClick={handleClick}
-//         className={`w-16 h-16 rounded-full flex items-center justify-center relative transition-all duration-300 ${
-//           isClicked ? "bg-pink-500" : "bg-gray-800"
-//         }`}
-//       >
-//         <div className="relative w-8 h-8">
-//           {/* Horizontal line */}
-//           <span
-//             className={`block absolute h-1 w-8 bg-white rounded transition-all duration-300 ease-in-out ${
-//               isClicked ? "rotate-45" : "rotate-0"
-//             }`}
-//           ></span>
-//           {/* Vertical line */}
-//           <span
-//             className={`block absolute h-1 w-8 bg-white rounded transition-all duration-300 ease-in-out ${
-//               isClicked ? "-rotate-45" : "rotate-90"
-//             }`}
-//           ></span>
-//         </div>
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default PlusToXButton;
-
-
-import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { StoreContext } from "../../Context/storeContext";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableHead from "@mui/material/TableHead";
-import Paper from "@mui/material/Paper";
-import TableRow from "@mui/material/TableRow";
-import { Combobox } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/24/solid";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import React, { useEffect, useState } from "react";
+import { GET_ALL_ORDERS } from "../../Constants/apiRoutes";
+import { IoIosSearch } from "react-icons/io";
 
-import {
-  CREATEORUPDATE_STORES_API,
-  GETALLUSERS_API,
-  CREATEORUPDATE_MAPSTOREUSER,
-  GET_MAPSTORE_USERBYSTOREID,
-  DELETEMAPSTOREUSER,
-} from "../../Constants/apiRoutes";
-import "../../style.css";
-import LoadingAnimation from "../../components/Loading/LoadingAnimation";
-import "react-toastify/dist/ReactToastify.css";
-import { TableContainer } from "@mui/material";
-
-import {
-  StyledTableCell,
-  StyledTableRow,
-  TablePaginationActions,
-} from "../CustomTablePagination";
-import { IoIosSearch, IoIosCall, IoMdMail } from "react-icons/io";
-import { MdOutlineCancel } from "react-icons/md";
-import { DataContext } from "../../Context/DataContext";
-
-const steps = ["Store Details", "Store Users"];
-
-function StoreForm() {
-  const location = useLocation();
-
-  const navigate = useNavigate();
-  const { storeDetails } = useContext(StoreContext);
-  const [storeUsers, setStoreUsers] = useState([]);
-  const [orders, setOrders] = useState([]);
-
-  const [countryMap, setCountryMap] = useState({});
-  const [stateMap, setStateMap] = useState({});
-  const [cityMap, setCityMap] = useState({});
-
-  const { citiesData, statesData, countriesData } = useContext(DataContext);
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [filteredStates, setFilteredStates] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]);
-  const [selectedTableUsers, setSelectedTableUsers] = useState([]);
-
-  const handleSelectedUserClick = (user) => {
-    setSelectedTableUsers((prevUsers) => [...prevUsers, user]);
-    setSearchQuery("");
-    setFilteredUsers([]);
-  };
-  const handleRemoveSelectedUser = (UserID) => {
-    setSelectedTableUsers((prevUsers) =>
-      prevUsers.filter((user) => user.UserID !== UserID)
-    );
-  };
-  const handleSaveSelectedUsers = async () => {
-    try {
-      setIsLoading(true); // Show loading animation
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      // Get the StoreID based on whether it's edit mode or not
-      const store = location.state?.storeDetails?.store || storeDetails?.store;
-      const storeID = store?.StoreID || ""; // Fallback to 9 if no storeID is found
-
-      // Map over the selectedTableUsers and create a payload for each user
-      const payloads = selectedTableUsers.map((user) => {
-        return {
-          MapStoreUserID: 0,
-          StoreID: storeID, // Dynamically set the StoreID from edit mode
-          UserID: user.UserID,
-          CreatedBy: "Danny",
-          FirstName: user.FirstName,
-          LastName: user.LastName,
-          Email: user.Email,
-          PhoneNumber: user.PhoneNumber,
-        };
-      });
-      console.log(storeID)
-
-      // Make a POST request to the backend to save the users
-      const response = await axios.post(CREATEORUPDATE_MAPSTOREUSER, payloads, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      // Check if the response is successful
-      if (response.status === 201) {
-        // Optionally, display success notification or update UI here
-        toast.success("Users saved successfully!");
-        // Clear the selectedTableUsers
-        setSelectedTableUsers([]);
-      } else {
-        console.error("Failed to save users:", response.data);
-      }
-    } catch (error) {
-      console.error("Error saving users:", error);
-    } finally {
-      setIsLoading(false); // Hide loading animation
-    }
-  };
-
-  useEffect(() => {
-    if (countriesData && statesData && citiesData) {
-      setCountries(countriesData.data || []);
-      setStates(statesData.data || []);
-      setCities(citiesData.data || []);
-    }
-  }, [countriesData, statesData, citiesData]);
-
-  const [formData, setFormData] = useState(
-    location.state?.storeDetails || {
-      TenantID: 1,
-      StoreID: null,
-      StoreName: "",
-      Email: "",
-      Phone: "",
-      AddressLine1: "",
-      AddressLine2: "",
-      CityID: "",
-      StateID: "",
-      CountryID: "",
-      ZipCode: "",
-    }
-  );
-
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const isEditMode = Boolean(
-    location.state?.storeDetails?.store || storeDetails?.store
-  );
-
-  const storeId = storeDetails?.store?.StoreID;
-
-  useEffect(() => {
-    const setInitialData = async () => {
-      if (isEditMode) {
-        const store =
-          location.state?.storeDetails?.store || storeDetails?.store;
-
-        if (!store) {
-          console.warn("No store data found");
-          return;
-        }
-
-        // Find country, state, and city names by matching the IDs from the store
-        const selectedCountry = countries.find(
-          (country) => country.CountryName === store.CountryName
-        );
-        const selectedState = states.find(
-          (state) => state.StateName === store.StateName
-        );
-        const selectedCity = cities.find(
-          (city) => city.CityName === store.CityName
-        );
-        // Set form data based on store details
-        setFormData({
-          TenantID: store.TenantID || 1,
-          StoreID: store.StoreID || "",
-          StoreName: store.StoreName || "",
-          StoreCode: store.StoreCode || "",
-          Email: store.Email || "",
-          Phone: store.Phone || "",
-          AddressLine1: store.AddressLine1 || "",
-          AddressLine2: store.AddressLine2 || "",
-          CountryID: selectedCountry?.CountryID || "",
-          CountryName: selectedCountry?.CountryName || "",
-          StateID: selectedState?.StateID || "",
-          StateName: selectedState?.StateName || "",
-          CityID: selectedCity?.CityID || "",
-          CityName: selectedCity?.CityName || "",
-          ZipCode: store.ZipCode || "",
-        });
-        setSelectedCountry(selectedCountry);
-        setSelectedState(selectedState);
-        setSelectedCity(selectedCity);
-      }
-    };
-
-    setInitialData();
-  }, [
-    isEditMode,
-    location.state?.storeDetails?.store,
-    storeDetails?.store,
-    countries,
-    states,
-    cities,
-  ]);
-
-  const fetchUsersByStoreId = async (storeId) => {
-    try {
-      setIsLoading(true); // Show loading animation
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${GET_MAPSTORE_USERBYSTOREID}/${storeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Extracting user data from response and storing it in tableUsers
-      const users = response.data.rows.map((row) => ({
-        MapStoreUserID: row.MapStoreUserID,
-        FirstName: row.User.FirstName,
-        LastName: row.User.LastName,
-        Email: row.User.Email,
-        PhoneNumber: row.User.PhoneNumber,
-      }));
-
-      setTableUsers(users); // Set updated user data
-    } catch (error) {
-      console.error("Error fetching users by StoreID:", error);
-    } finally {
-      setIsLoading(false); // Hide loading animation
-    }
-  };
-
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true); // Show loading animation
-    const isUpdate = formData.StoreID ? true : false;
-    const apiUrl = CREATEORUPDATE_STORES_API;
-
-    try {
-      const response = await axios.post(apiUrl, formData);
-
-      toast.success(
-        isUpdate ? "Store updated successfully!" : "Store created successfully!"
-      );
-      setTimeout(() => {
-        navigate("/Stores");
-      }, 5500);
-    } catch (error) {
-      console.error("Store submission failed:", error);
-
-      if (error.response) {
-        toast.error(
-          `Failed to ${isUpdate ? "update" : "create"} store: ` +
-            error.response.data.message
-        );
-      } else if (error.request) {
-        toast.error("No response received from server.");
-      } else {
-        console.error("Error in setting up request:", error.message);
-        toast.error("Error: " + error.message);
-      }
-    } finally {
-      setIsLoading(false); // Hide loading animation
-    }
-  };
-
-  const handleNext = () => {
-    setActiveStep((prevStep) => prevStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevStep) => prevStep - 1);
-  };
-  const handleFinish = () => {
-    setTimeout(() => {
-      navigate("/Stores");
-    }, 500);
-  };
-
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  //   setFormData({
-  //     TenantID: 1,
-  //     StoreID: null,
-  //     StoreName: "",
-  //     Email: "",
-  //     Phone: "",
-  //     AddressLine1: "",
-  //     AddressLine2: "",
-  //     CityID: "",
-  //     StateID: "",
-  //     CountryID: "",
-  //     ZipCode: "",
-  //   });
-  //   setSelectedCountry("");
-  //   setSelectedState("");
-  //   setSelectedCity("");
-  //   setFilteredStates([]);
-  //   setFilteredCities([]);
-  //   setTableUsers([]);
-  // };
-
-  const isStepSkipped = (step) => false;
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
-  const [users, setUsers] = useState([]); // All users from the API
-  const [filteredUsers, setFilteredUsers] = useState([]); // Users after filtering
-  const [query, setQuery] = useState("");
-  const [tableUsers, setTableUsers] = useState([]); // Users added to the table
-  const [selectedUsers, setSelectedUsers] = useState([]); // Users selected in the popup
-  const [isModalOpen, setIsModalOpen] = useState(false); // Control the modal state
+const Temp = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [searchName, setSearchName] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [results, setResults] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    const fetchUsers = async (search = "") => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No authentication token found");
-        }
-
-        const response = await axios.get(
-          `${GETALLUSERS_API}?SearchText=${search}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const data = response.data;
-        const userArray = data.users || []; // Correctly access the 'users' array
-
-        // Check if 'userArray' is an array before mapping
-        if (Array.isArray(userArray)) {
-          const usersData = userArray.map((item) => ({
-            ...item, // Spread the user object to include all user details
-          }));
-          setUsers(usersData);
-        } else {
-          console.error(
-            "API response does not contain user data in an array:",
-            userArray
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    // // Only fetch when the search query has 3 or more characters
-
-    fetchUsers(searchQuery);
-  }, [searchQuery]);
-
-  const mapStoreUser = async (selectedUser) => {
-    try {
-      setIsLoading(true); // Show loading animation
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      // Get the StoreID based on whether it's edit mode or not
-      const store = location.state?.storeDetails?.store || storeDetails?.store;
-      const storeID = store?.StoreID || ""; // Fallback to 9 if no storeID is found
-
-      // Construct the payload
-      const payload = {
-        MapStoreUserID: 0,
-        StoreID: storeID, // Dynamically set the StoreID from edit mode
-        UserID: selectedUser.UserID,
-        CreatedBy: "Danny",
-        FirstName: selectedUser.FirstName,
-        LastName: selectedUser.LastName,
-        Email: selectedUser.Email,
-        PhoneNumber: selectedUser.PhoneNumber,
-      };
-
-      const response = await axios.post(CREATEORUPDATE_MAPSTOREUSER, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      // Check if the response is successful
-      if (response.status === 201) {
-        // Optionally, display success notification or update UI here
-      } else {
-        console.error("Failed to map user:", response.data);
-      }
-    } catch (error) {
-      console.error("Error mapping user:", error);
-    } finally {
-      setIsLoading(false); // Hide loading animation
-    }
-  };
-
-  const handleSearchChange = (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    setSearchQuery(query);
-
-    // Start loading when search begins
-    setLoading(true);
-
-    // Simulate a delay (optional) to visualize the loading animation
-    setTimeout(() => {
-      const filtered = users.filter((user) => {
-        const firstName = user.FirstName?.trim().toLowerCase() || "";
-        const lastName = user.LastName?.trim().toLowerCase() || "";
-        const email = user.Email?.trim().toLowerCase() || "";
-
-        return (
-          firstName.includes(query) ||
-          lastName.includes(query) ||
-          email.includes(query)
-        );
-      });
-
-      setFilteredUsers(filtered);
-
-      // Stop loading after filtering
-      setLoading(false);
-    }, 500); // Optional delay for visualizing the loading state
-  };
+  console.log(products)
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
-
-  const handleCustomerSelect = (customer) => {
-    // Check if the user is already in the table
-    const isUserInTable = tableUsers.some(
-      (user) => user.CustomerID === customer.CustomerID
-    );
-
-    // If the user is not in the table, add them
-    if (!isUserInTable) {
-      setTableUsers((prevUsers) => [...prevUsers, customer]);
-    }
-
-    // Clear the search query without updating it to the selected customer's name
-    setSearchQuery("");
-    setFilteredUsers([]); // Clear the dropdown after selection
+  const [value, setValue] = useState({
+    startDate: "",
+    endDate: "",
+  });
+  const handleSearchInput = (e) => {
+    const { value } = e.target;
+    setSearchValue(value);
+    fetchData(value); // Trigger the search based on input value
   };
 
-  // Close the modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-  // Handle the addition of filtered users to the table
-  const handleAddUsers = () => {
-    setTableUsers((prevUsers) => [...prevUsers, ...selectedUsers]); // Add selected users to the table
-    setSelectedUsers([]); // Clear selected users
-    setIsModalOpen(false); // Close the modal after adding users
-  };
-
-  // Handle user selection in the popup (you can make this more complex to allow selecting multiple users)
-  const handleSelectUser = (user) => {
-    setSelectedUsers([user]); // Select the user to be added
-  };
-
-  const handleCountryChange = (selectedCountry) => {
-    if (!selectedCountry) return;
-
-    const countryID =
-      countryMap[selectedCountry.CountryName] || selectedCountry.CountryID;
-
-    setSelectedCountry(selectedCountry);
-    setFormData({
-      ...formData,
-      CountryID: countryID,
-      CountryName: selectedCountry.CountryName,
-    });
-
-    setSelectedState("");
-    setSelectedCity("");
-    setFilteredStates(
-      states.filter((state) => state.CountryID === state.CountryID)
-    );
-  };
-
-  const handleStateChange = (state) => {
-    if (!state) return;
-
-    const stateID = stateMap[state.StateName] || state.StateID;
-
-    setSelectedState(state);
-    setSelectedCity("");
-
-    setFormData({
-      ...formData,
-      StateID: stateID,
-      StateName: state.StateName,
-    });
-    setFilteredCities(cities.filter((city) => city.StateID === state.StateID));
-  };
-
-  const handleCityChange = (city) => {
-    if (!city) return;
-
-    const cityID = cityMap[city.CityName] || city.CityID;
-
-    setSelectedCity(city);
-    setFormData({
-      ...formData,
-      CityID: cityID,
-      CityName: city.CityName,
-    });
-  };
-
-  const handleCancel = () => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      navigate("/Stores");
-    }, 1500); // Delay by 500ms
-  };
-
-  const handleStepClick = (index) => {
-    setActiveStep(index);
-  };
-  const isStepOptional = (step) => step === 1;
-
-  const handleRemoveUser = async (MapStoreUserID) => {
+  const fetchData = async (value) => {
     try {
-      setIsLoading(true); // Show loading animation
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
+      // If isEditMode is true, return early and do not proceed with the data fetching
+
+      console.log("Fetching data in normal mode...");
+
+      let page = 1;
+      let pageSize = 10;
+
+      let allResults = [];
+      let hasMoreData = true;
+
+      while (hasMoreData) {
+        const response = await axios.get(GETALLCUSTOMERS_API, {
+          params: {
+            limit: pageSize,
+            page: page,
+            searchText: value,
+          },
+        });
+
+        const customers = response.data.customers;
+        allResults = [...allResults, ...customers];
+
+        // Determine if there are more pages to fetch
+        if (customers.length < pageSize) {
+          hasMoreData = false;
+        } else {
+          page++;
+        }
       }
 
-      // Make DELETE request to remove the user
-      await axios.delete(`${DELETEMAPSTOREUSER}/${MapStoreUserID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      // Filter the combined results
+      const filteredUsers = allResults.filter((customer) => {
+        return (
+          (value &&
+            customer &&
+            customer.CustomerFirstName &&
+            customer.CustomerFirstName.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.CustomerLastName &&
+            customer.CustomerLastName.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.CustomerEmail &&
+            customer.CustomerEmail.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.PhoneNumber &&
+            customer.PhoneNumber.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.AddressLine1 &&
+            customer.AddressLine1.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.AddressLine2 &&
+            customer.AddressLine2.toLowerCase().includes(
+              value.toLowerCase()
+            )) ||
+          (customer.City &&
+            customer.City.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.State &&
+            customer.State.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.Country &&
+            customer.Country.toLowerCase().includes(value.toLowerCase())) ||
+          (customer.Zipcode &&
+            customer.Zipcode.toLowerCase().includes(value.toLowerCase()))
+        );
       });
 
-      // Update tableUsers by filtering out the deleted user
-      const updatedUsers = tableUsers.filter(
-        (user) => user.MapStoreUserID !== MapStoreUserID
-      );
-      setTableUsers(updatedUsers);
+      setResults(filteredUsers);
     } catch (error) {
-      console.error("Error removing user:", error);
-    } finally {
-      setIsLoading(false); // Hide loading animation
+      console.error("Error fetching users:", error);
     }
   };
 
-  // Handle click event on user selection
-  const handleUserClick = (user) => {
-    mapStoreUser(user).then(() => {
-      setTableUsers((prevUsers) => [...prevUsers, user]);
-    });
+  const getAllOrders = async (
+    pageNum,
+    pageSize,
+    search = "",
+    storeID = "",
+    startDate = "",
+    endDate = ""
+  ) => {
+    try {
+      const response = await axios.get(`${GET_ALL_ORDERS}`, {
+        params: {
+          page: pageNum + 1,
+          limit: pageSize,
+          SearchText: search,
+          StoreID: storeID,
+          StartDate: startDate,
+          EndDate: endDate,
+        },
+      });
+      return {
+        orders: response.data.data,
+        totalCount: response.data.totalItems,
+      };
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
+  };
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const { orders, totalCount } = await getAllOrders(
+        page,
+        rowsPerPage,
+        searchName,
+        value.startDate,
+        value.endDate
+      );
+
+      setProducts(orders);
+      setTotalOrders(totalCount);
+    } catch (error) {
+      console.error("Failed to fetch orders", error);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
-    if (storeId && isEditMode !== "") {
-      fetchUsersByStoreId(storeId);
-    }
-  }, [storeId]);
+    fetchOrders();
+  }, [page, rowsPerPage, searchName, value.startDate, value.endDate]);
+
   return (
-    // <div className="p-6 mr-10 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-1/8 rounded-lg">
     <div className="main-container">
-      {/* <div className="p-6 mb-7 sm:px-6 lg:px-8 pt-4 bg-white shadow-lg rounded-lg"> */}
-      {/* <div className="p-6 mb-7 sm:px-6 lg:px-8 pt-4 rounded-lg"> */}
-      <div className="body-container">
-        <ToastContainer />
-        <Box sx={{ width: "100%" }}>
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((label, index) => {
-              const stepProps = {};
-              const labelProps = {
-                onClick: () => handleStepClick(index), // Add onClick handler
-                style: { cursor: "pointer" }, // Add cursor style for pointer
-              };
+      <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
+        <input
+          id="searchName"
+          type="text"
+          placeholder="Search by Name..."
+          value={searchValue}
+          onChange={handleSearchInput}
+          onFocus={() => setIsFocused(true)}
+          className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
+        />
+        <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
+          <IoIosSearch aria-label="Search Icon" />
+        </div>
 
-              if (isStepOptional(index)) {
-                // Optional step logic
-              }
-
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
-
-              return (
-                <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-
-          <React.Fragment>
-            {activeStep === 0 && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                  {/* Store Details Form */}
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Store Name
-                    </label>
-                    <input
-                      type="text"
-                      name="StoreName"
-                      value={formData.StoreName}
-                      onChange={handleFormChange}
-                      className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Address Line 1
-                    </label>
-                    <input
-                      type="text"
-                      name="AddressLine1"
-                      value={formData.AddressLine1}
-                      onChange={handleFormChange}
-                      className={`p-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Store Code
-                    </label>
-                    <input
-                      type="text"
-                      name="StoreCode"
-                      value={formData.StoreCode}
-                      onChange={handleFormChange}
-                      className={`p-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Address Line 2
-                    </label>
-                    <input
-                      type="text"
-                      name="AddressLine2"
-                      value={formData.AddressLine2}
-                      onChange={handleFormChange}
-                      className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      type="text"
-                      name="Email"
-                      value={formData.Email}
-                      onChange={handleFormChange}
-                      className={`p-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Country
-                    </label>
-                    <div className="w-full">
-                      <Combobox
-                        as="div"
-                        value={selectedCountry} // Bind the selected country object here
-                        onChange={(newCountry) => {
-                          handleCountryChange(newCountry); // Handle country change (updates the state)
-                          setFormData((prevFormData) => ({
-                            ...prevFormData,
-                            CountryID: newCountry.CountryID,
-                            CountryName: newCountry.CountryName,
-                          }));
-                        }}
-                      >
-                        <div className="relative">
-                          <Combobox.Input
-                            className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                            onChange={(event) => setQuery(event.target.value)} // Set the query for filtering
-                            displayValue={(country) =>
-                              country?.CountryName || ""
-                            } // Display selected country name
-                          />
-                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                            <ChevronUpDownIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </Combobox.Button>
-
-                          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {countries // Access countries data correctly
-                              .filter((country) =>
-                                country.CountryName.toLowerCase().includes(
-                                  query.toLowerCase()
-                                )
-                              )
-                              .map((country) => (
-                                <Combobox.Option
-                                  key={country.CountryID}
-                                  value={country} // Pass the full country object to onChange
-                                  className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                >
-                                  <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                                    {country.CountryName}
-                                  </span>
-                                  <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                    <CheckIcon
-                                      className="h-5 w-5"
-                                      aria-hidden="true"
-                                    />
-                                  </span>
-                                </Combobox.Option>
-                              ))}
-                          </Combobox.Options>
-                        </div>
-                      </Combobox>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Contact
-                    </label>
-                    <input
-                      type="text"
-                      name="Phone"
-                      value={formData.Phone || ""}
-                      onChange={handleFormChange}
-                      className={`p-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      State
-                    </label>
-                    <div className="w-full">
-                      <Combobox
-                        as="div"
-                        value={selectedState}
-                        onChange={handleStateChange}
-                      >
-                        <div className="relative">
-                          <Combobox.Input
-                            className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                            onChange={(event) => setQuery(event.target.value)} // Handle the search query
-                            displayValue={(state) => state?.StateName || ""} // Show the selected state name
-                          />
-                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                            <ChevronUpDownIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </Combobox.Button>
-
-                          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {filteredStates
-                              .filter((state) =>
-                                state.StateName.toLowerCase().includes(
-                                  query.toLowerCase()
-                                )
-                              ) // Filter based on query
-                              .map((state) => (
-                                <Combobox.Option
-                                  key={state.StateID}
-                                  value={state}
-                                  className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                >
-                                  <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                                    {state.StateName}
-                                  </span>
-                                  <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                    <CheckIcon
-                                      className="h-5 w-5"
-                                      aria-hidden="true"
-                                    />
-                                  </span>
-                                </Combobox.Option>
-                              ))}
-                          </Combobox.Options>
-                        </div>
-                      </Combobox>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      Zip Code
-                    </label>
-                    <input
-                      type="text"
-                      name="ZipCode"
-                      value={formData.ZipCode || ""}
-                      onChange={handleFormChange}
-                      className={`p-1 w-full border rounded-md ${
-                        error ? "border-red-500" : "border-gray-400"
-                      }`}
-                    />
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <label className="w-1/3 text-xs font-medium text-gray-700">
-                      City
-                    </label>
-                    <div className="w-full">
-                      <Combobox
-                        as="div"
-                        value={selectedCity}
-                        onChange={handleCityChange}
-                      >
-                        <div className="relative">
-                          <Combobox.Input
-                            className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                            onChange={(event) => setQuery(event.target.value)} // Handle the search query
-                            displayValue={(city) => city?.CityName || ""} // Show the selected city name
-                          />
-                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                            <ChevronUpDownIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </Combobox.Button>
-
-                          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {filteredCities
-                              .filter((city) =>
-                                city.CityName.toLowerCase().includes(
-                                  query.toLowerCase()
-                                )
-                              ) // Filter based on query
-                              .map((city) => (
-                                <Combobox.Option
-                                  key={city.CityID}
-                                  value={city}
-                                  className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                >
-                                  <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                                    {city.CityName}
-                                  </span>
-                                  <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                    <CheckIcon
-                                      className="h-5 w-5"
-                                      aria-hidden="true"
-                                    />
-                                  </span>
-                                </Combobox.Option>
-                              ))}
-                          </Combobox.Options>
-                        </div>
-                      </Combobox>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex justify-end gap-4">
-                  <button
-                    type="submit"
-                    className="button-base save-btn"
-                    onClick={handleFormSubmit}
-                  >
-                    {isEditMode ? "Update" : "Save"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="button-base cancel-btn"
-                  >
-                    Cancel
-                  </button>
-                </div>
-                {/* {isLoading && <LoadingAnimation />} */}
-                {isLoading && (
-                  // <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-                  <LoadingAnimation />
-                  // </div>
-                )}
-              </>
-            )}
-
-            {activeStep === 1 && (
-              <div>
-                <div>
-                  <div className="relative flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg pb-2 mx-auto">
-                    <div className="relative w-80 max-w-md mx-auto">
-                      {/* Search Input */}
-                      <div className="flex items-center justify-center relative">
-                        <input
-                          id="searchName"
-                          type="text"
-                          placeholder="Search by Name..."
-                          value={searchQuery}
-                          onChange={handleSearchChange}
-                          onFocus={() => setIsFocused(true)}
-                          className={`mt-1 p-2 pr-10 border border-gray-300 rounded-md text-sm md:text-base w-full ${
-                            isFocused ? "border-blue-500" : "border-gray-300"
-                          }`}
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                          <IoIosSearch aria-label="Search Icon" />
-                        </div>
-                      </div>
-
-                      {/* Dropdown for filtered users */}
-                      {searchQuery.length >= 3 && isFocused && (
-                        <div
-                          className="absolute top-full mt-1 w-full bg-white shadow-lg border border-gray-300 rounded-lg z-10"
-                          style={{ maxHeight: "200px", overflowY: "auto" }}
-                          onMouseEnter={handleMouseEnter}
-                          onMouseLeave={handleMouseLeave}
-                          onFocus={() => setIsFocused(true)}
-                          onBlur={() => setIsFocused(false)}
-                        >
-                          {loading ? (
-                            <div className="flex justify-center p-4">
-                              <LoadingAnimation />
-                              {/* Display loading animation when loading */}
-                            </div>
-                          ) : filteredUsers.length > 0 ? (
-                            <>
-                              <div className="mb-2 text-sm text-gray-600 px-2">
-                                {filteredUsers.length} Result
-                                {filteredUsers.length > 1 ? "s" : ""}
-                              </div>
-
-                              {filteredUsers.map((user) => (
-                                <div>
-                                  <div
-                                    className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                                    key={user.UserID}
-                                    onClick={() =>
-                                      handleSelectedUserClick(user)
-                                    }
-                                  >
-                                    <span className="font-medium">
-                                      {user.FirstName} {user.LastName}
-                                    </span>
-                                    <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                      <IoIosCall
-                                        className="w-4 h-4 mr-1"
-                                        aria-label="Phone Icon"
-                                      />
-                                      <span>{user.PhoneNumber}</span>
-                                    </div>
-                                    <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                      <IoMdMail
-                                        className="w-4 h-4 mr-1"
-                                        aria-label="Email Icon"
-                                      />
-                                      <span>{user.Email}</span>
-                                    </div>
-
-                                    {/* <button
-                                      type="button"
-                                      onClick={() => handleUserClick(user)}
-                                      className="button-base save-btn mt-2"
-                                    >
-                                      Add User
-                                    </button> */}
-                                  </div>
-                                </div>
-                              ))}
-                            </>
-                          ) : (
-                            <div className="flex justify-center p-4 text-gray-500">
-                              {loading ? (
-                                <LoadingAnimation />
-                              ) : (
-                                "No results found."
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-6 flex justify-end gap-4">
-                    <button
-                      type="submit"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      onClick={handleSaveSelectedUsers}
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  <TableContainer
-                    component={Paper}
-                    sx={{ width: "90%", margin: "0 auto", mt: 4 }}
-                  >
-                    <Table aria-label="store users table">
-                      <TableHead>
-                        <TableRow>
-                          <StyledTableCell>Username</StyledTableCell>
-                          <StyledTableCell>Email</StyledTableCell>
-                          <StyledTableCell>Phone</StyledTableCell>
-                          <StyledTableCell>Action</StyledTableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {tableUsers && tableUsers.length > 0 ? (
-                          tableUsers.map((user) => (
-                            <TableRow key={user.MapStoreUserID}>
-                              <StyledTableCell>
-                                {user.FirstName} {user.LastName}
-                              </StyledTableCell>
-                              <StyledTableCell>{user.Email}</StyledTableCell>
-                              <StyledTableCell>
-                                {user.PhoneNumber}
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleRemoveUser(user.MapStoreUserID)
-                                  }
-                                  className="button delete-button"
-                                >
-                                  <MdOutlineCancel
-                                    aria-hidden="true"
-                                    className="h-4 w-4"
-                                  />
-                                  Delete
-                                </button>
-                              </StyledTableCell>
-                            </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <StyledTableCell
-                              colSpan={4}
-                              style={{ textAlign: "center" }}
-                            >
-                              No saved users found
-                            </StyledTableCell>
-                          </TableRow>
-                        )}
-
-                        {selectedTableUsers &&
-                          selectedTableUsers.length > 0 && (
-                            <TableRow>
-                              <StyledTableCell colSpan={4} align="center">
-                                {/* <hr /> */}
-                                <span
-                                  style={{
-                                    fontSize: "14px",
-                                    fontWeight: "bold",
-                                    color: "black",
-                                  }}
-                                >
-                                  Unsaved Users
-                                </span>
-                                {/* <hr /> */}
-                              </StyledTableCell>
-                            </TableRow>
-                          )}
-
-                        {selectedTableUsers &&
-                          selectedTableUsers.length > 0 &&
-                          selectedTableUsers.map((user) => (
-                            <TableRow key={user.UserID}>
-                              <StyledTableCell>
-                                {user.FirstName} {user.LastName}
-                              </StyledTableCell>
-                              <StyledTableCell>{user.Email}</StyledTableCell>
-                              <StyledTableCell>
-                                {user.PhoneNumber}
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleRemoveSelectedUser(user.UserID)
-                                  }
-                                  className="button delete-button"
-                                >
-                                  <MdOutlineCancel
-                                    aria-hidden="true"
-                                    className="h-4 w-4"
-                                  />
-                                  Delete
-                                </button>
-                              </StyledTableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  {isLoading && <LoadingAnimation />}
-                </div>
+        {/* Only show the dropdown when searchValue is not empty and input is focused */}
+        <div
+          className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
+            searchValue && isFocused ? "block" : "hidden"
+          }`}
+          style={{
+            maxHeight: "200px",
+            minHeight: "100px",
+            overflowY: "auto",
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {results.length > 0 ? (
+            <>
+              <div className="mb-2 text-sm text-gray-600">
+                {results.length} Result
+                {results.length > 1 ? "s" : ""}
               </div>
-            )}
 
-            <Box className="flex justify-between mt-4">
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className="bg-gray-300 px-4 py-2 rounded"
-              >
-                Back
-              </Button>
-              <Button
-                onClick={
-                  activeStep === steps.length - 1 ? handleFinish : handleNext
-                }
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
-            </Box>
-          </React.Fragment>
-        </Box>
+              {/* Map over filtered results */}
+              {[
+                ...new Map(
+                  results.map((result) => [result.CustomerID, result])
+                ).values(),
+              ].map((result) => (
+                <div
+                  className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
+                  key={result.CustomerID}
+                  onClick={() => handleCustomerSelect(result)}
+                >
+                  <span className="font-medium">
+                    {result.CustomerFirstName} {result.CustomerLastName}
+                  </span>
+                  <div className="flex items-center text-xs md:text-sm text-gray-500">
+                    <IoIosCall
+                      className="w-4 h-4 mr-1"
+                      aria-label="Phone Icon"
+                    />
+                    <span>{result.PhoneNumber}</span>
+                  </div>
+                  <div className="flex items-center text-xs md:text-sm text-gray-500">
+                    <IoMdMail
+                      className="w-4 h-4 mr-1"
+                      aria-label="Email Icon"
+                    />
+                    <span>
+                      {result.CustomerEmail}
+                      {result.AddressID}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="p-2 overflow-clip text-gray-500">
+              No results found.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
+        <div className="flex justify-left text-lg font-medium text-gray-700">
+          <h2>Payment Information</h2>
+        </div>
+
+        <div className="flex gap-10">
+          <div className="sm:pt-2 w-full space-y-2 p-4">
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Customer Name</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.CustomerName}</span>
+            </div>
+            <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+              <span className="w-1/2">Order Number</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.OrderNumber}</span>
+            </div>
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Order Date</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.OrderDate}</span>
+            </div>
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Project Type</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.Type}</span>
+            </div>
+          </div>
+
+          <div className="sm:pt-2 w-full space-y-2 p-4">
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Total Amount</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.TotalAmount}</span>
+            </div>
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Advance</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.customerPhone}</span>
+            </div>
+            <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+              <span className="w-1/2">Balance</span>
+              <span className="mr-20">:</span>
+              <span className="w-2/3">{products.customerPhone}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default StoreForm;
+export default Temp;

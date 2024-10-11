@@ -218,7 +218,7 @@ function Payment() {
       case "AmazonPay":
         return (
           <div className=" rounded-full">
-            <img className="w-9 h-7 " src={AmazonPayIcon} alt="Cash Icon" />
+            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
       case "PayPal":
@@ -297,7 +297,7 @@ function Payment() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-2 mt-2">
+      <div className="flex flex-wrap justify-end gap-2 mt-2">
         {/* Container for centering search box */}
         <div className="search-container-c-u">
           <label htmlFor="searchName" className="sr-only">
@@ -311,15 +311,15 @@ function Payment() {
             onChange={(e) => setSearchName(e.target.value)}
             className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
           />
-          <div className="search-icon-container-c-u ">
+          <div className="search-icon-container-c-u">
             <IoIosSearch />
           </div>
         </div>
 
         {/* Container for Combo box */}
-        <div className="combobox-container flex items-center ">
+        <div className="combobox-container flex items-center">
           <Combobox value={selectedStore} onChange={setSelectedStore}>
-            <div className="combobox-wrapper  h-[40px]">
+            <div className="combobox-wrapper h-[40px]">
               <Combobox.Input
                 className="combobox-input w-full h-full"
                 displayValue={(store) => store?.StoreName || "Select Store ID"}
@@ -412,7 +412,7 @@ function Payment() {
           </Combobox>
         </div>
         {/* Container for Date Pickers */}
-        <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6 ">
+        <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6">
           <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
             <Datepicker
               popoverDirection="down"

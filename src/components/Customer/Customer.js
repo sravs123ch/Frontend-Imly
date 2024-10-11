@@ -385,9 +385,25 @@ function Customers() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center w-full gap-4">
-        {/* Combobox on the left with equal width */}
-        <div className="combobox-container flex-1">
+      <div className="flex justify-end items-center w-full gap-4">
+        {/* Search input in the center with equal width */}
+        <div className="search-container-c-u w-1/4">
+          <div className="relative">
+            <input
+              id="searchName"
+              type="text"
+              placeholder="Search by Name or Email"
+              value={searchName}
+              onChange={(e) => searchItems(e.target.value)}
+              className="search-input w-full pr-10"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <IoIosSearch className="text-gray-500" />
+            </div>
+          </div>
+        </div>
+        {/* Combobox on the right */}
+        <div className="combobox-container w-1/4 flex justify-end">
           <Combobox value={selectedStore} onChange={setSelectedStore}>
             <div className="combobox-wrapper">
               <Combobox.Input
@@ -480,26 +496,8 @@ function Customers() {
             </div>
           </Combobox>
         </div>
-
-        {/* Search input in the center with equal width */}
-        <div className="search-container-c-u w-1/4">
-          <div className="relative">
-            <input
-              id="searchName"
-              type="text"
-              placeholder="Search by Name or Email"
-              value={searchName}
-              onChange={(e) => searchItems(e.target.value)}
-              className="search-input w-full pr-10"
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <IoIosSearch className="text-gray-500" />
-            </div>
-          </div>
-        </div>
-
-        {/* Date picker on the right with equal width */}
-        <div className="w-1/4">
+         {/* Date picker on the right with equal width */}
+         <div className="w-1/4">
           <div className="border-solid border-gray-400 border-[1px] rounded-lg w-full">
             <Datepicker
               popoverDirection="down"

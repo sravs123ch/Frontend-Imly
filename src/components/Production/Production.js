@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -20,6 +20,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FilterBar from './FilterBar';
 import StatusUpdateDialog from '../Orders/StatusUpdateDialog';
+import { Combobox } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { OrderContext } from "../../Context/orderContext";
+import { DataContext } from "../../Context/DataContext";
+
+import { FaPlus, FaTable } from "react-icons/fa";
+import { IoIosSearch } from "react-icons/io";
+import Datepicker from "react-tailwindcss-datepicker";
 import {
   GET_ALL_ORDERS,
   GETALLSTORES_API,
@@ -47,6 +55,18 @@ export default function Orders() {
   const [products, setProducts] = useState([
 
   ]);
+  const { setOrderIdDetails } = useContext(OrderContext);
+
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
+  const searchItems = (value) => {
+    setSearchName(value);
+  };
 
   const [selectedFilter, setSelectedFilter] = useState({ label: 'All', subStatusId: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -180,6 +200,9 @@ export default function Orders() {
         page,
         rowsPerPage,
         searchName,
+        selectedStore.StoreID,
+        value.startDate,
+        value.endDate,
       );
 
       // Log the result from the API
@@ -317,6 +340,133 @@ export default function Orders() {
             <h2 className="heading">Production Orders</h2>
           </div>
         </div>
+        <div className="flex flex-wrap justify-end gap-2 mt-2">
+        {/* Container for centering search box */}
+        <div className="search-container-c-u">
+          <label htmlFor="searchName" className="sr-only">
+            Search
+          </label>
+          <input
+            id="searchName"
+            type="text"
+            placeholder=" Search by Order Number / Customer Name "
+            value={searchName}
+            onChange={(e) => searchItems(e.target.value)}
+            className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
+          />
+          <div className="search-icon-container-c-u">
+            <IoIosSearch />
+          </div>
+        </div>
+
+        {/* Container for Combo box */}
+        <div className="combobox-container flex items-center">
+          <Combobox value={selectedStore} onChange={setSelectedStore}>
+            <div className="combobox-wrapper h-[40px]">
+              <Combobox.Input
+                className="combobox-input w-full h-full"
+                displayValue={(store) => store?.StoreName || "Select Store ID"}
+                placeholder="Select Store Name"
+              />
+              <Combobox.Button className="combobox-button">
+                <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
+              </Combobox.Button>
+              <Combobox.Options className="combobox-options">
+                {/* Add "Select Store ID" option */}
+                <Combobox.Option
+                  key="select-store-id"
+                  className={({ active }) =>
+                    active ? "combobox-option-active" : "combobox-option"
+                  }
+                  value={{ StoreID: null, StoreName: "Select Store ID" }}
+                >
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={
+                          selected
+                            ? "combobox-option-text font-semibold"
+                            : "combobox-option-text font-normal"
+                        }
+                      >
+                        Select Store ID
+                      </span>
+                      {selected && (
+                        <span
+                          className={
+                            active
+                              ? "combobox-option-selected-icon active-selected-icon"
+                              : "combobox-option-selected-icon"
+                          }
+                        >
+                          <CheckIcon
+                            className="combobox-check-icon"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+
+                {/* Render all store options */}
+                {stores.map((store) => (
+                  <Combobox.Option
+                    key={store.StoreID}
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={store}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          {store.StoreName}
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </div>
+          </Combobox>
+        </div>
+
+        {/* Container for Date Pickers */}
+        <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6">
+          <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
+            <Datepicker
+              popoverDirection="down"
+              showShortcuts={true}
+              showFooter={true}
+              placeholder="Start Date and End Date"
+              primaryColor={"purple"}
+              value={value}
+              onChange={(newValue) => setValue(newValue)}
+            />
+          </div>
+        </div>
+      </div>
         <div className="flex flex-wrap">
           {isLoading && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">

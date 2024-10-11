@@ -201,13 +201,13 @@ export default function Navigation() {
           </div>
         </Dialog>
 
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-30 lg:flex lg:w-56 lg:flex-col shadow-md border border-gray-200">
+        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col shadow-md border border-gray-200">
           <div
-            className="flex grow flex-col bg-white px-4 pb-4"
+            className="flex flex-col grow bg-white px-6 pb-4" // Add left padding to the entire container
             style={{
-              overflowY: "auto",
-              scrollbarWidth: "none", // For Firefox
-              msOverflowStyle: "none", // For Internet Explorer and Edge
+              overflowY: 'auto',
+              scrollbarWidth: 'none', // For Firefox
+              msOverflowStyle: 'none', // For Internet Explorer and Edge
             }}
           >
             <style>
@@ -217,79 +217,79 @@ export default function Navigation() {
         }
       `}
             </style>
-            <div className="flex h-16 mt-10 shrink-0 items-center">
-              <img alt="Your Company" src={logo} className="h-18 w-32 mt-4" />{" "}
-              {/* Reduced logo size */}
+
+            {/* Logo Section */}
+            <div className="flex items-center justify-center">
+              <img alt="Your Company" src={logo} className="h-18 w-32" />
+              <hr className="border-gray-200 my-4" />
             </div>
-            <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col">
-                {Object.entries(navigation).map(([key, items], index) => (
-                  <>
-                    {/* Increased font size for the key name */}
-                    <li key={key}>
-                      <h3 className="text-sm font-bold text-gray-700 mb-2">
-                        {" "}
-                        {/* Increased bottom margin */}
-                        {key.replace(/([A-Z])/g, " $1")}
-                      </h3>
-                      <hr className="my-1 border-gray-300" />
-                      <ul role="list" className="space-y-1">
-                        {items.map((item) => (
-                          <li key={item.name}>
-                            <a
-                              href={item.href}
-                              onClick={() => setSidebarOpen(false)}
+            <hr className="border-gray-300" />
+            {/* Navigation Section */}
+
+
+
+            <nav className="flex flex-col flex-1 w-full">
+              <ul role="list" className="space-y-6 w-full">
+                {Object.entries(navigation).map(([key, items]) => (
+                  <li key={key} className="w-full">
+                    <h3 className="text-sm font-bold text-gray-700 mb-2 text-left pl-4">
+                      {key.replace(/([A-Z])/g, ' $1')}
+                    </h3>
+                    <ul role="list" className="space-y-1 w-full">
+                      {items.map((item) => (
+                        <li key={item.name} className="w-full">
+                          <a
+                            href={item.href}
+                            onClick={() => setSidebarOpen(false)}
+                            className={classNames(
+                              location.pathname.startsWith(item.href)
+                                ? 'bg-custom-darkblue text-white'
+                                : 'text-gray-900 hover:bg-custom-lightblue hover:text-gray-700',
+                              'group flex items-center p-2 text-xs font-medium w-full pl-6'
+                            )}
+                          >
+                            <item.icon
+                              aria-hidden="true"
                               className={classNames(
-                                location.pathname.startsWith(item.href)
-                                  ? "bg-gray-200"
-                                  : "text-gray-900 hover:bg-custom-lightblue hover:text-gray-700",
-                                "group flex items-center p-2 text-xs font-medium" // Reduced font size and padding
+                                location.pathname.startsWith(item.href) ? 'text-white' : 'group-hover:text-gray-700',
+                                'h-4 w-4 shrink-0 mr-2'
                               )}
-                              style={{ whiteSpace: "nowrap" }} // Prevent text wrapping
-                            >
-                              <item.icon
-                                aria-hidden="true"
-                                className={classNames(
-                                  location.pathname.startsWith(item.href)
-                                    ? "text-gray-700"
-                                    : "group-hover:text-gray-700",
-                                  "h-4 w-4 shrink-0 text-black mr-2" // Reduced icon size and added spacing
-                                )}
-                              />
-                              {item.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                    {/* Add <hr> with small margin */}
-                  </>
+                            />
+                            {item.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
                 ))}
-                <li className="mt-auto">
-                  <button
-                    onClick={handleSettingsClick}
-                    className="group flex items-center p-2 text-xs font-medium text-gray-900 hover:bg-custom-lightblue hover:text-gray-700"
-                  >
-                    <Cog6ToothIcon
-                      aria-hidden="true"
-                      className="h-6 w-6 shrink-0  text-gray-700 group-hover:text-gray-700"
-                    />
-                    Settings
-                  </button>
-                </li>
               </ul>
             </nav>
+
+            {/* Settings Button */}
+            <div className="mt-auto pb-4 flex">
+              <button
+                onClick={handleSettingsClick}
+                className="group flex items-center ml-2 p-2 text-xs font-medium text-gray-900 hover:bg-custom-lightblue hover:text-gray-700"
+              >
+                <CogIcon
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 ml-2 text-gray-700 mr-2"
+                />
+                Settings
+              </button>
+            </div>
           </div>
         </div>
         <div className="lg:pl-100">
           <div
-            className="fixed top-0 left-0 right-0 z-40 flex h-12 w-full items-center gap-x-4 border-b border-gray-200 px-2 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6"
-            style={{ backgroundColor: "#950ca5" }}
+            className="fixed top-0 left-0 right-0 z-40 flex  bg-white h-12 w-full items-center gap-x-4 border-b border-gray-200 px-2 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6"
+            // style={{ backgroundColor: "#C0C0C0" }}
           >
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="-m-1.5 p-1.5 text-white lg:hidden"
+              // className="-m-1.5 p-1.5 text-white lg:hidden"
+              className="-m-1.5 p-1.5 text-black lg:hidden"
             >
               <span className="sr-only">Open sidebar</span>
               <Bars3Icon aria-hidden="true" className="h-5 w-5" />
@@ -326,7 +326,8 @@ export default function Navigation() {
                 {/* Notification Button */}
                 <button
                   type="button"
-                  className="-m-1.5 p-1.5 text-white hover:text-gray-500"
+                  // className="-m-1.5 p-1.5 text-white hover:text-gray-500"
+                   className="-m-1.5 p-1.5 text-black hover:text-gray-500"
                 >
                   <span className="sr-only">View notifications</span>
                   <BellIcon aria-hidden="true" className="h-5 w-5" />
@@ -334,7 +335,9 @@ export default function Navigation() {
 
                 <div
                   aria-hidden="true"
-                  className="hidden lg:block lg:h-5 lg:w-px lg:bg-white"
+                  // className="hidden lg:block lg:h-5 lg:w-px lg:bg-white"
+                   className="hidden lg:block lg:h-5 lg:w-px lg:bg-black"
+
                 />
 
                 {/* User Menu */}
@@ -349,7 +352,8 @@ export default function Navigation() {
                     <span className="hidden lg:flex lg:items-center ml-2">
                       <span
                         aria-hidden="true"
-                        className="text-sm font-semibold leading-6 text-white"
+                        // className="text-sm font-semibold leading-6 text-white"
+                         className="text-sm font-semibold leading-6 text-black"
                       >
                         Tom Cook
                       </span>
