@@ -33,7 +33,7 @@ import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
 import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
 import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
-import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
+import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.png";
 import { ToastContainer, toast } from "react-toastify";
 
 function Payment() {
@@ -218,7 +218,7 @@ function Payment() {
       case "AmazonPay":
         return (
           <div className=" rounded-full">
-            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
+            <img className="w-9 h-7 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
       case "PayPal":
