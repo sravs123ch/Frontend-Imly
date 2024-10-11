@@ -1202,23 +1202,24 @@ const YourComponent = ({ onBack, onNext }) => {
                   }`}
                 />
               </div>
-              {/* {statusData && formOrderDetails.OrderStatus && ( */}
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-                  Expected Delivery in Days:
-                </label>
-                <input
-                  type="number"
-                  name="ExpectedDays"
-                  value={formOrderDetails.ExpectedDays}
-                  onChange={handleExpectedDaysChange}
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.ExpectedDays ? "border-red-500" : "border-gray-300"
-                  }`}
-                  min="0" // Ensure the user can't select a negative number of days
-                />
-              </div>
-              {/* )}   */}
+
+              {!editMode && (
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+                  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+                    Expected Delivery in Days:
+                  </label>
+                  <input
+                    type="number"
+                    name="ExpectedDays"
+                    value={formOrderDetails.ExpectedDays}
+                    onChange={handleExpectedDaysChange}
+                    className={`p-1 w-full sm:w-1/4 border rounded-md ${
+                      errors.ExpectedDays ? "border-red-500" : "border-gray-300"
+                    }`}
+                    min="0" // Ensure the user can't select a negative number of days
+                  />
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
