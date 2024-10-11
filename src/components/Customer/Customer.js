@@ -29,9 +29,6 @@ import { Combobox } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { MdOutlineCancel } from "react-icons/md";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Datepicker from "react-tailwindcss-datepicker";
 import {
   GETALLCUSTOMERS_API,
   DELETECUSTOMERSBYID_API,
@@ -39,7 +36,6 @@ import {
   GETALLSTORES_API,
   CUSTOMERID_API,
   ADDRESS_API,
-  CUSTOMER_REPORT_API,
   ORDERBYCUSTOMERID_API,
 } from "../../Constants/apiRoutes";
 import {
@@ -54,7 +50,7 @@ function Customers() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchName, setSearchName] = useState("");
-  const [customers, setCustomers] = useState([]);
+  const [Customers, setCustomers] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const navigate = useNavigate();
   const [paginatedPeople, setPaginatedPeople] = useState([]);
@@ -67,15 +63,12 @@ function Customers() {
 
   // const [storeNames, setStoreNames] = useState([]);
 
+  const [customers] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [orders, setOrders] = useState([]); // State to hold the fetched orders
   const { storesData } = useContext(DataContext);
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
-  const [value, setValue] = useState({
-    startDate: "",
-    endDate: "",
-  });
   useEffect(() => {
     if (storesData) {
       setStores(storesData || []);
@@ -92,7 +85,6 @@ function Customers() {
           pageSize: pageSize,
           limit: pageSize,
           SearchText: searchName,
-          StoreID: selectedStore?.StoreID, // Add the selected store ID to the API request
         },
       });
 
@@ -105,9 +97,10 @@ function Customers() {
       throw error;
     }
   };
+
   useEffect(() => {
     fetchCustomers();
-  }, [page, rowsPerPage, searchName, selectedStore]);
+  }, [page, rowsPerPage, searchName]);
 
   // Fetch customers from API
   const fetchCustomers = async () => {
@@ -116,12 +109,10 @@ function Customers() {
       const { customers, totalCount } = await getAllCustomers(
         page,
         rowsPerPage,
-        searchName,
-        selectedStore?.StoreID
+        searchName
       );
       setCustomers(customers);
       setPaginatedPeople(customers);
-      setTotalCustomers(totalCount);
 
       // Only update filtered customers if no search is active
       if (!isSearching) {
@@ -137,10 +128,21 @@ function Customers() {
   };
 
   useEffect(() => {
+    fetchCustomers(); // Fetch customers on component mount or whenever page/rowsPerPage changes
+  }, [page, rowsPerPage]);
+
+  // Filter customers based on selected store
+  useEffect(() => {
     if (selectedStore?.StoreID) {
-      fetchCustomers();
+      const filtered = customers.filter(
+        (customer) => customer.StoreID === selectedStore.StoreID
+      );
+      setFilteredCustomers(filtered);
+    } else {
+      setFilteredCustomers(customers);
     }
-  }, [page, rowsPerPage, searchName, selectedStore]);
+  }, [selectedStore, customers]);
+
   // Search customers based on the search bar
   const searchItems = (searchValue) => {
     setSearchName(searchValue);
@@ -159,7 +161,10 @@ function Customers() {
   const getCustomerById = async (customerId) => {
     try {
       console.log("customers", customerId);
-      const response = await axios.get(`${CUSTOMERID_API}/${customerId}`);
+      const response = await axios.get(
+        // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${customerId}`
+        `${CUSTOMERID_API}/${customerId}`
+      );
 
       return response.data;
     } catch (error) {
@@ -235,98 +240,12 @@ function Customers() {
   };
 
   const handleExportCustomersData = async () => {
-    setIsLoading(true);
-    const url = CUSTOMER_REPORT_API; // New API endpoint
-
-    // Define the request body (JSON format)
-    const data = {
-      StartDate: value.startDate,
-      EndDate: value.endDate,
-      StoreID: null, // Use selected store for ID
-      ReferredBy: null,
-    };
-
     try {
-      // Make the POST request
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      // Check if the response is okay
-      if (response.ok) {
-        // Process response as a blob for the Excel file
-        const blob = await response.blob();
-
-        // Create a link element
-        const link = document.createElement("a");
-        // Set the blob URL as the href
-        link.href = window.URL.createObjectURL(blob);
-        // Set the download attribute with a filename
-        link.download = "customer_report.xlsx"; // Adjust the filename as needed
-        // Append the link to the body
-        document.body.appendChild(link);
-        // Programmatically click the link to trigger the download
-        link.click();
-        // Remove the link from the document
-        link.remove();
-
-        // Show success toast
-        toast.success("Excel file downloaded successfully!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      } else {
-        const errorText = await response.text(); // Get the error message from the response
-        console.error(
-          "Failed to download the file:",
-          response.status,
-          response.statusText,
-          errorText
-        );
-
-        // Parse the error text as JSON and extract the error message
-        let errorMessage = "";
-        try {
-          const parsedError = JSON.parse(errorText);
-          errorMessage = parsedError.error; // Access the error message
-        } catch (e) {
-          errorMessage = "An unexpected error occurred"; // Fallback error message
-        }
-
-        // Show error toast with backend message
-        toast.error(`Failed to download the file: ${errorMessage}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
+      const { customers } = await getAllCustomers(0, totalCustomers); // Fetch all users for export
+      exportToExcel(customers, "Customers");
     } catch (error) {
-      console.error("Error while fetching the report:", error);
-      // Show error toast with error message
-      toast.error(`Error while fetching the report: ${error.message}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      console.error("Error exporting users data:", error);
     }
-    setIsLoading(false);
   };
 
   const handleAddCustomerClick = () => {
@@ -366,7 +285,6 @@ function Customers() {
   return (
     // <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
     <div className="main-container">
-      <ToastContainer />
       <div className="body-container">
         <h2 className="heading">Customers</h2>
         <div className="search-button-group">
@@ -395,13 +313,12 @@ function Customers() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center w-full gap-4">
-        {/* Combobox on the left with equal width */}
-        <div className="combobox-container flex-1">
+      <div className="flex-container">
+        <div className="combobox-container">
           <Combobox value={selectedStore} onChange={setSelectedStore}>
             <div className="combobox-wrapper">
               <Combobox.Input
-                className="combobox-input w-full h-10 px-3"
+                className="combobox-input"
                 displayValue={(store) => store?.StoreName || "Select Store ID"}
                 placeholder="Select Store Name"
               />
@@ -412,6 +329,7 @@ function Customers() {
                 />
               </Combobox.Button>
               <Combobox.Options className="combobox-options">
+                {/* Add "Select Store ID" option */}
                 <Combobox.Option
                   key="select-store-id"
                   className={({ active }) =>
@@ -491,39 +409,21 @@ function Customers() {
           </Combobox>
         </div>
 
-        {/* Search input in the center with equal width */}
-        <div className="search-container-c-u w-1/4">
-          <div className="relative">
-            <input
-              id="searchName"
-              type="text"
-              placeholder="Search by Name or Email"
-              value={searchName}
-              onChange={(e) => searchItems(e.target.value)}
-              className="search-input w-full pr-10"
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <IoIosSearch className="text-gray-500" />
-            </div>
-          </div>
-        </div>
-
-        {/* Date picker on the right with equal width */}
-        <div className="w-1/4">
-          <div className="border-solid border-gray-400 border-[1px] rounded-lg w-full">
-            <Datepicker
-              popoverDirection="down"
-              showShortcuts={true}
-              showFooter={true}
-              placeholder="Start Date and End Date"
-              primaryColor={"purple"}
-              value={value}
-              onChange={(newValue) => setValue(newValue)}
-              className="w-full"
-            />
+        <div className="search-container-c-u">
+          <input
+            id="searchName"
+            type="text"
+            placeholder="Search by Name or Email or Mobile"
+            value={searchName}
+            onChange={(e) => searchItems(e.target.value)}
+            className="search-input"
+          />
+          <div className="search-icon-container-c-u">
+            <IoIosSearch />
           </div>
         </div>
       </div>
+
       <TableContainer component={Paper} className="mt-4">
         <Table>
           <TableHead>
@@ -548,8 +448,8 @@ function Customers() {
                   <LoadingAnimation />
                 </StyledTableCell>
               </StyledTableRow>
-            ) : Customers.length > 0 ? ( // Check if there are customers to display
-              Customers.map((person, index) => (
+            ) : filteredCustomers.length > 0 ? (
+              filteredCustomers.map((person, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
                     <div className="flex items-center space-x-2">
@@ -597,13 +497,14 @@ function Customers() {
                         />
                         Delete
                       </button>
+
                       <button
                         type="button"
                         onClick={() => {
                           handleViewOrdersClick(person.CustomerID);
                           setActiveStep(2);
                         }}
-                        className="button view-button w-32 whitespace-nowrap"
+                        className="button view-button w-32 whitespace-nowrap" /* Prevents text from splitting */
                       >
                         <GrFormView aria-hidden="true" className="h-5 w-5" />
                         View Orders
@@ -620,7 +521,6 @@ function Customers() {
               </StyledTableRow>
             )}
           </TableBody>
-
           <TableFooter>
             <TableRow>
               <TablePagination
