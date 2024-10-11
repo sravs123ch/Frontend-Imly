@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -55,6 +55,7 @@ const Orders = () => {
   const [searchName, setSearchName] = useState("");
   const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const searchItems = (value) => {
     setSearchName(value);
@@ -105,8 +106,9 @@ const Orders = () => {
     }
   };
 
-  const fetchOrders = async () => {
-    setLoading(true);
+  const fetchOrders = useCallback(async () => {
+    if (isFetching) return;
+    setIsFetching(true);
     try {
       const { orders, totalCount } = await getAllOrders(
         page,
@@ -122,19 +124,13 @@ const Orders = () => {
     } catch (error) {
       console.error("Failed to fetch orders", error);
     } finally {
-      setLoading(false);
+      setIsFetching(false);
     }
-  };
+  }, [page, rowsPerPage, searchName]);
+
   useEffect(() => {
     fetchOrders();
-  }, [
-    page,
-    rowsPerPage,
-    searchName,
-    selectedStore,
-    value.startDate,
-    value.endDate,
-  ]);
+  }, [fetchOrders, page, rowsPerPage, searchName]);
 
   const getOrderById = async (orderId) => {
     try {

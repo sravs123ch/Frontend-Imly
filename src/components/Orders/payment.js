@@ -176,7 +176,7 @@ const Payment = () => {
     // Example: Reset form or navigate to a different page
     console.log('Cancel clicked');
     // If you want to navigate away from the form, for example:
-    navigate('/Orders');  // This assumes you're using `react-router-dom` for navigation
+    navigate('/nav');  // This assumes you're using `react-router-dom` for navigation
   };
 
   const [activeStep, setActiveStep] = useState(0);
