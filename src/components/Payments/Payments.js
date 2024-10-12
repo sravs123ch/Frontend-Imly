@@ -28,7 +28,7 @@ import { Combobox } from "@headlessui/react";
 import { DataContext } from "../../Context/DataContext";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import Datepicker from "react-tailwindcss-datepicker";
-import CashIcon from "../../assests/Images/Payments/indian-rupees.svg";
+import CashIcon from "../../assests/Images/Payments/note.png";
 import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
 import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
