@@ -5,8 +5,9 @@ import { IoIosCall, IoIosSearch, IoMdMail } from "react-icons/io";
 import { Combobox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Box } from "@mui/material";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "../Loading/LoadingAnimation";
+import { CiReceipt } from "react-icons/ci";
 
 const Temp = () => {
   const [loading, setLoading] = useState(true);
@@ -21,26 +22,26 @@ const Temp = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [errors, setErrors] = useState({});
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedOrderNumber, setSelectedOrderNumber] = useState("");
 
   const handleCustomerSelect = useCallback((customer) => {
     setSelectedCustomer(customer);
+    setSelectedOrderNumber(customer.OrderNumber);
   }, []);
 
-  // const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  // const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleSearchInput = useCallback((e) => {
     const { value } = e.target;
     setSearchValue(value);
     fetchData(value);
   }, []);
-
+  const navigate = useNavigate();
   const handleCancel = useCallback(() => {
-    console.log("Cancel clicked");
     // If you want to navigate away from the form, for example:
-    // Navigate("/payments"); // This assumes you're using `react-router-dom` for navigation
+    navigate("/payments");
   }, []);
-  if (loading) return <LoadingAnimation />;
 
   const fetchData = useCallback(async (value) => {
     try {
@@ -53,7 +54,8 @@ const Temp = () => {
         },
       });
 
-      const customers = response.data.customers;
+      const customers = response.data.data;
+      console.log(customers, "customers");
 
       // Fetch orders based on the filtered customers
       const filteredOrders = await getAllOrders(0, 10, value);
@@ -63,6 +65,47 @@ const Temp = () => {
       console.error("Error fetching users:", error);
     }
   }, []);
+
+  const payload = {
+    CustomerID: selectedCustomer?.CustomerID,
+    OrderID: selectedCustomer?.OrderID,
+    PaymentMethod: products.PaymentMethod,
+    MaskedCardNumber: products.MaskedCardNumber,
+    PaymentAmount: products.AdvanceAmount,
+    PaymentComments: products.PaymentComments,
+    OrderDate: selectedCustomer?.OrderDate,
+    CustomerName: selectedCustomer?.CustomerName,
+    Type: selectedCustomer?.Type,
+    TotalAmount: selectedCustomer?.TotalAmount,
+    Balance: selectedCustomer?.TotalAmount,
+  };
+
+  const handleSave = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        "https://imly-b2y.onrender.com/api/payments/payments/createOrUpdatePayment",
+        payload
+      );
+      console.log(response.data);
+      // Handle successful response
+    } catch (error) {
+      console.error(error);
+      // Handle error response
+    }
+  }, [payload]);
+
+  const handleCardNumberChange = (e) => {
+    const { value } = e.target;
+
+    // Allow only numeric input
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    // Update the state with the actual card number
+    setProducts((prevProducts) => ({
+      ...prevProducts,
+      MaskedCardNumber: numericValue,
+    }));
+  };
 
   const getAllOrders = useCallback(async (pageNum, pageSize, search = "") => {
     try {
@@ -105,22 +148,12 @@ const Temp = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  const paymentMethods = useMemo(() => ["Cash", "UPI", "Card"], []);
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="main-container">
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "1fr " }, // Ensure proper grid layout
+          display: { xs: "block", sm: "grid" }, // Use block layout for small screens and grid for larger screens
+          gridTemplateColumns: { sm: "1fr" }, // Adjust grid layout for larger screens
           gap: 2, // Adjust spacing between items
           pt: 2,
           p: 3,
@@ -128,7 +161,9 @@ const Temp = () => {
         }}
       >
         <div className="flex justify-center">
-          <div className="w-1/3 flex justify-between    relative ">
+          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 relative">
+            {" "}
+            {/* Adjust widths for different screen sizes */}
             <input
               id="searchName"
               type="text"
@@ -136,12 +171,11 @@ const Temp = () => {
               value={searchValue}
               onChange={handleSearchInput}
               onFocus={() => setIsFocused(true)}
-              className="mt-0 h-8 pr-10 w-full border border-gray-300 rounded-md text-sm md:text-base pl-2"
+              className="mt-0 h-10 pr-10 w-full border border-gray-300 rounded-md text-sm md:text-base pl-2"
             />
             <div className="absolute right-2 top-2 flex items-center pointer-events-none">
               <IoIosSearch aria-label="Search Icon" />
             </div>
-
             {/* Only show the dropdown when searchValue is not empty and input is focused */}
             <div
               className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
@@ -152,8 +186,8 @@ const Temp = () => {
                 minHeight: "100px",
                 overflowY: "auto",
               }}
-              // onMouseEnter={handleMouseEnter}
-              // onMouseLeave={handleMouseLeave}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               {results.length > 0 ? (
                 <>
@@ -164,32 +198,31 @@ const Temp = () => {
                   {/* Map over filtered results */}
                   {[
                     ...new Map(
-                      results.map((result) => [result.CustomerID, result])
+                      results.map((result) => [result.OrderID, result])
                     ).values(),
                   ].map((result) => (
                     <div
                       className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                      key={result.CustomerID}
-                      // onClick={() => handleCustomerSelect(result)}
+                      key={result.OrderID}
+                      onClick={() => {
+                        handleCustomerSelect(result);
+                        setIsFocused(false); // Add this line to hide the dropdown
+                      }}
                     >
-                      <span className="font-medium">
-                        {result.CustomerFirstName} {result.CustomerLastName}
-                      </span>
+                      <span className="font-medium">{result.CustomerName}</span>
                       <div className="flex items-center text-xs md:text-sm text-gray-500">
                         <IoIosCall
                           className="w-4 h-4 mr-1"
                           aria-label="Phone Icon"
                         />
-                        <span>{result.PhoneNumber}</span>
+                        <span>{result.Phone}</span>
                       </div>
                       <div className="flex items-center text-xs md:text-sm text-gray-500">
-                        <IoMdMail
-                          className="w-4 h-4 mr-1"
+                        <CiReceipt
+                          className="w-5 h-5 mr-1"
                           aria-label="Email Icon"
                         />
-                        <span>
-                          {result.CustomerEmail} {result.AddressID}
-                        </span>
+                        <span>{result.OrderNumber}</span>
                       </div>
                     </div>
                   ))}
@@ -203,17 +236,18 @@ const Temp = () => {
           </div>
         </div>
       </Box>
+
       {console.log(selectedCustomer, "dasfas")}
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "1fr " }, // Ensure proper grid layout
+          display: { xs: "block", sm: "grid" }, // Use block layout for small screens and grid for larger screens
+          gridTemplateColumns: { sm: "1fr" }, // Ensure grid layout is applied for larger screens
           gap: 2, // Adjust spacing between items
           pt: 2,
           p: 3,
         }}
       >
-        {/* <div className="flex justify-center">
+        <div className="flex justify-center">
           <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-3/4 bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
             <div className="flex justify-left text-lg font-medium text-gray-700">
               <h1 className="text-base">Payment Information</h1>
@@ -239,7 +273,18 @@ const Temp = () => {
                   <span className="w-1/2">Order Date</span>
                   <span className="mr-20">:</span>
                   <span className="w-2/3">
-                    {selectedCustomer?.OrderDate || ""}
+                    {selectedCustomer?.OrderDate
+                      ? (() => {
+                          const date = new Date(selectedCustomer.OrderDate);
+                          const month = date.toLocaleString("en-US", {
+                            month: "short",
+                          });
+                          const day = String(date.getDate()).padStart(2, "0");
+                          const year = date.getFullYear();
+
+                          return `${month} ${day}, ${year}`;
+                        })()
+                      : ""}
                   </span>
                 </div>
               </div>
@@ -251,24 +296,25 @@ const Temp = () => {
                   <span className="w-2/3">{selectedCustomer?.Type || ""}</span>
                 </div>
                 <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-                  <span className="w-1/2">Advance</span>
+                  <span className="w-1/2">Total Amount</span>
                   <span className="mr-20">:</span>
                   <span className="w-2/3">
-                    {selectedCustomer?.customerPhone || ""}
+                    {selectedCustomer?.TotalAmount || ""}
                   </span>
                 </div>
                 <div className="flex text-sm sm:text-xs font-medium text-gray-800">
                   <span className="w-1/2">Balance</span>
                   <span className="mr-20">:</span>
                   <span className="w-2/3">
-                    {selectedCustomer?.customerPhone || ""}
+                    {selectedCustomer?.TotalAmount || ""}
                   </span>
                 </div>
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
       </Box>
+
       <Box
         sx={{
           display: "grid",
@@ -308,7 +354,14 @@ const Temp = () => {
                         />
                       </Combobox.Button>
                       <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        {["Cash", "UPI", "Card"].map((method) => (
+                        {[
+                          "Amazon Pay",
+                          "Cash",
+                          "Credit Card",
+                          "Debit Card",
+                          "Paypal",
+                          "UPI",
+                        ].map((method) => (
                           <Combobox.Option
                             key={method}
                             value={method}
@@ -326,11 +379,6 @@ const Temp = () => {
                       </Combobox.Options>
                     </div>
                   </Combobox>
-                  {errors.PaymentMethod && (
-                    <p className="text-red-500 text-sm mt-1 sm:ml-4">
-                      {errors.PaymentMethod}
-                    </p>
-                  )}
                 </div>
 
                 <div className="flex  justify-between flex-col sm:flex-row gap-2 sm:gap-0">
@@ -342,28 +390,17 @@ const Temp = () => {
                     name="MaskedCardNumber"
                     value={
                       products.MaskedCardNumber
-                        ? products.MaskedCardNumber.replace(/\d(?=\d{4})/g, "*")
+                        ? products.MaskedCardNumber.replace(/\d(?=\d{4})/g, "*") // Mask all but the last four digits
                         : ""
                     }
-                    // onChange={(e) => {
-                    //   const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
-                    //   if (value.length <= 16) {
-                    //     handleChange ({
-                    //       target: { name: "MaskedCardNumber", value },
-                    //     });
-                    //   }
-                    // }}
+                    onChange={(e) => handleCardNumberChange(e)} // Handle input changes
                     className={`p-1 w-full sm:w-2/4 border rounded-md ${
                       errors.MaskedCardNumber
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                    placeholder="Enter card number" // Optional placeholder for better UX
                   />
-                  {errors.MaskedCardNumber && (
-                    <p className="text-red-500 text-sm mt-1 sm:ml-4">
-                      {errors.MaskedCardNumber}
-                    </p>
-                  )}
                 </div>
               </div>
               <div className="sm:pt-2 w-full space-y-2 p-4">
@@ -376,16 +413,7 @@ const Temp = () => {
                     name="AdvanceAmount"
                     className="p-1 w-full sm:w-2/4 border rounded-md border-gray-300"
                     value={products.AdvanceAmount}
-                    // onChange={// handleChange }
-                    // className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    //   errors.AdvanceAmount ? "border-red-500" : "border-gray-300"
-                    // }`}
                   />
-                  {errors.AdvanceAmount && (
-                    <p className="text-red-500 text-sm mt-1 sm:ml-4">
-                      {errors.AdvanceAmount}
-                    </p>
-                  )}
                 </div>
                 <div className="flex   justify-between flex-col sm:flex-row gap-2 sm:gap-0">
                   <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
@@ -396,16 +424,7 @@ const Temp = () => {
                     name="PaymentComments"
                     className="p-1 w-full sm:w-2/4 border rounded-md border-gray-300"
                     value={products.PaymentComments}
-                    // onChange={// handleChange }
-                    // className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    //   errors.PaymentComments ? "border-red-500" : "border-gray-300"
-                    // }`}
                   />
-                  {errors.PaymentComments && (
-                    <p className="text-red-500 text-sm mt-1 sm:ml-4">
-                      {errors.PaymentComments}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -416,9 +435,7 @@ const Temp = () => {
             <button
               type="submit"
               className="button-base save-btn"
-              // onClick={() => {
-              //   savePayment();
-              // }}
+              onClick={handleSave}
             >
               Save
             </button>
