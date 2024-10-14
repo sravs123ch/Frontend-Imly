@@ -94,7 +94,7 @@ const Payment = () => {
       CustomerID: 33,
       TotalAmount: orderDetails.AdvanceAmount,
       AdvanceAmount: 500,
-      BalanceAmount: 500, // Corrected typo
+      BalanceAmount: 500, 
       PaymentComments: orderDetails.PaymentComments,
       PaymentMethod: orderDetails.PaymentMethod,
       PaymentStatus: orderDetails.PaymentStatus,
@@ -378,7 +378,7 @@ const Payment = () => {
         </div> */}
         <div className="flex  justify-center flex-col sm:flex-row gap-2 sm:gap-0">
           <label className="text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
-          Card Number:
+            Card Number:
           </label>
           <input
             type="text"

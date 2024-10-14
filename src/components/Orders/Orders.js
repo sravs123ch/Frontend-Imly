@@ -87,9 +87,9 @@ const Orders = () => {
     try {
       const response = await axios.get(`${GET_ALL_ORDERS}`, {
         params: {
-          page: pageNum + 1,
-          limit: pageSize,
-          SearchText: search,
+          pageSize: pageSize,
+          pageNumber: pageNum + 1,
+          searchText: search,
           StoreID: storeID,
           StartDate: startDate,
           EndDate: endDate,

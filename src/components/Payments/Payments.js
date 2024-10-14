@@ -61,30 +61,23 @@ function Payment() {
     endDate: "",
   });
 
-  const fetchPayments = async () => {
-    setIsLoading(true);
+  const getAllPayments = async (
+    pageNum,
+    pageSize,
+    search = "",
+    storeID = "",
+    startDate = "",
+    endDate = ""
+  ) => {
     try {
-      const { payments, totalCount } = await getAllPayments(
-        page,
-        rowsPerPage,
-        searchName
-      );
-      setPayments(payments);
-      setTotalPayments(totalCount);
-    } catch (error) {
-      console.error("Failed to fetch payments", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getAllPayments = async (pageNum, pageSize, search = "") => {
-    try {
-      const response = await axios.get(GET_ALL_PAYMENTS_API, {
+      const response = await axios.get(`${GET_ALL_PAYMENTS_API}`, {
         params: {
           page: pageNum + 1,
           limit: pageSize,
-          search: search,
+          SearchText: search,
+          StoreID: storeID,
+          StartDate: startDate,
+          EndDate: endDate,
         },
       });
       return {
@@ -94,6 +87,26 @@ function Payment() {
     } catch (error) {
       console.error("Error fetching payments:", error);
       throw error;
+    }
+  };
+
+  const fetchPayments = async () => {
+    setIsLoading(true);
+    try {
+      const { payments, totalCount } = await getAllPayments(
+        page,
+        rowsPerPage,
+        searchName,
+        selectedStore.StoreID,
+        value.startDate,
+        value.endDate
+      );
+      setPayments(payments);
+      setTotalPayments(totalCount);
+    } catch (error) {
+      console.error("Failed to fetch payments", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleExportPaymentsData = async () => {
@@ -193,7 +206,14 @@ function Payment() {
 
   useEffect(() => {
     fetchPayments();
-  }, [page, rowsPerPage, searchName]);
+  }, [
+    page,
+    rowsPerPage,
+    searchName,
+    selectedStore,
+    value.startDate,
+    value.endDate,
+  ]);
 
   const getPaymentMethodIcon = (paymentMethod) => {
     switch (paymentMethod) {
@@ -209,19 +229,25 @@ function Payment() {
             <img className="w-10 h-10" src={CreditCardIcon} alt="Cash Icon" />
           </div>
         );
-      case "UPI":
+      case "UPI" || "upi":
         return (
           <div className="rounded-full ">
             <img className="w-10 h-10" src={UpiIcon} alt="Cash Icon" />
           </div>
         );
-      case "AmazonPay":
+      case "AmazonPay" || "Amazonpay":
         return (
           <div className=" rounded-full">
             <img className="w-10 h-8 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
-      case "PayPal":
+      case  "PayPal"  :
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Paypal":
         return (
           <div className="rounded-full ">
             <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
