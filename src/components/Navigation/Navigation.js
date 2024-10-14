@@ -22,6 +22,7 @@ import {
   CreditCardIcon,
   UserIcon,
   DocumentMagnifyingGlassIcon,
+  ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
@@ -31,6 +32,7 @@ import logo from "../../assests/Images/imly-logo-new.jpg";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { CogIcon } from "@heroicons/react/20/solid";
 import { useAuth } from "../../Context/AuthContext";
+import { FaRegCommentDots } from 'react-icons/fa';
 
 const allNavigation = {
   Service: [
@@ -64,7 +66,14 @@ const allNavigation = {
     { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
     { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1, 2] },
     { name: "Tasks", href: "/tasks", icon: ShoppingBagIcon, roles: [1, 2] },
+    {
+      name: "Feedbacks",
+      href: "/feedback",
+      icon: ChatBubbleLeftEllipsisIcon,
+      roles: [1, 2],
+    },
   ],
+  
 };
 
 const userNavigation = [
@@ -213,7 +222,7 @@ export default function Navigation() {
             <style>
               {`
         .flex.grow.flex-col::-webkit-scrollbar {
-          display: none; /* Safari and Chrome */
+          display: none; /* Hide scrollbar for Safari and Chrome */
         }
       `}
             </style>
@@ -280,6 +289,7 @@ export default function Navigation() {
             </div>
           </div>
         </div>
+
         <div className="lg:pl-100">
           <div
             className="fixed top-0 left-0 right-0 z-40 flex  bg-white h-12 w-full items-center gap-x-4 border-b border-gray-200 px-2 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6"

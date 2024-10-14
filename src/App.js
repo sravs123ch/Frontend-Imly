@@ -45,6 +45,7 @@ import PlusToXButton from "./components/Testing/Temp";
 import { UpdatedStatusOrderProvider } from "./Context/UpdatedOrder";
 import Test from "./components/Testing/Testing";
 import Temp from "./components/Testing/Temp";
+import Feedback from "./components/FeedBack/feeedbackForm";
 
 function App() {
   const location = useLocation();
@@ -259,6 +260,14 @@ function App() {
                                 element={
                                   <ProtectedRoute allowedRoles={[1]}>
                                     <Temp />
+                                  </ProtectedRoute>
+                                }
+                              />
+                              <Route
+                                path="/feedback"
+                                element={
+                                  <ProtectedRoute allowedRoles={[1]}>
+                                    <Feedback />
                                   </ProtectedRoute>
                                 }
                               />

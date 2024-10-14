@@ -54,6 +54,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import { useUpdatedStatusOrderContext } from "../../Context/UpdatedOrder";
+import { useParams } from "react-router-dom";
 
 const categories = [
   { id: 1, name: "Walk-in", subOptions: ["Newspaper ad"] },
@@ -102,7 +103,7 @@ function AddOrders() {
   const popupRef = useRef(null);
   const [selectedAddress, setSelectedAddress] = useState("");
   const location = useLocation();
-  const { orderId } = location.state || {}; // Get orderId from location state
+  // const { orderId } = location.state || {}; 
   const [order, setOrder] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -115,6 +116,8 @@ function AddOrders() {
     setDesignerName,
     desginerID,
     setDesginerID,
+    statusID,
+setStatusID, 
   } = useContext(IdContext);
   const [selectedTab, setSelectedTab] = useState("address");
   // const[totalAddresses,setTotalAddresses]=useState();
@@ -123,6 +126,78 @@ function AddOrders() {
   const handleTabChange = (tab) => setSelectedTab(tab);
 
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
+  const { orderId } = useParams(); // Get orderId from URL
+
+ 
+  //  // Fetch order details when the component mounts
+  // useEffect(() => {
+  //   const fetchOrderDetails = async () => {
+  //     if (orderId==="new") return; // If there is no orderId, return early
+
+  //     try {
+  //       setIsLoading(true);
+  //       setError(null); // Reset error state
+
+  //       const response = await axios.get(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`);
+  //       if (response.data.order) {
+  //         setOrderIdDetails(response.data.order); // Set the fetched order details
+  //         setOrderDetails(response.data.order); // Set the local order details
+  //       } else {
+  //         setError("Order not found."); // Handle the case where no order is found
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching order details:", err);
+  //       setError("Failed to fetch order details.");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchOrderDetails(); // Call the function to fetch order details
+  // }, [orderId]); // Dependency on orderId
+  // const isEditMode = Boolean(orderId !== "new");
+
+  // Fetch order details when the component mounts or when orderId changes
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      // If the orderId is "new", we're creating a new order so no need to fetch data
+      if (orderId === "new") {
+        setOrderDetails({}); // Set an empty object for new order creation
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Determine which orderId to use for fetching data (either from URL or state)
+        const orderIdToFetch = orderDetails.OrderID || orderId;
+
+        // Fetch order details based on the orderId
+        const response = await axios.get(
+          `https://imly-b2y.onrender.com/api/orders/getOrderById/${orderIdToFetch}`
+        );
+
+        const fetchedOrderData = response.data.order;
+        setStatusID(fetchedOrderData.StatusID);
+        if (fetchedOrderData) {
+          setOrderDetails(fetchedOrderData); // Set the fetched order details
+          setOrderIdDetails({ order: fetchedOrderData }); // Optionally store orderIdDetails
+         
+          console.log("Order details fetched:", fetchedOrderData);
+        } else {
+          setError("Order not found."); // Handle no order found case
+        }
+      } catch (err) {
+        console.error("Error fetching order details:", err);
+        setError("Failed to fetch order details.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrderDetails(); // Call the function to fetch order details
+  }, [orderId]); // Trigger this effect when orderId changes (e.g., on page load or refresh)
 
   useEffect(() => {
     if (isDialogOpen) {
@@ -289,24 +364,45 @@ function AddOrders() {
     setIsDialogOpen(false);
   };
 
-  useEffect(() => {
-    if (orderId) {
-      fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data?.order) {
-            setOrderDetails(data.order); // Set order details from API response
-            setIsEditMode(true); // Activate edit mode once order is fetched
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching order:", error);
-          setAlertMessage("Failed to load order details");
-          setAlertType("error");
-        });
-    }
-  }, [orderId]);
+  // useEffect(() => {
+  //   if (orderId==="new") return; 
+  //   if (orderId) {
+  //     fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data?.order) {
+  //           setOrderDetails(data.order); // Set order details from API response
+  //           setIsEditMode(true); // Activate edit mode once order is fetched
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching order:", error);
+  //         setAlertMessage("Failed to load order details");
+  //         setAlertType("error");
+  //       });
+  //   }
+  // }, [orderId]);
 
+  // useEffect(() => {
+  //   if (orderId) {
+  //     fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         console.log("Fetched Order Data on refresh:", data); // Log response
+  //         if (data?.order) {
+  //           setOrderDetails(data.order); // Set order details from API response
+  //           setIsEditMode(true); // Activate edit mode once order is fetched
+  //         } else {
+  //           console.error("Order data not found in response.");
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching order:", error);
+  //       });
+  //   }
+  // }, [orderId]);
+  
+  
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
@@ -396,7 +492,6 @@ function AddOrders() {
     CustomerID: selectedCustomer.CustomerID,
     OrderDate: "",
     TotalQuantity: 1,
-
     AddressID: selectedAddress.AddressID,
     TotalAmount: "",
     OrderStatus: "",
@@ -414,6 +509,7 @@ function AddOrders() {
     DesginerName: "",
     DesginerID: "",
     UserID: "",
+    StatusID:"",
     AssainTo: "",
     StoreID: selectedCustomer.StoreID || "",
   });
@@ -571,11 +667,55 @@ function AddOrders() {
   // const isEditMode = Boolean(
   //   location.state?.orderIdDetails?.order || orderIdDetails?.order
   // );
-  const isEditMode = Boolean(
+ 
+const isEditMode = Boolean(
     orderDetails.OrderID ||
       location.state?.orderIdDetails?.order ||
       orderIdDetails?.order
   );
+
+// Determine if we are in edit mode based on orderId or location.state
+// const isEditMode = Boolean(
+//   orderDetails.OrderID || 
+//   location.state?.orderIdDetails?.order || 
+//   orderIdDetails?.order
+// );
+
+// Fetch order details when in edit mode or on page load
+// useEffect(() => {
+//   const fetchOrderDetails = async () => {
+//     if (orderId==="new") return;
+//     try {
+//       setError(null);
+
+//       // Check if in edit mode (based on URL orderId or existing state)
+//       if (isEditMode || orderId) {
+//         const orderIdToFetch = orderDetails.OrderID || orderId;
+
+//         // Fetch order details using orderId
+//         const response = await axios.get(
+//           `https://imly-b2y.onrender.com/api/orders/getOrderById/${orderIdToFetch}`
+//         );
+
+//         const fetchedOrderData = response.data.order;
+//         if (fetchedOrderData) {
+//           setOrderDetails(fetchedOrderData); // Set fetched order data
+//           setOrderIdDetails({ order: fetchedOrderData }); // Optionally set orderIdDetails for state
+//           console.log("Order details fetched:", fetchedOrderData);
+//         } else {
+//           setError("Order not found."); // Handle no order found case
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Error fetching order details:", error);
+//       setError("Failed to fetch order details.");
+//     }
+//   };
+
+//   fetchOrderDetails();
+// }, [isEditMode, orderId]); // Depend on orderId to fetch data on page load or refresh
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -628,8 +768,10 @@ function AddOrders() {
           .then((data) => {
             if (data?.order) {
               setOrderDetails(data.order); // Update order details from fetched data
+             setStatusID(data.order.StatusID);
               setOrderIdDetails({ order: data.order }); // Update orderIdDetails
               console.log("Order details fetched and updated:", data.order);
+              console.log("status",data.order.StatusID);
             }
           })
           .catch((error) => {
@@ -687,6 +829,7 @@ function AddOrders() {
       ExpectedDurationDays: "",
       DesginerName: "",
       DesginerID: "",
+      StatusID:"",
       UserID: "",
       AssainTo: "",
     });
@@ -975,6 +1118,7 @@ function AddOrders() {
         Comments: order.Comments || "",
         DesginerName: order.DesginerName || "",
         DesginerID: order.DesginerID || "",
+        StatusID:order.StatusID||"",
         UserID: order.UserID || "",
         AssainTo: order.AssainTo || "",
         ReferedBy: order.ReferedBy || "",
@@ -1402,6 +1546,15 @@ function AddOrders() {
     return acc;
   }, {});
 
+//   const getSubstatus = (status) => {
+//     if (status.includes('R1')) return 'Initial Revision';
+//     if (status.includes('R2')) return 'Second Revision';
+//     // Add more conditions as needed
+//     return 'Ongoing Revision'; // Default substatus
+//   };
+// // Check if statusUpdatedData is a valid string or array before calling includes
+// const isValidStatus = typeof statusUpdatedData === 'string' || Array.isArray(statusUpdatedData);
+
   return (
     <>
       <div className="main-container">
@@ -1484,16 +1637,35 @@ function AddOrders() {
                                     {orderDetails.OrderNumber}
                                   </span>
                                 </div>
-                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
                                   <span className="w-1/3 mt-2">
                                     Order Status:
                                   </span>
-                                  {/* <span className="w-1/3"><StatusBadge  status={orderDetails.OrderStatus}/></span>
-    <span className="w-1/3"><StatusBadge  status={statusUpdatedData}/></span> */}
+                                 
                                   <span className="w-1/3">
                                     <StatusBadge status={statusUpdatedData} />
                                   </span>
-                                </div>
+                                </div> */}
+                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+  <span className="w-1/3 mt-2">Order Status:</span>
+
+  <span className="w-1/3">
+    <StatusBadge status={statusUpdatedData} />
+  </span>
+
+  {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
+  {/* {(statusUpdatedData.StatusID === 4 || 
+    statusUpdatedData.OrderStatus?.includes("Revised Design")) && (
+    <span className="w-1/3 mt-2 ml-2">
+     
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-400 text-white">
+        Substatus: {statusUpdatedData.OrderStatus} 
+      </span>
+    </span>
+  )} */}
+</div>
+
+
                                 <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
                                   <span className="w-1/3  mt-2">
                                     Store Name:
@@ -1658,6 +1830,64 @@ function AddOrders() {
                         )}
                       </div>
 
+                      {/* {isDialogOpen && selectedCustomer && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+    <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-2xl max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg w-full border border-gray-200 relative" data-aos="zoom-in">
+      <div className="absolute top-0 left-0 right-0 bg-gray-600 p-3 sm:p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Customer Details</h2>
+        <button className="flex items-center justify-center text-white" onClick={handleClose} data-aos="fade-up">
+          <span className="flex items-center justify-center h-4 w-4 sm:h-5 sm:w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">&#10005;</span>
+        </button>
+      </div>
+
+      <div className="pt-16 sm:pt-20 space-y-2">
+        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Name:</strong> {selectedCustomer.FirstName} {selectedCustomer.LastName}</p>
+        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Phone:</strong> {selectedCustomer.PhoneNumber}</p>
+        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Email:</strong> {selectedCustomer.Email}</p>
+
+        <div>
+          <strong className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-up">Address:</strong>
+          <div className="mt-2 space-y-2 max-h-32 sm:max-h-40 overflow-y-auto">
+            {selectedCustomer.Addresses?.map((address, index) => (
+              <div key={index} className="flex items-center p-2 sm:p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all transform hover:scale-105" data-aos="fade-left">
+                <input
+                  type="radio"
+                  name="address"
+                  className="form-radio h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-2 sm:mr-4"
+                  checked={selectedAddress === address}
+                  onChange={() => handleAddressChange(address)}
+                />
+                <span className="text-gray-800 text-xs sm:text-sm">
+                  {address.AddressLine1}, {address.AddressLine2}, {address.CityID}, {address.StateID}, {address.CountryID}, {address.ZipCode}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end mt-4 sm:mt-6">
+        <button className="py-2 sm:py-3 px-6 sm:px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105" onClick={handleAutoFill} data-aos="fade-up">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+)} */}
+
+                      {/* Dialog for Selected Customer Details */}
+                      {/* {isDialogOpen && selectedCustomer && (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 relative">
+      
+        <div className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
+          <h2 className="text-3xl font-bold text-white">Customer Details</h2>
+          <button className="flex items-center justify-center text-white" onClick={handleClose}>
+            <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
+              &#10005;
+            </span>
+          </button>
+        </div> */}
                       {isDialogOpen && selectedCustomer && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
                           <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
@@ -1672,7 +1902,11 @@ function AddOrders() {
                               <button
                                 className="flex items-center justify-center text-white"
                                 onClick={handleClose}
-                              ></button>
+                              >
+                                {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
+            &#10005;
+          </span> */}
+                              </button>
                             </div>
 
                             <div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">
@@ -2010,6 +2244,18 @@ function AddOrders() {
                                 Close
                               </button>
                             </div>
+                            {/* <div className="flex justify-end mt-6">
+  <button
+    className="py-3 px-8 text-white rounded-lg hover:bg-opacity-90 transition-all shadow-lg transform hover:scale-105"
+    style={{ backgroundColor: '#EFBC9B' }} // Add custom color here
+    onClick={() => {
+      handleAutoFill(); // Call your autofill logic
+      handleClose(); // Close the dialog
+    }}
+  >
+    Next
+  </button>
+</div> */}
                           </div>
                         </div>
                       )}
@@ -2549,6 +2795,59 @@ function AddOrders() {
                         </div>
                       </div>
                     </div>
+
+                    {/* <div className="flex gap-10 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
+                      
+                      <div className="sm:pt-2 w-full space-y-2 p-4">
+                      <div className="flex  text-sm  font-medium text-gray-700">
+                        <h2>Customer Information</h2>
+                        </div>
+  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+    <span className="w-1/3">First Name:</span>
+    <span className="w-2/3">{orderDetails.customerFirstName}</span>
+  </div>
+  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+    <span className="w-1/3">Last Name:</span>
+    <span className="w-2/3">{orderDetails.customerLastName}</span>
+  </div>
+  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+    <span className="w-1/3">Email:</span>
+    <span className="w-2/3">{orderDetails.customerEmail}</span>
+  </div>
+  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+    <span className="w-1/3">Phone:</span>
+    <span className="w-2/3">{orderDetails.customerPhone}</span>
+</div>
+
+</div>
+
+<div className="sm:pt-2 w-full space-y-2 p-4">
+<div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>Address Line 1:</span>
+    <span>{orderDetails.AddressLine1}</span>
+  </div>
+  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>Address Line 2:</span>
+    <span>{orderDetails.AddressLine2}</span>
+  </div>
+  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>Country:</span>
+    <span>{selectedCountry?.CountryName || 'N/A'}</span>
+  </div>
+  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>State:</span>
+    <span>{selectedState?.StateName || 'N/A'}</span>
+  </div>
+  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>City:</span>
+    <span>{selectedCity?.CityName || 'N/A'}</span>
+  </div>
+  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
+    <span>Zip Code:</span>
+    <span>{orderDetails.ZipCode}</span>
+  </div>
+</div>
+                    </div> */}
 
                     <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
                       <div className="flex justify-left text-lg font-medium text-gray-700">

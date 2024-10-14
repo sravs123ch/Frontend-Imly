@@ -51,6 +51,7 @@ import { FaEye } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
 
 import { useUpdatedStatusOrderContext } from "../../Context/UpdatedOrder";
+// import { useFormData } from "../../Context/statusFormContext";
 
 const YourComponent = ({ onBack, onNext }) => {
   // Define state for orders, images, pdfPreview, errors, etc.
@@ -92,6 +93,8 @@ const YourComponent = ({ onBack, onNext }) => {
     setDesignerName,
     desginerID,
     setDesginerID,
+    statusID,
+    setStatusID
   } = useContext(IdContext);
   const [orderStatusList, setOrderStatusList] = useState([]);
   const [results, setResults] = useState([]);
@@ -107,8 +110,8 @@ const YourComponent = ({ onBack, onNext }) => {
 
   console.log("designerName:", designerName);
   console.log("desginerID:", desginerID);
-
-  const [formOrderDetails, setFormOrderDetails] = useState({
+  console.log("statusID:", statusID);
+  const [formOrderDetails, setFormOrderDetails] =  useState({
     OrderStatus: "",
     ExpectedDays: "",
     DeliveryDate: "",
@@ -195,14 +198,12 @@ const YourComponent = ({ onBack, onNext }) => {
     CustomerID: selectedCustomer.CustomerID,
     OrderDate: "",
     TotalQuantity: 1,
-
     AddressID: selectedAddress.AddressID,
     TotalAmount: "",
     OrderStatus: "",
     TotalQuantity: 1,
     OrderBy: "",
     DeliveryDate: "",
-
     DeliveryDate: "",
     Comments: "",
     ReferedBy: "",
@@ -318,6 +319,7 @@ const YourComponent = ({ onBack, onNext }) => {
         );
         const updatedCustomer = await fetchOrderDetails(OrderID);
         // Fetch the order details using the generated ID
+
         fetch(
           `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
         )
@@ -366,7 +368,310 @@ const YourComponent = ({ onBack, onNext }) => {
       setIsLoading(false); // Hide loader when done
     }
   };
+
   // Use `useEffect` to perform an action when `updatedOrderDetails` changes
+  
+  // const saveOrderHistory = async () => {
+  //   const {
+  //     StatusID,
+  //     OrderStatus,
+  //     DeliveryDate,
+  //     Comments,
+  //     AssignTo,
+  //     RoleID,
+  //     UserID,
+  //     OrderHistoryID,
+  //   } = formOrderDetails;
+  
+  //   // Validate required fields
+  //   if (!DeliveryDate) {
+  //     toast.error("Delivery date is required.", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //     return;
+  //   }
+  
+  //   const userId = localStorage.getItem("UserID");
+  
+  //   // Create a new FormData object
+  //   const formData = new FormData();
+  //   formData.append("TenantID", 1);
+  //   formData.append(
+  //     "OrderHistoryID",
+  //     editMode ? formOrderDetails.OrderHistoryID : 0
+  //   );
+  //   formData.append("OrderID", OrderID);
+  //   formData.append("StartDate", orderDate);
+  //   formData.append("EndDate", DeliveryDate);
+  //   formData.append("AssignTo", desginerID);
+  //   formData.append("Comments", Comments);
+  //   formData.append("UserID", userId);
+  //   formData.append("UserRoleID", RoleID);
+  //   formData.append("CreatedBy", "sandy");
+  //   formData.append("OrderStatus", selectedStatus || "N/A");
+  
+  //   const selectedOrderStatus = orderStatusList.find(
+  //     (status) => status.StatusID === selectedStatus
+  //   );
+  
+  //   formData.append("StatusID", selectedStatus || 1);
+  //   formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
+  
+  //   if (images && images.length > 0) {
+  //     images.forEach((fileData, index) => {
+  //       const { data, name, type } = fileData;
+  //       const blob = new Blob([data], { type });
+  //       formData.append("UploadDocument", blob, name);
+  //     });
+  //   }
+  
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log("API Response:", data);
+  
+  //     if (data.StatusCode === "SUCCESS") {
+  //       toast.success(
+  //         editMode
+  //           ? "Order status updated successfully!"
+  //           : "Order history created successfully!",
+  //         {
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //         }
+  //       );
+  
+  //       // Reset form fields here after successful creation/updating
+  //       setFormOrderDetails({
+  //         StatusID: "",
+  //         OrderStatus: "",
+  //         DeliveryDate: "",
+  //         Comments: "",
+  //         AssignTo: "",
+  //         RoleID: "",
+  //         UserID: "",
+  //         OrderHistoryID: "",
+  //         ExpectedDays: "",
+  //       });
+  //       setSelectedRole(statusData.RoleName || "");
+  //       setSelectedStatus("");
+  //       fetchOrderDetails(OrderID); // Refetch order details
+       
+  //       setSelectedStatus("");
+          
+  //     setImagePreviews([]);  // Clear image previews
+  //     setPdfPreviews([]);    // Clear PDF previews
+  
+  //       fetch(
+  //         `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
+  //       )
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //           if (data?.order) {
+  //             setOrderDetails(data.order);
+  //             setUpdatedStatusOrderDetails(data.order);
+  //             console.log("Order details fetched and updated:", data.order);
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error fetching order:", error);
+  //           toast.error("Failed to fetch the order details!");
+  //         });
+  
+  //       closeModalAndMoveToNextStep();
+  //     } else {
+  //       toast.error(
+  //         data.message || "Error occurred while processing the request.",
+  //         {
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //         }
+  //       );
+  //       closeModalAfterDelay();
+  //     }
+  //   } catch (error) {
+  //     toast.error("" + error.message, {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //     closeModalAfterDelay();
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
+  // const saveOrderHistory = async () => {
+  //   const {
+  //     StatusID,
+  //     OrderStatus,
+  //     DeliveryDate,
+  //     Comments,
+  //     AssignTo,
+  //     RoleID,
+  //     UserID,
+  //     OrderHistoryID,
+  //   } = formOrderDetails;
+  
+  //   // Validate required fields
+  //   if (!DeliveryDate) {
+  //     toast.error("Delivery date is required.", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //     return;
+  //   }
+  
+  //   const userId = localStorage.getItem("UserID");
+  
+  //   // Create a new FormData object
+  //   const formData = new FormData();
+  //   formData.append("TenantID", 1);
+  //   formData.append("OrderHistoryID", editMode ? formOrderDetails.OrderHistoryID : 0);
+  //   formData.append("OrderID", OrderID);
+  //   formData.append("StartDate", orderDate);
+  //   formData.append("EndDate", DeliveryDate);
+  //   formData.append("AssignTo", desginerID);
+  //   formData.append("Comments", Comments);
+  //   formData.append("UserID", userId);
+  //   formData.append("UserRoleID", RoleID);
+  //   formData.append("CreatedBy", "sandy");
+  //   formData.append("OrderStatus", selectedStatus || "N/A");
+  
+  //   const selectedOrderStatus = orderStatusList.find(
+  //     (status) => status.StatusID === selectedStatus
+  //   );
+  
+  //   formData.append("StatusID", selectedStatus || 1);
+  //   formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
+  
+  //   if (images && images.length > 0) {
+  //     images.forEach((fileData) => {
+  //       const { data, name, type } = fileData;
+  //       const blob = new Blob([data], { type });
+  //       formData.append("UploadDocument", blob, name);
+  //     });
+  //   }
+  
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log("API Response:", data);
+  
+  //     if (data.StatusCode === "SUCCESS") {
+  //       toast.success(
+  //         editMode ? "Order status updated successfully!" : "Order history created successfully!",
+  //         {
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //         }
+  //       );
+  
+  //       // Reset form fields here after successful creation/updating
+  //       setFormOrderDetails({
+  //         StatusID: "",
+  //         OrderStatus: "",
+  //         DeliveryDate: "",
+  //         Comments: "",
+  //         AssignTo: "",
+  //         RoleID: "",
+  //         UserID: "",
+  //         OrderHistoryID: "",
+  //         ExpectedDays: "",
+  //       });
+  //       setSelectedRole(statusData.RoleName || "");
+  //       setSelectedStatus("");
+  //       setImagePreviews([]);  // Clear image previews
+  //       setPdfPreviews([]);    // Clear PDF previews
+  
+  //       // Fetch updated order details
+  //       fetchOrderDetails(OrderID);
+  
+  //       // Reset editMode to false to return to normal view
+  //       setEditMode(false); // Add this line to reset edit mode
+  
+  //       // Close modal and return to normal view
+  //       closeModalAndMoveToNextStep();
+  //     } else {
+  //       toast.error(
+  //         data.message || "Error occurred while processing the request.",
+  //         {
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: true,
+  //           draggable: true,
+  //           progress: undefined,
+  //         }
+  //       );
+  //       closeModalAfterDelay();
+  //     }
+  //   } catch (error) {
+  //     toast.error("" + error.message, {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //     closeModalAfterDelay();
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
+  
   useEffect(() => {
     // Log the updated order details or perform any side effects here
     console.log("Updated Order Details:", updatedStatusOrderDetails);
@@ -674,7 +979,7 @@ const YourComponent = ({ onBack, onNext }) => {
       "Quick Quote": 0,
       "Initial Design": 1,
       "Initial Measurements": 2,
-      "Revised Design": 3, // You could adjust this for specific revision numbers like R1, R2, etc.
+      "Revised Design(R1,R2,R#)": 3, // You could adjust this for specific revision numbers like R1, R2, etc.
       "Final Measurement": 4,
       "Signup Document": 5,
       Production: 6,
@@ -729,11 +1034,17 @@ const YourComponent = ({ onBack, onNext }) => {
         AssignTo: statusData.AssignTo || "",
         AssignTo: desginerID || "",
         RoleID: statusData.RoleName || "", // Corrected key if needed
+        RoleName: statusData.RoleName || "",
       });
       // Set the search user value for the input field
       // setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
       setSelectedRole(statusData.RoleName || "");
+      console.log("RoleName:", statusData.RoleName); // Check if the value exists
+       // Set the selected role for the combobox
+    setSelectedRole(statusData.RoleName || ""); // Call setSelectedRole only once
+   
+
       // Get the index of the current status in the list
       const selectedStepIndex = filteredStatusList.findIndex(
         (status) => status.StatusID === statusId
@@ -749,7 +1060,7 @@ const YourComponent = ({ onBack, onNext }) => {
       for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
         newCompletedSteps[i] = false;
       }
-
+      setSelectedRole(statusData.RoleName || "");
       // Update completed steps and active step
       setCompletedSteps(newCompletedSteps);
       setActiveStep(selectedStepIndex); // Set the active step to the current one
@@ -765,6 +1076,146 @@ const YourComponent = ({ onBack, onNext }) => {
     }
   };
 
+
+  // const handleEditstatus = (historyId, statusId) => {
+  //   console.log("Attempting to edit Payment with historyId:", historyId);
+  
+  //   // Find the specific order status based on the selected historyId
+  //   const statusData = statusDetails.find(
+  //     (status) => status.OrderHistoryID === historyId
+  //   );
+  
+  //   if (statusData) {
+  //     // Populate file previews if documents are available
+  //     const images = statusData.DownloadDocuments?.filter((file) =>
+  //       file.includes("image")
+  //     );
+  //     const pdfs = statusData.DownloadDocuments?.filter((file) =>
+  //       file.includes("pdf")
+  //     );
+  
+  //     // Set the previews
+  //     setImagePreviews(images || []);
+  //     setPdfPreviews(pdfs || []);
+  
+  //     // Set form order details with the data found from the backend
+  //     setFormOrderDetails({
+  //       OrderID: statusData.OrderID || "",
+  //       OrderHistoryID: statusData.OrderHistoryID || "",
+  //       OrderStatus: statusData.OrderStatus || "N/A",
+  //       DeliveryDate: statusData.DeliveryDate || "",
+  //       Comments: statusData.Comments || "",
+  //       StartDate: statusData.StartDate || "",
+  //       DownloadDocuments: statusData.DownloadDocuments || [], // Populate from backend
+  //       viewdocuments: statusData.viewdocuments || [],
+  //       StatusID: statusId || "",
+  //       AssignTo: statusData.AssignTo || "",
+  //       RoleID: statusData.RoleName || "",
+  //     });
+  
+  //     setSelectedRole(statusData.RoleName || "");
+  
+  //     // Update steps logic, completed steps, etc.
+  //     const selectedStepIndex = filteredStatusList.findIndex(
+  //       (status) => status.StatusID === statusId
+  //     );
+  //     const newCompletedSteps = {};
+  //     for (let i = 0; i <= selectedStepIndex; i++) {
+  //       newCompletedSteps[i] = true; // Mark previous steps as completed
+  //     }
+  //     for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
+  //       newCompletedSteps[i] = false;
+  //     }
+  
+  //     setCompletedSteps(newCompletedSteps);
+  //     setActiveStep(selectedStepIndex); // Set the active step to the current one
+  //     setSelectedStatus(statusId); // Update the selected status ID
+  //     setEditMode(true); // Enable edit mode
+  //   } else {
+  //     console.error(
+  //       "No valid data found for the provided historyId:",
+  //       historyId
+  //     );
+  //   }
+  // };
+  
+
+  // const handleEditstatus = (historyId, statusId) => {
+  //   console.log("Attempting to edit Payment with historyId:", historyId);
+  
+  //   // Find the specific order status based on the selected historyId
+  //   const statusData = statusDetails.find(
+  //     (status) => status.OrderHistoryID === historyId
+  //   );
+  
+  //   if (statusData) {
+  //       // Set the selected role for the Combobox (Department)
+  //   setSelectedRole(statusData.RoleName || ""); // This will set the RoleName
+  //     // 1. Populate file previews if documents are available
+  //     const documents = statusData.DownloadDocuments || []; // Default to an empty array if undefined or null
+    
+  //     // Check if documents is an array before filtering
+  //     const images = Array.isArray(documents)
+  //       ? documents.filter((file) => file.includes("image"))
+  //       : []; // Use an empty array if documents is not an array
+    
+  //     const pdfs = Array.isArray(documents)
+  //       ? documents.filter((file) => file.includes("pdf"))
+  //       : []; // Use an empty array if documents is not an array
+    
+  //     // Set the image and PDF previews
+  //     setImagePreviews(images);
+  //     setPdfPreviews(pdfs);
+  
+  //     // Set the image and PDF previews
+  //     setImagePreviews(images || []||"");
+  //     setPdfPreviews(pdfs || [] || "");
+  
+  //     // 2. Set form order details from the backend
+  //     setFormOrderDetails({
+  //       OrderID: statusData.OrderID || "",
+  //       OrderHistoryID: statusData.OrderHistoryID || "",
+  //       OrderStatus: statusData.OrderStatus || "N/A",
+  //       DeliveryDate: statusData.DeliveryDate || "",
+  //       Comments: statusData.Comments || "",
+  //       StartDate: statusData.StartDate || "",
+  //       DownloadDocuments: statusData.DownloadDocuments || [], // Backend data
+  //       viewdocuments: statusData.viewdocuments || [], // Backend data
+  //       StatusID: statusId || "",
+  //       AssignTo: statusData.AssignTo || "",
+  //       RoleID: statusData.RoleName || "", // Set RoleName here
+  //     });
+  
+  //     // 3. Set the selected role for the Combobox (Department)
+  //     // setSelectedRole(statusData.RoleName || "");
+
+  //     console.log("Role name",selectedRole);
+  
+  //     // 4. Steps handling (completed steps logic)
+  //     const selectedStepIndex = filteredStatusList.findIndex(
+  //       (status) => status.StatusID === statusId
+  //     );
+  //     const newCompletedSteps = {};
+  //     for (let i = 0; i <= selectedStepIndex; i++) {
+  //       newCompletedSteps[i] = true; // Mark previous steps as completed
+  //     }
+  //     for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
+  //       newCompletedSteps[i] = false;
+  //     }
+  
+  //     // Update state for steps and mode
+  //     setCompletedSteps(newCompletedSteps);
+  //     setActiveStep(selectedStepIndex); // Set the active step
+  //     setSelectedStatus(statusId); // Update selected status ID
+  //     setEditMode(true); // Enable edit mode
+  //   } else {
+  //     console.error(
+  //       "No valid data found for the provided historyId:",
+  //       historyId
+  //     );
+  //   }
+  // };
+  
   useEffect(() => {
     console.log("FormOrderDetails updated:", formOrderDetails);
   }, [formOrderDetails]);
@@ -777,43 +1228,91 @@ const YourComponent = ({ onBack, onNext }) => {
     console.log("Selected Status Updated:", selectedStatusText);
   }, [selectedStatus]);
 
-  const [visibleSteps, setVisibleSteps] = useState(4); // Initially show 5 steps
-  const [completedSteps, setCompletedSteps] = useState({});
+  // const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
+  // const [completedSteps, setCompletedSteps] = useState({});
 
-  const handleCompleteStep = (stepIndex) => {
-    const newCompletedSteps = { ...completedSteps };
-    for (let i = 0; i <= stepIndex; i++) {
-      newCompletedSteps[i] = true; // Mark all steps before and including the selected one as completed
+  // const handleCompleteStep = (stepIndex) => {
+  //   const newCompletedSteps = { ...completedSteps };
+  //   for (let i = 0; i <= stepIndex; i++) {
+  //     newCompletedSteps[i] = true; // Mark all steps before and including the selected one as completed
+  //   }
+  //   setCompletedSteps(newCompletedSteps);
+  //   setActiveStep(stepIndex); // Set the current step as active
+  // };
+
+  // const handleStepClick = (index) => {
+  //   handleCompleteStep(index); // Complete the step and all before it
+  //   if (index < visibleSteps) {
+  //     setVisibleSteps((prevSteps) =>
+  //       Math.min(prevSteps + 1, filteredStatusList.length)
+  //     );
+  //   }
+  // };
+
+  // const handleScroll = (e) => {
+  //   const bottom =
+  //     Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
+  //     e.target.clientHeight;
+  //   if (bottom && visibleSteps < filteredStatusList.length) {
+  //     setVisibleSteps((prevSteps) =>
+  //       Math.min(prevSteps + 5, filteredStatusList.length)
+  //     );
+  //   }
+  // };
+
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  //   setCompletedSteps({});
+  //   setVisibleSteps(4); // Reset visible steps to initial value
+  // };
+
+
+  const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
+const [completedSteps, setCompletedSteps] = useState({});
+// const [activeStep, setActiveStep] = useState(null);
+
+const handleCompleteStep = (statusID) => {
+  const newCompletedSteps = { ...completedSteps };
+  // Mark the selected StatusID and all previous steps as completed
+  filteredStatusList.forEach((status) => {
+    if (status.StatusID <= statusID) {
+      newCompletedSteps[status.StatusID] = true;
     }
-    setCompletedSteps(newCompletedSteps);
-    setActiveStep(stepIndex); // Set the current step as active
-  };
+  });
+  setCompletedSteps(newCompletedSteps);
+  setActiveStep(statusID); // Set the current StatusID as active
+};
 
-  const handleStepClick = (index) => {
-    handleCompleteStep(index); // Complete the step and all before it
-    if (index < visibleSteps) {
-      setVisibleSteps((prevSteps) =>
-        Math.min(prevSteps + 1, filteredStatusList.length)
-      );
-    }
-  };
+const handleStepClick = (statusID) => {
+  handleCompleteStep(statusID); // Complete the step and all before it
+  const currentIndex = filteredStatusList.findIndex(
+    (status) => status.StatusID === statusID
+  );
+  
+  // Show more steps if the current step is within visible range
+  if (currentIndex < visibleSteps) {
+    setVisibleSteps((prevSteps) =>
+      Math.min(prevSteps + 1, filteredStatusList.length)
+    );
+  }
+};
 
-  const handleScroll = (e) => {
-    const bottom =
-      Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
-      e.target.clientHeight;
-    if (bottom && visibleSteps < filteredStatusList.length) {
-      setVisibleSteps((prevSteps) =>
-        Math.min(prevSteps + 5, filteredStatusList.length)
-      );
-    }
-  };
+const handleScroll = (e) => {
+  const bottom =
+    Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
+    e.target.clientHeight;
+  if (bottom && visibleSteps < filteredStatusList.length) {
+    setVisibleSteps((prevSteps) =>
+      Math.min(prevSteps + 5, filteredStatusList.length)
+    );
+  }
+};
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompletedSteps({});
-    setVisibleSteps(4); // Reset visible steps to initial value
-  };
+const handleReset = () => {
+  setActiveStep(null); // Reset the active step
+  setCompletedSteps({}); // Clear all completed steps
+  setVisibleSteps(5); // Reset visible steps to initial value
+};
 
   // const [searchUserValue, setSearchUserValue]=useState();
   const [isUserFocused, setIsUserFocused] = useState();
@@ -947,11 +1446,13 @@ const YourComponent = ({ onBack, onNext }) => {
 
   const handleRoleChanging = (roleID) => {
     setSelectedRole(roleID); // Set the selected RoleID
+    // setSelectedRole(statusData.RoleName || "");
 
     // Update formOrderDetails with UserRoleID for backend submission
     setFormOrderDetails((prevDetails) => ({
       ...prevDetails,
       RoleID: roleID, // Pass UserRoleID to backend
+      // RoleName:RoleName,
     }));
 
     // Validate if a role is selected
@@ -971,7 +1472,8 @@ const YourComponent = ({ onBack, onNext }) => {
     }
   }, [statusData]);
 
-  const handleViewDocuments = () => {
+  const handleViewDocuments = (event) => {
+    event.preventDefault(); 
     // Logic to handle viewing documents
     if (imagePreviews.length > 0) {
       // Open the first image preview, for example
@@ -993,6 +1495,8 @@ const YourComponent = ({ onBack, onNext }) => {
     document.getElementById("UploadFiles").value = "";
   };
 
+
+  
   return (
     <Box
       sx={{
@@ -1041,7 +1545,7 @@ const YourComponent = ({ onBack, onNext }) => {
                       {filteredStatusList.length > 0 ? (
                         // Filter the statuses to only show those after the active step
                         filteredStatusList
-                          .filter((_, index) => index > activeStep) // Show statuses after the active one
+                          .filter((_, index) => index === 3?index >= activeStep:index >activeStep) // Show statuses after the active one
                           .map((status) => (
                             <Combobox.Option
                               key={status.StatusID}
@@ -1136,7 +1640,7 @@ const YourComponent = ({ onBack, onNext }) => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+              {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
                   Department:
                 </label>
@@ -1186,7 +1690,56 @@ const YourComponent = ({ onBack, onNext }) => {
                 {errors.UserRole && (
                   <p className="text-red-500 text-sm ml-2">{errors.UserRole}</p>
                 )}
-              </div>
+              </div> */}
+
+ <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+    Department:
+  </label>
+  <Combobox value={selectedRole} onChange={handleRoleChanging}>
+    <div className="relative w-full sm:w-1/4">
+      <Combobox.Input
+        className={`p-1 w-full border rounded-md ${
+          errors.UserRole ? "border-red-500" : "border-gray-300"
+        }`}
+        onChange={(e) => setQuery(e.target.value)}
+        displayValue={(roleID) => {
+          const selected = roles.find((role) => role.RoleID === roleID);
+          return selected ? selected.RoleName : ""; // Display selected role
+        }}
+      />
+      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+        <ChevronUpDownIcon
+          className="h-5 w-5 text-gray-400"
+          aria-hidden="true"
+        />
+      </Combobox.Button>
+      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+        {filteredRolesList.length > 0 ? (
+          filteredRolesList.map((role) => (
+            <Combobox.Option
+              key={role.RoleID}
+              value={role.RoleID}
+              className={({ active }) =>
+                `cursor-pointer select-none relative p-2 ${
+                  active ? "bg-blue-500 text-white" : "text-gray-900"
+                }`
+              }
+            >
+              {role.RoleName}
+            </Combobox.Option>
+          ))
+        ) : (
+          <div className="p-2 text-gray-500">No roles found</div>
+        )}
+      </Combobox.Options>
+    </div>
+  </Combobox>
+  {errors.UserRole && (
+    <p className="text-red-500 text-sm ml-2">{errors.UserRole}</p>
+  )}
+</div> 
+
 
               <div className="flex flex-col hidden sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
@@ -1202,24 +1755,24 @@ const YourComponent = ({ onBack, onNext }) => {
                   }`}
                 />
               </div>
-
-              {!editMode && (
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-                    Expected Delivery in Days:
-                  </label>
-                  <input
-                    type="number"
-                    name="ExpectedDays"
-                    value={formOrderDetails.ExpectedDays}
-                    onChange={handleExpectedDaysChange}
-                    className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                      errors.ExpectedDays ? "border-red-500" : "border-gray-300"
-                    }`}
-                    min="0" // Ensure the user can't select a negative number of days
-                  />
-                </div>
-              )}
+           
+                {!editMode && (
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+                  Expected Delivery in Days:
+                </label>
+                <input
+                  type="number"
+                  name="ExpectedDays"
+                  value={formOrderDetails.ExpectedDays}
+                  onChange={handleExpectedDaysChange}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
+                    errors.ExpectedDays ? "border-red-500" : "border-gray-300"
+                  }`}
+                  min="0" // Ensure the user can't select a negative number of days
+                />
+              </div>
+             )}   
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
@@ -1406,94 +1959,83 @@ const YourComponent = ({ onBack, onNext }) => {
               </div>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-                  Comments
-                </label>
-                <input
-                  type="text"
-                  name="Comments"
-                  value={formOrderDetails.Comments}
-                  onChange={(e) =>
-                    setFormOrderDetails({
-                      ...formOrderDetails,
-                      Comments: e.target.value,
-                    })
-                  }
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.Comments ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.Comments && (
-                  <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
-                )}
-              </div>
+  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+    Comments
+  </label>
+  <textarea
+    name="Comments"
+    value={formOrderDetails.Comments}
+    onChange={(e) =>
+      setFormOrderDetails({
+        ...formOrderDetails,
+        Comments: e.target.value,
+      })
+    }
+    className={`p-2 w-full sm:w-1/4 border rounded-md ${
+      errors.Comments ? "border-red-500" : "border-gray-300"
+    }`}
+    rows={3} // Set the number of visible rows
+  />
+  {errors.Comments && (
+    <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
+  )}
+</div>
+
             </div>
 
-            <div onScroll={handleScroll} className="overflow-y-auto max-h-80">
-              <nav aria-label="Progress">
-                <ol role="list">
-                  {filteredStatusList
-                    .slice(0, visibleSteps)
-                    .map((status, index) => (
-                      <li
-                        key={status.StatusID}
-                        className={`relative pb-10 cursor-pointer ${
-                          completedSteps[index] ? "completed" : ""
-                        }`}
-                        onClick={() => handleStepClick(index)}
-                      >
-                        {/* Step rendering logic with lines */}
-                        <div
-                          className={`step-indicator flex items-center ${
-                            completedSteps[index]
-                              ? "text-gray-800"
-                              : "text-gray-800"
-                          } ${activeStep === index ? "text-orange-500" : ""}`}
-                        >
-                          {/* Check icon for completed steps */}
-                          {/* <span
-                  className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center ${
-                    completedSteps[index] ? 'bg-green-600 text-white' : 'bg-gray-300'
-                  }`}
+<div onScroll={handleScroll} className="overflow-y-auto max-h-80">
+      <nav aria-label="Progress">
+        <ol role="list">
+          {filteredStatusList
+            .slice(0, visibleSteps)
+            .map((status, index) => (
+              <li
+                key={status.StatusID}
+                className={`relative pb-7 cursor-pointer ${
+                  completedSteps[index] ? "completed" : ""
+                }`}
+                onClick={() => handleStepClick(index)}
+              >
+                {/* Step rendering logic with lines */}
+                <div
+                  className={`step-indicator flex items-center ${
+                    completedSteps[index]
+                      ? "text-gray-800"
+                      : "text-gray-800"
+                  } ${activeStep === index ? "text-orange-500" : ""}`}
                 >
-                  {completedSteps[index] ? '✓' : index + 1}
-                </span> */}
-                          <span
-                            className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
-    ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
-      ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
-                          >
-                            {/* {activeStep === index ? <GrInProgress /> : completedSteps[index] ? '✓' : index + 1} */}
+                  {/* Step Circle */}
+                  <span
+                    className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
+                      ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
+                      ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
+                  >
+                    {activeStep === index ? (
+                      <GrInProgress />
+                    ) : completedSteps[index] ? (
+                      "✓"
+                    ) : (
+                      <FaRegUserCircle />
+                    )}
+                  </span>
 
-                            {activeStep === index ? (
-                              <GrInProgress />
-                            ) : completedSteps[index] ? (
-                              "✓"
-                            ) : (
-                              <FaRegUserCircle />
-                            )}
-                          </span>
+                  {/* Status Text */}
+                  {status.OrderStatus}
+                </div>
 
-                          {/* Status Text */}
-                          {status.OrderStatus}
-                        </div>
-
-                        {/* Line between steps */}
-                        {index < filteredStatusList.length - 1 && (
-                          <div
-                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${
-                              completedSteps[index] ? "bg-green-400" : ""
-                            }`}
-                          />
-                        )}
-                      </li>
-                    ))}
-                </ol>
-              </nav>
-              {/* <button onClick={handleReset} className="mt-4 bg-red-600 text-white px-4 py-2 rounded">
-        Reset
-      </button> */}
-            </div>
+                {/* Line between steps */}
+                {index < filteredStatusList.length - 1 && (
+                  <div
+                    className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${
+                      completedSteps[index] ? "bg-green-400" : ""
+                    }`}
+                  />
+                )}
+              </li>
+            ))}
+        </ol>
+      </nav>
+    </div>
           </div>
           <div className="relative mt-10 flex justify-end gap-4">
             <div className="mt-6 flex justify-end gap-4">
@@ -1565,15 +2107,19 @@ const YourComponent = ({ onBack, onNext }) => {
                   Assigned To
                 </StyledTableCell>
                 <StyledTableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #e5e7eb",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Comments
-                </StyledTableCell>
+  align="center"
+  sx={{
+    borderRight: "1px solid #e5e7eb",
+    color: "white",
+    fontWeight: "bold",
+    width: "200px", // Set a fixed width for the comments column
+    overflow: "hidden", // Hide overflow text
+    whiteSpace: "nowrap", // Prevent text from wrapping to the next line
+    textOverflow: "ellipsis", // Show ellipsis (...) for overflowing text
+  }}
+>
+  Comments
+</StyledTableCell>
                 <StyledTableCell
                   align="center"
                   sx={{
@@ -1662,7 +2208,7 @@ const YourComponent = ({ onBack, onNext }) => {
                     >
                       <p className="font-thin">
                         {/* Log the status object */}
-                        {console.log("Status Data: ", status)}
+                        {/* {console.log("Status Data: ", status)} */}
                         {/* Display the FirstName */}
                         Assigned To: {status?.AssignTo || "N/A"}
                         <br />
@@ -1671,12 +2217,42 @@ const YourComponent = ({ onBack, onNext }) => {
                     </StyledTableCell>
 
                     {/* Comments */}
-                    <StyledTableCell
-                      align="center"
-                      className="border-r border-gray-300"
-                    >
-                      {status.Comments || "N/A"}
-                    </StyledTableCell>
+                  
+                    {/* <StyledTableCell
+  align="center"
+  className="border-r border-gray-300"
+  // sx={{
+  //   width: "200px", // Set a fixed width for the comments column
+  //   overflow: "hidden", // Hide overflow text
+  //   whiteSpace: "normal", // Allow text to wrap to the next line
+  //   wordWrap: "break-word", // Break long words onto the next line
+  //   padding: "8px", // Add consistent padding
+  //   height: "100px", // Allow the cell to auto-adjust based on content
+  //   whiteSpace: "normal", // Allow text to wrap to the next line
+  //                       wordWrap: "break-word", // Break long words onto the next line
+  //                       display: "block", // Make it block to allow wrapping
+  //                       lineClamp: 4, // Limit the number of lines to show
+  //                       display: "-webkit-box", // Required for line clamping
+  //                       WebkitLineClamp: 4, // Limit to two lines
+  //                       WebkitBoxOrient: "vertical", // Required for line clamping
+  // }}
+>
+  {status.Comments || "N/A"}
+</StyledTableCell> */}
+<StyledTableCell
+  align="center"
+  className="border-r border-gray-300"
+  sx={{
+    width: "100px", // Set a fixed width for the column if needed
+    wordBreak: "break-word", // Ensures long words break and wrap correctly
+    whiteSpace: "normal", // Allow text to wrap to the next line
+    overflow: "hidden", // Prevent overflow from growing the cell size
+  }}
+>
+  {status.Comments || "N/A"}
+</StyledTableCell>
+
+
 
                     {/* Document Links */}
                     <StyledTableCell

@@ -290,7 +290,7 @@ const Orders = () => {
         progress: undefined,
       });
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   const handleChangeRowsPerPage = (event) => {

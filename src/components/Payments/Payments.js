@@ -218,7 +218,7 @@ function Payment() {
       case "AmazonPay":
         return (
           <div className=" rounded-full">
-            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
+            <img className="w-10 h-8 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
       case "PayPal":
@@ -448,7 +448,7 @@ function Payment() {
                 <StyledTableCell>
                   <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
                     {getPaymentMethodIcon(payment.PaymentMethod)}
-                    <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
+                    <div className="flex flex-col  sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
                       {payment.PaymentMethod}
                     </div>
                   </div>

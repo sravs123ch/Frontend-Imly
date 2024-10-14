@@ -61,7 +61,7 @@ const Payment = () => {
     const validatePaymentData = () => {
       if (!orderDetails.AdvanceAmount) return "Advance amount is required.";
       if (!orderDetails.PaymentMethod) return "Payment method is required.";
-      if (!orderDetails.PaymentStatus) return "Payment status is required.";
+      // if (!orderDetails.PaymentStatus) return "Payment status is required.";
       if (!orderDetails.MaskedCardNumber)
         return "Masked card number is required.";
       if (!orderDetails.PaymentComments)
