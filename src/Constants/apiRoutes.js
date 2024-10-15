@@ -37,17 +37,11 @@ export const UPDATE_ORDERS = `${BASE_URL}/orders/updateOrder`;
 export const GET_ALL_ORDERS = `${BASE_URL}/orders/getAllOrders`;
 export const SEARCH_CUSTOMERS = `${BASE_URL}/customers/getCustomerById`;
 
-// export const GETPAYMENTSBYID_API = `${BASE_URL}/payments/getPaymentById`;
-// export const GET_ALL_PAYMENTS_API = `${BASE_URL}/payments/payments`;
-
-// export const GET_PAYMENTSBY_ORDERID_API = `${BASE_URL}/payments/payment`;
-
 export const CITIES_API = `${BASE_URL}/cities/getCitiesByState?$filter=StateID eq`;
 export const STATES_API = `${BASE_URL}/cities/getStatesByCountry?$filter=CountryID eq`;
 export const COUNTRIES_API = `${BASE_URL}/cities/getCountries`;
 
 export const GETORDERBYID_API = `${BASE_URL}/orders/getOrderById`;
-
 
 export const CREATEORUPDATE_ORDER_HISTORY__API = `${BASE_URL}/orderhistory/order-histories/createorderhistory`;
 
@@ -57,17 +51,17 @@ export const GET_ALL_PAYMENTS_API = `${BASE_URL}/payments/GetAllPayments`;
 export const CREATEORUPDATE_PAYMENTS_API = `${BASE_URL}payments/createOrUpdatePayment`;
 export const GET_PAYMENTSBY_ORDERID_API = `${BASE_URL}/payments/payment`;
 
-
 export const CREATEORUPDATE_MAPSTOREUSER = `${BASE_URL}/mapstoreusers/mapstoreuser`;
 export const GET_MAPSTOREUSERBY_USERID = `${BASE_URL}/mapstoreusers//mapstoreuserbyUserID`;
 export const GET_MAPSTORE_USERBYSTOREID = `${BASE_URL}/mapstoreusers/mapstoreuser`;
-export const  DELETEMAPSTOREUSER = `${BASE_URL}/mapstoreusers/deleteMapStoreUser`;
-export const GET_ALL_HYSTORYID_API=`${BASE_URL}/orderhistory/order-history/`;
+export const DELETEMAPSTOREUSER = `${BASE_URL}/mapstoreusers/deleteMapStoreUser`;
+export const GET_ALL_HYSTORYID_API = `${BASE_URL}/orderhistory/order-history/`;
 export const FETCH_PERMISSION_URL = `${BASE_URL}/permissions/getAllPermissions`;
 export const CREATE_OR_UPDATE_ROLE_URL = `${BASE_URL}/permissions/createOrUpdateRolePermissions`;
-export const ORDER_STATUS_API=`${BASE_URL}/Orderstatus/getAllOrderStatus`;
+export const ORDER_STATUS_API = `${BASE_URL}/Orderstatus/getAllOrderStatus`;
 export const PAYMENT_REPORT_API = `${BASE_URL}/reports/getPaymentReport`;
-export const CUSTOMER_REPORT_API=`${BASE_URL}/reports/getCustomerReport`;
-export const GET_INVENTORY_FILE_API = (fileID) => `${BASE_URL}/InventoryFile/getInventoryFileById/${fileID}`;
-export const GET_INVENTORY_FILE_UPL_API=`${BASE_URL}/InventoryFile/uploadInventoryFile`;
-export const GET_ORDER_REPORT=`${BASE_URL}/reports/getOrderReport`;
+export const CUSTOMER_REPORT_API = `${BASE_URL}/reports/getCustomerReport`;
+export const GET_INVENTORY_FILE_API = (fileID) =>
+  `${BASE_URL}/InventoryFile/getInventoryFileById/${fileID}`;
+export const GET_INVENTORY_FILE_UPL_API = `${BASE_URL}/InventoryFile/uploadInventoryFile`;
+export const GET_ORDER_REPORT = `${BASE_URL}/reports/getOrderReport`;

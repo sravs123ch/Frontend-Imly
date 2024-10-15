@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { IoIosCall, IoMdMail } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ADDRESS_API } from "../../Constants/apiRoutes";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import StatusBadge from "./Statuses";
@@ -73,7 +74,7 @@ const steps = ["Order Details", "Order Status", "payments"];
 
 function AddOrders() {
   const { customerDetails } = useContext(CustomerContext);
-  const handleCustomerSelect = (customer) => {
+  const handleCustomerSelect = async (customer) => {
     setOrderDetails({
       ...orderDetails,
       CustomerID: customer.customerId,
@@ -87,7 +88,23 @@ function AddOrders() {
     setIsDialogOpen(true);
     setIsFocused(false); // Close the popup after autofill
     setSearchValue(""); // Clear the search input after selection
+
+    // Fetch address data
+    const addressData = await fetchAddressData(customer.customerId);
+    if (addressData) {
+      setOrderDetails((prevDetails) => ({
+        ...prevDetails,
+        AddressID: addressData.AddressID,
+        AddressLine1: addressData.AddressLine1,
+        AddressLine2: addressData.AddressLine2,
+        CityName: addressData.City,
+        State: addressData.State,
+        Country: addressData.Country,
+        ZipCode: addressData.ZipCode,
+      }));
+    }
   };
+
   const handleStepClick = (index) => {
     setActiveStep(index); // Set the active step to the clicked step
     // Add your logic to change the page or navigate here
@@ -157,6 +174,19 @@ function AddOrders() {
   // const isEditMode = Boolean(orderId !== "new");
 
   // Fetch order details when the component mounts or when orderId changes
+
+  const fetchAddressData = async (customerId) => {
+    try {
+      const response = await axios.get(`${ADDRESS_API}/${customerId}`);
+      if (response.data && response.data.address) {
+        return response.data.address;
+      }
+    } catch (error) {
+      console.error("Error fetching address data:", error);
+    }
+    return null;
+  };
+
   useEffect(() => {
     const fetchOrderDetails = async () => {
       // If the orderId is "new", we're creating a new order so no need to fetch data
@@ -1760,64 +1790,6 @@ function AddOrders() {
                       )}
                     </div>
 
-                    {/* {isDialogOpen && selectedCustomer && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-    <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-2xl max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg w-full border border-gray-200 relative" data-aos="zoom-in">
-      <div className="absolute top-0 left-0 right-0 bg-gray-600 p-3 sm:p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
-        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Customer Details</h2>
-        <button className="flex items-center justify-center text-white" onClick={handleClose} data-aos="fade-up">
-          <span className="flex items-center justify-center h-4 w-4 sm:h-5 sm:w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">&#10005;</span>
-        </button>
-      </div>
-
-      <div className="pt-16 sm:pt-20 space-y-2">
-        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Name:</strong> {selectedCustomer.FirstName} {selectedCustomer.LastName}</p>
-        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Phone:</strong> {selectedCustomer.PhoneNumber}</p>
-        <p className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-right"><strong>Email:</strong> {selectedCustomer.Email}</p>
-
-        <div>
-          <strong className="text-gray-800 text-sm sm:text-lg leading-tight" data-aos="fade-up">Address:</strong>
-          <div className="mt-2 space-y-2 max-h-32 sm:max-h-40 overflow-y-auto">
-            {selectedCustomer.Addresses?.map((address, index) => (
-              <div key={index} className="flex items-center p-2 sm:p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all transform hover:scale-105" data-aos="fade-left">
-                <input
-                  type="radio"
-                  name="address"
-                  className="form-radio h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-2 sm:mr-4"
-                  checked={selectedAddress === address}
-                  onChange={() => handleAddressChange(address)}
-                />
-                <span className="text-gray-800 text-xs sm:text-sm">
-                  {address.AddressLine1}, {address.AddressLine2}, {address.CityID}, {address.StateID}, {address.CountryID}, {address.ZipCode}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end mt-4 sm:mt-6">
-        <button className="py-2 sm:py-3 px-6 sm:px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105" onClick={handleAutoFill} data-aos="fade-up">
-          Next
-        </button>
-      </div>
-    </div>
-  </div>
-)} */}
-
-                    {/* Dialog for Selected Customer Details */}
-                    {/* {isDialogOpen && selectedCustomer && (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 relative">
-      
-        <div className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
-          <h2 className="text-3xl font-bold text-white">Customer Details</h2>
-          <button className="flex items-center justify-center text-white" onClick={handleClose}>
-            <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
-              &#10005;
-            </span>
-          </button>
-        </div> */}
                     {isDialogOpen && selectedCustomer && (
                       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
                         <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
@@ -1832,11 +1804,7 @@ function AddOrders() {
                             <button
                               className="flex items-center justify-center text-white"
                               onClick={handleClose}
-                            >
-                              {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
-            &#10005;
-          </span> */}
-                            </button>
+                            ></button>
                           </div>
 
                           <div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">

@@ -102,28 +102,29 @@ const Paymentform = () => {
 
   const savePayment = () => {
     // Validation messages
-    // const validatePaymentData = () => {
-    //   if (!advanceAmount) return "Amount is required.";
-    //   if (!paymentMethod) return "Payment method is required.";
-    //   if (!maskedCardNumber) return "Card Number is required.";
-    // };
+    const validatePaymentData = () => {
+      if (!selectedCustomer) return"Please select a customer.";
+      if (!amount || amount<=0) return "Amount is required.";
+      if (!paymentMethod) return "Payment method is required.";
+      if (!maskedCardNumber) return "Card Number is required.";
+    };
 
     // // Call validation function
-    // const validationError = validatePaymentData();
+    const validationError = validatePaymentData();
 
     // // If validation fails, show an error toast and exit the function
-    // if (validationError) {
-    //   toast.error(validationError, {
-    //     position: "top-right",
-    //     autoClose: 5000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //   });
-    //   return; // Exit function if validation fails
-    // }
+    if (validationError) {
+      toast.error(validationError, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return; // Exit function if validation fails
+    }
 
     // Payment data object with correct fields
     const paymentData = {
@@ -443,7 +444,7 @@ const Paymentform = () => {
                       </Combobox.Button>
                       <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                         {[
-                          "Amazon Pay",
+                          "AmazonPay",
                           "Cash",
                           "Credit Card",
                           "Debit Card",

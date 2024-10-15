@@ -241,6 +241,12 @@ function Payment() {
             <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
+      case "Amazon Pay":
+        return (
+          <div className=" rounded-full ">
+            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
+          </div>
+        );
       case "PayPal":
         return (
           <div className="rounded-full ">
