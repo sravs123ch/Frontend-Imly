@@ -31,6 +31,7 @@ const Paymentform = () => {
   const [maskedCardNumber, setMaskedCardNumber] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentComments, setPaymentComments] = useState("");
+  const [amount, setAmount] = useState("");
 
   const handleCardNumberChange = (e) => {
     const { value } = e.target;
@@ -48,10 +49,14 @@ const Paymentform = () => {
     // Update the state with the selected payment method
     setPaymentMethod(value);
   };
-
+  const handleAmountChange = (e) => {
+    const { value } = e.target; // Now this will correctly get the value from the input field
+    setAmount(value);
+  };
   const handleCustomerSelect = useCallback((customer) => {
     setSelectedCustomer(customer);
     setSelectedOrderNumber(customer.OrderNumber);
+    setSearchValue(customer.CustomerName);
   }, []);
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
@@ -60,8 +65,16 @@ const Paymentform = () => {
   const handleSearchInput = useCallback((e) => {
     const { value } = e.target;
     setSearchValue(value);
-    fetchData(value);
+    if (value === "") {
+      setSelectedCustomer(null); // Clear selected customer when search input is empty
+    }
+    if (value.length >= 1) {
+      fetchData(value);
+    } else {
+      setResults([]); // Clear results when search input is empty
+    }
   }, []);
+
   const navigate = useNavigate();
   const handleCancel = useCallback(() => {
     // If you want to navigate away from the form, for example:
@@ -90,14 +103,15 @@ const Paymentform = () => {
   const savePayment = () => {
     // Validation messages
     // const validatePaymentData = () => {
-    //   // if (!products.AdvanceAmount) return "Advance amount is required.";
-    //   // if (!products.PaymentMethod) return "Payment method is required.";
+    //   if (!advanceAmount) return "Amount is required.";
+    //   if (!paymentMethod) return "Payment method is required.";
+    //   if (!maskedCardNumber) return "Card Number is required.";
     // };
 
-    // Call validation function
+    // // Call validation function
     // const validationError = validatePaymentData();
 
-    // If validation fails, show an error toast and exit the function
+    // // If validation fails, show an error toast and exit the function
     // if (validationError) {
     //   toast.error(validationError, {
     //     position: "top-right",
@@ -114,13 +128,11 @@ const Paymentform = () => {
     // Payment data object with correct fields
     const paymentData = {
       TenantID: 1,
-      UserID: 3, // Make sure to include the UserID
+      UserID: selectedCustomer?.UserID || null,
       PaymentID: 0,
       OrderID: selectedCustomer?.OrderID || null,
       CustomerID: selectedCustomer?.CustomerID || null,
-      TotalAmount: selectedCustomer?.TotalAmount || null,
-      BalenceAmount: selectedCustomer?.TotalAmount || null,
-      AdvanceAmount: selectedCustomer?.TotalAmount || null,
+      Amount: amount || null,
       PaymentComments: paymentComments || "",
       PaymentMethod: paymentMethod || "",
       MaskedCardNumber: maskedCardNumber || null,
@@ -150,8 +162,9 @@ const Paymentform = () => {
           setSelectedOrderNumber("");
           setAdvanceAmount(null);
           setMaskedCardNumber(null);
-          setPaymentMethod("");
-          setPaymentComments("");
+          setPaymentMethod(""); // Reset payment method
+          setPaymentComments(""); // Reset payment comments
+          setAmount(""); // Reset amount
           setSearchValue("");
           setResults([]);
         } else {
@@ -344,13 +357,20 @@ const Paymentform = () => {
                       : ""}
                   </span>
                 </div>
-              </div>
-
-              <div className="sm:pt-2 w-full space-y-2 p-4">
                 <div className="flex text-sm sm:text-xs font-medium text-gray-800">
                   <span className="w-1/2">Project Type</span>
                   <span className="mr-20">:</span>
                   <span className="w-2/3">{selectedCustomer?.Type || ""}</span>
+                </div>
+              </div>
+
+              <div className="sm:pt-2 w-full space-y-2 p-4">
+                <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                  <span className="w-1/2">Order Status</span>
+                  <span className="mr-20">:</span>
+                  <span className="w-2/3">
+                    {selectedCustomer?.OrderStatus || ""}
+                  </span>
                 </div>
                 <div className="flex text-sm sm:text-xs font-medium text-gray-800">
                   <span className="w-1/2">Total Amount</span>
@@ -360,10 +380,17 @@ const Paymentform = () => {
                   </span>
                 </div>
                 <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                  <span className="w-1/2">Paid Amount</span>
+                  <span className="mr-20">:</span>
+                  <span className="w-2/3">
+                    {selectedCustomer?.AdvanceAmount || ""}
+                  </span>
+                </div>
+                <div className="flex text-sm sm:text-xs font-medium text-gray-800">
                   <span className="w-1/2">Balance</span>
                   <span className="mr-20">:</span>
                   <span className="w-2/3">
-                    {selectedCustomer?.TotalAmount || ""}
+                    {selectedCustomer?.BalanceAmount || ""}
                   </span>
                 </div>
               </div>
@@ -390,7 +417,7 @@ const Paymentform = () => {
                     Payment Method:
                   </label>
                   <Combobox
-                    value={products.PaymentMethod}
+                    value={paymentMethod}
                     onChange={(value) =>
                       handlePaymentMethodChange({ target: { value } })
                     }
@@ -463,24 +490,25 @@ const Paymentform = () => {
               <div className="sm:pt-2 w-full space-y-2 p-4">
                 <div className="flex justify-between flex-col sm:flex-row gap-2 sm:gap-0">
                   <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700 ">
-                    Advance Amount:
+                    Amount:
                   </label>
                   <input
                     type="number"
-                    name="AdvanceAmount"
+                    name="Amount"
                     className="p-1 w-full sm:w-2/4 border rounded-md border-gray-300"
-                    value={products.AdvanceAmount}
+                    value={amount}
+                    onChange={handleAmountChange}
                   />
                 </div>
                 <div className="flex   justify-between flex-col sm:flex-row gap-2 sm:gap-0">
                   <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
                     Comments:
                   </label>
-                  <input
+                  <textarea
                     type="text"
                     name="PaymentComments"
                     className="p-1 w-full sm:w-2/4 border rounded-md border-gray-300"
-                    value={products.PaymentComments}
+                    value={paymentComments}
                     onChange={(e) => setPaymentComments(e.target.value)}
                   />
                 </div>

@@ -55,7 +55,7 @@ export const CREATEORUPDATE_PAYMENT_API = `${BASE_URL}/payments/payments/createO
 export const GETPAYMENTSBY_PAYMETID_API = `${BASE_URL}/payments/payments`;
 export const GET_ALL_PAYMENTS_API = `${BASE_URL}/payments/GetAllPayments`;
 export const CREATEORUPDATE_PAYMENTS_API = `${BASE_URL}payments/createOrUpdatePayment`;
-export const GET_PAYMENTSBY_ORDERID_API = `${BASE_URL}/payments/payments`;
+export const GET_PAYMENTSBY_ORDERID_API = `${BASE_URL}/payments/payment`;
 
 
 export const CREATEORUPDATE_MAPSTOREUSER = `${BASE_URL}/mapstoreusers/mapstoreuser`;

@@ -73,16 +73,16 @@ function Payment() {
       const response = await axios.get(`${GET_ALL_PAYMENTS_API}`, {
         params: {
           page: pageNum + 1,
-          limit: pageSize,
-          SearchText: search,
+          pageSize: pageSize,
+          searchText: search,
           StoreID: storeID,
           StartDate: startDate,
           EndDate: endDate,
         },
       });
       return {
-        payments: response.data.data || [],
-        totalCount: response.data.totalRecords || 0,
+        payments: response.data.data,
+        totalCount: response.data.totalRecords,
       };
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -225,8 +225,8 @@ function Payment() {
         );
       case "Credit Card":
         return (
-          <div className="rounded-full ">
-            <img className="w-10 h-10" src={CreditCardIcon} alt="Cash Icon" />
+          <div className="rounded-full pt-2">
+            <img className="w-10 h-8" src={CreditCardIcon} alt="Cash Icon" />
           </div>
         );
       case "UPI" || "upi":
@@ -241,7 +241,7 @@ function Payment() {
             <img className="w-10 h-8 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
-      case  "PayPal"  :
+      case "PayPal":
         return (
           <div className="rounded-full ">
             <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
@@ -255,8 +255,8 @@ function Payment() {
         );
       case "Debit Card":
         return (
-          <div className="rounded-full ">
-            <img className="w-10 h-10" src={DebitCardIcon} alt="Cash Icon" />
+          <div className="rounded-full pt-2 ">
+            <img className="w-10 h-8" src={DebitCardIcon} alt="Cash Icon" />
           </div>
         );
 
@@ -465,7 +465,7 @@ function Payment() {
               <StyledTableCell>Payment Date</StyledTableCell>
               <StyledTableCell>Order Number</StyledTableCell>
               <StyledTableCell>Customer Name</StyledTableCell>
-              <StyledTableCell>Total Amount &nbsp;( &#8377; )</StyledTableCell>
+              <StyledTableCell>Paid Amount &nbsp;( &#8377; )</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -507,7 +507,7 @@ function Payment() {
                   {payment.CustomerName ?? "Not available"}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {payment.TotalAmount ? payment.TotalAmount : "N/A"}
+                  {payment.Amount ? payment.Amount : "N/A"}
                 </StyledTableCell>
               </StyledTableRow>
             ))}

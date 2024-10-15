@@ -34,7 +34,14 @@ import {
   TablePaginationActions,
 } from "../CustomTablePagination";
 
-const Payment = () => {
+import CashIcon from "../../assests/Images/Payments/note.png";
+import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
+import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
+import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
+import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
+import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.png";
+
+const Payment = ({ orderId }) => {
   const { generatedId, customerId, orderDate } = useContext(IdContext);
   const [orderDetails, setOrderDetails] = useState({
     PaymentMethod: "",
@@ -61,7 +68,7 @@ const Payment = () => {
     const validatePaymentData = () => {
       if (!orderDetails.AdvanceAmount) return "Advance amount is required.";
       if (!orderDetails.PaymentMethod) return "Payment method is required.";
-      // if (!orderDetails.PaymentStatus) return "Payment status is required.";
+      if (!orderDetails.PaymentStatus) return "Payment status is required.";
       if (!orderDetails.MaskedCardNumber)
         return "Masked card number is required.";
       if (!orderDetails.PaymentComments)
@@ -94,7 +101,7 @@ const Payment = () => {
       CustomerID: 33,
       TotalAmount: orderDetails.AdvanceAmount,
       AdvanceAmount: 500,
-      BalanceAmount: 500, 
+      BalanceAmount: 500,
       PaymentComments: orderDetails.PaymentComments,
       PaymentMethod: orderDetails.PaymentMethod,
       PaymentStatus: orderDetails.PaymentStatus,
@@ -168,11 +175,6 @@ const Payment = () => {
 
   // Function to fetch order details
 
-  // Initial fetch when component loads
-  useEffect(() => {
-    fetchOrderDetails();
-  }, [generatedId]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setOrderDetails({ ...orderDetails, [name]: value });
@@ -201,15 +203,12 @@ const Payment = () => {
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${GET_PAYMENTSBY_ORDERID_API}/${generatedId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${GET_PAYMENTSBY_ORDERID_API}/${orderId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch data");
@@ -226,7 +225,7 @@ const Payment = () => {
         MaskedCardNumber: payment.MaskedCardNumber || "N/A",
         PaymentComments: payment.PaymentComments || "N/A",
         TotalAmount: payment.TotalAmount || "N/A",
-        AdvanceAmount: payment.AdvanceAmount || "N/A",
+        Amount: payment.Amount || "N/A",
         BalanceAmount: payment.BalanceAmount || "N/A",
         PaymentDate: payment.PaymentDate || "N/A",
       }));
@@ -242,7 +241,7 @@ const Payment = () => {
 
   useEffect(() => {
     fetchOrderDetails();
-  }, [generatedId]);
+  }, [orderId]);
 
   const handleEditPayment = (paymentId) => {
     console.log("Attempting to edit PaymentID:", paymentId);
@@ -271,6 +270,59 @@ const Payment = () => {
         "No valid data found for the provided PaymentID:",
         paymentId
       );
+    }
+  };
+  const getPaymentMethodIcon = (paymentMethod) => {
+    switch (paymentMethod) {
+      case "Cash":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={CashIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Credit Card":
+        return (
+          <div className="rounded-full pt-2">
+            <img className="w-10 h-8" src={CreditCardIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "UPI" || "upi":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={UpiIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "AmazonPay" || "Amazonpay":
+        return (
+          <div className=" rounded-full">
+            <img className="w-10 h-8 " src={AmazonPayIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "PayPal":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Paypal":
+        return (
+          <div className="rounded-full ">
+            <img className="w-10 h-10" src={PaypalIcon} alt="Cash Icon" />
+          </div>
+        );
+      case "Debit Card":
+        return (
+          <div className="rounded-full pt-2 ">
+            <img className="w-10 h-8" src={DebitCardIcon} alt="Cash Icon" />
+          </div>
+        );
+
+      default:
+        return (
+          <div>
+            <strong>N/A</strong>
+          </div>
+        );
     }
   };
   return (
@@ -336,46 +388,7 @@ const Payment = () => {
             </p>
           )}
         </div>
-        {/* <div className="flex justify-center flex-col sm:flex-row gap-2 sm:gap-0">
-          <label className="text-left w-full sm:w-1/4 text-xs font-medium text-gray-700">
-            Payment Status:
-          </label>
-          <Combobox value={orderDetails.PaymentStatus} onChange={(value) => handleChange({ target: { name: 'PaymentStatus', value } })}>
-            <div className="relative w-full sm:w-1/4">
-              <Combobox.Input
-                className={`p-1 w-full border rounded-md ${errors.PaymentStatus ? 'border-red-500' : 'border-gray-300'}`}
-                displayValue={(option) => option || 'Select a Status'}
-              />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                  <ChevronUpDownIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </Combobox.Button>
-              </Combobox.Button>
-              <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                {['Processing', 'Pending', 'Completed'].map((status) => (
-                  <Combobox.Option
-                    key={status}
-                    value={status}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-blue-600 text-white' : 'text-gray-900'
-                      }`
-                    }
-                  >
-                    {status}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
-            </div>
-          </Combobox>
-          {errors.PaymentStatus && (
-            <p className="text-red-500 text-sm mt-1 sm:ml-4">
-              {errors.PaymentStatus}
-            </p>
-          )}
-        </div> */}
+
         <div className="flex  justify-center flex-col sm:flex-row gap-2 sm:gap-0">
           <label className="text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
             Card Number:
@@ -490,16 +503,7 @@ const Payment = () => {
                     >
                       Payment Method
                     </StyledTableCell>
-                    {/* <StyledTableCell
-                      align="center"
-                      sx={{
-                        borderRight: "1px solid #e5e7eb",
-                        color: "white",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Payment Status
-                    </StyledTableCell> */}
+
                     <StyledTableCell
                       align="center"
                       sx={{
@@ -528,7 +532,7 @@ const Payment = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      Edit
+                      Amount
                     </StyledTableCell>
                     <StyledTableCell
                       align="center"
@@ -538,7 +542,7 @@ const Payment = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      Delete
+                      Action
                     </StyledTableCell>
                   </TableRow>
                 </TableHead>
@@ -550,16 +554,13 @@ const Payment = () => {
                     >
                       {/* Payment Method */}
                       <StyledTableCell align="center" className="border-r">
-                        {payment.PaymentMethod}
+                        <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
+                          {getPaymentMethodIcon(payment.PaymentMethod)}
+                          <div className="flex flex-col  sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
+                            {payment.PaymentMethod}
+                          </div>
+                        </div>
                       </StyledTableCell>
-
-                      {/* Payment Status with Badge */}
-                      {/* <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        <StatusBadge status={payment.PaymentStatus} />
-                      </StyledTableCell> */}
 
                       {/* Masked Card Number */}
                       <StyledTableCell
@@ -574,30 +575,30 @@ const Payment = () => {
                         {payment.PaymentComments}
                       </StyledTableCell>
 
-                      {/* Edit Button */}
-                      <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleEditPayment(payment.PaymentID)}
-                          className="button edit-button"
-                        >
-                          <AiOutlineEdit
-                            aria-hidden="true"
-                            className="h-4 w-4"
-                          />
-                          Edit
-                        </button>
+                      {/* Amount */}
+                      <StyledTableCell align="center" className="border-r">
+                        {payment.Amount}
                       </StyledTableCell>
+
+                      {/* Edit Button */}
 
                       {/* Delete Button */}
                       <StyledTableCell align="center">
                         <div className="button-container justify-center">
                           <button
                             type="button"
-                            // onClick={() => handleDelete(generatedId)}
+                            onClick={() => handleEditPayment(payment.PaymentID)}
+                            className="button edit-button"
+                          >
+                            <AiOutlineEdit
+                              aria-hidden="true"
+                              className="h-4 w-4"
+                            />
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(orderId)}
                             className="button delete-button"
                           >
                             <MdOutlineCancel

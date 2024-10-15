@@ -103,7 +103,7 @@ function AddOrders() {
   const popupRef = useRef(null);
   const [selectedAddress, setSelectedAddress] = useState("");
   const location = useLocation();
-  // const { orderId } = location.state || {}; 
+  // const { orderId } = location.state || {};
   const [order, setOrder] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -117,7 +117,7 @@ function AddOrders() {
     desginerID,
     setDesginerID,
     statusID,
-setStatusID, 
+    setStatusID,
   } = useContext(IdContext);
   const [selectedTab, setSelectedTab] = useState("address");
   // const[totalAddresses,setTotalAddresses]=useState();
@@ -128,7 +128,6 @@ setStatusID,
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
   const { orderId } = useParams(); // Get orderId from URL
 
- 
   //  // Fetch order details when the component mounts
   // useEffect(() => {
   //   const fetchOrderDetails = async () => {
@@ -183,7 +182,7 @@ setStatusID,
         if (fetchedOrderData) {
           setOrderDetails(fetchedOrderData); // Set the fetched order details
           setOrderIdDetails({ order: fetchedOrderData }); // Optionally store orderIdDetails
-         
+
           console.log("Order details fetched:", fetchedOrderData);
         } else {
           setError("Order not found."); // Handle no order found case
@@ -364,45 +363,6 @@ setStatusID,
     setIsDialogOpen(false);
   };
 
-  // useEffect(() => {
-  //   if (orderId==="new") return; 
-  //   if (orderId) {
-  //     fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         if (data?.order) {
-  //           setOrderDetails(data.order); // Set order details from API response
-  //           setIsEditMode(true); // Activate edit mode once order is fetched
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching order:", error);
-  //         setAlertMessage("Failed to load order details");
-  //         setAlertType("error");
-  //       });
-  //   }
-  // }, [orderId]);
-
-  // useEffect(() => {
-  //   if (orderId) {
-  //     fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         console.log("Fetched Order Data on refresh:", data); // Log response
-  //         if (data?.order) {
-  //           setOrderDetails(data.order); // Set order details from API response
-  //           setIsEditMode(true); // Activate edit mode once order is fetched
-  //         } else {
-  //           console.error("Order data not found in response.");
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching order:", error);
-  //       });
-  //   }
-  // }, [orderId]);
-  
-  
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
@@ -509,7 +469,7 @@ setStatusID,
     DesginerName: "",
     DesginerID: "",
     UserID: "",
-    StatusID:"",
+    StatusID: "",
     AssainTo: "",
     StoreID: selectedCustomer.StoreID || "",
   });
@@ -667,55 +627,53 @@ setStatusID,
   // const isEditMode = Boolean(
   //   location.state?.orderIdDetails?.order || orderIdDetails?.order
   // );
- 
-const isEditMode = Boolean(
+
+  const isEditMode = Boolean(
     orderDetails.OrderID ||
       location.state?.orderIdDetails?.order ||
       orderIdDetails?.order
   );
 
-// Determine if we are in edit mode based on orderId or location.state
-// const isEditMode = Boolean(
-//   orderDetails.OrderID || 
-//   location.state?.orderIdDetails?.order || 
-//   orderIdDetails?.order
-// );
+  // Determine if we are in edit mode based on orderId or location.state
+  // const isEditMode = Boolean(
+  //   orderDetails.OrderID ||
+  //   location.state?.orderIdDetails?.order ||
+  //   orderIdDetails?.order
+  // );
 
-// Fetch order details when in edit mode or on page load
-// useEffect(() => {
-//   const fetchOrderDetails = async () => {
-//     if (orderId==="new") return;
-//     try {
-//       setError(null);
+  // Fetch order details when in edit mode or on page load
+  // useEffect(() => {
+  //   const fetchOrderDetails = async () => {
+  //     if (orderId==="new") return;
+  //     try {
+  //       setError(null);
 
-//       // Check if in edit mode (based on URL orderId or existing state)
-//       if (isEditMode || orderId) {
-//         const orderIdToFetch = orderDetails.OrderID || orderId;
+  //       // Check if in edit mode (based on URL orderId or existing state)
+  //       if (isEditMode || orderId) {
+  //         const orderIdToFetch = orderDetails.OrderID || orderId;
 
-//         // Fetch order details using orderId
-//         const response = await axios.get(
-//           `https://imly-b2y.onrender.com/api/orders/getOrderById/${orderIdToFetch}`
-//         );
+  //         // Fetch order details using orderId
+  //         const response = await axios.get(
+  //           `https://imly-b2y.onrender.com/api/orders/getOrderById/${orderIdToFetch}`
+  //         );
 
-//         const fetchedOrderData = response.data.order;
-//         if (fetchedOrderData) {
-//           setOrderDetails(fetchedOrderData); // Set fetched order data
-//           setOrderIdDetails({ order: fetchedOrderData }); // Optionally set orderIdDetails for state
-//           console.log("Order details fetched:", fetchedOrderData);
-//         } else {
-//           setError("Order not found."); // Handle no order found case
-//         }
-//       }
-//     } catch (error) {
-//       console.error("Error fetching order details:", error);
-//       setError("Failed to fetch order details.");
-//     }
-//   };
+  //         const fetchedOrderData = response.data.order;
+  //         if (fetchedOrderData) {
+  //           setOrderDetails(fetchedOrderData); // Set fetched order data
+  //           setOrderIdDetails({ order: fetchedOrderData }); // Optionally set orderIdDetails for state
+  //           console.log("Order details fetched:", fetchedOrderData);
+  //         } else {
+  //           setError("Order not found."); // Handle no order found case
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching order details:", error);
+  //       setError("Failed to fetch order details.");
+  //     }
+  //   };
 
-//   fetchOrderDetails();
-// }, [isEditMode, orderId]); // Depend on orderId to fetch data on page load or refresh
-
-
+  //   fetchOrderDetails();
+  // }, [isEditMode, orderId]); // Depend on orderId to fetch data on page load or refresh
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -768,10 +726,10 @@ const isEditMode = Boolean(
           .then((data) => {
             if (data?.order) {
               setOrderDetails(data.order); // Update order details from fetched data
-             setStatusID(data.order.StatusID);
+              setStatusID(data.order.StatusID);
               setOrderIdDetails({ order: data.order }); // Update orderIdDetails
               console.log("Order details fetched and updated:", data.order);
-              console.log("status",data.order.StatusID);
+              console.log("status", data.order.StatusID);
             }
           })
           .catch((error) => {
@@ -829,7 +787,7 @@ const isEditMode = Boolean(
       ExpectedDurationDays: "",
       DesginerName: "",
       DesginerID: "",
-      StatusID:"",
+      StatusID: "",
       UserID: "",
       AssainTo: "",
     });
@@ -1118,7 +1076,7 @@ const isEditMode = Boolean(
         Comments: order.Comments || "",
         DesginerName: order.DesginerName || "",
         DesginerID: order.DesginerID || "",
-        StatusID:order.StatusID||"",
+        StatusID: order.StatusID || "",
         UserID: order.UserID || "",
         AssainTo: order.AssainTo || "",
         ReferedBy: order.ReferedBy || "",
@@ -1546,14 +1504,14 @@ const isEditMode = Boolean(
     return acc;
   }, {});
 
-//   const getSubstatus = (status) => {
-//     if (status.includes('R1')) return 'Initial Revision';
-//     if (status.includes('R2')) return 'Second Revision';
-//     // Add more conditions as needed
-//     return 'Ongoing Revision'; // Default substatus
-//   };
-// // Check if statusUpdatedData is a valid string or array before calling includes
-// const isValidStatus = typeof statusUpdatedData === 'string' || Array.isArray(statusUpdatedData);
+  //   const getSubstatus = (status) => {
+  //     if (status.includes('R1')) return 'Initial Revision';
+  //     if (status.includes('R2')) return 'Second Revision';
+  //     // Add more conditions as needed
+  //     return 'Ongoing Revision'; // Default substatus
+  //   };
+  // // Check if statusUpdatedData is a valid string or array before calling includes
+  // const isValidStatus = typeof statusUpdatedData === 'string' || Array.isArray(statusUpdatedData);
 
   return (
     <>
@@ -1588,56 +1546,40 @@ const isEditMode = Boolean(
               );
             })}
           </Stepper>
-          {activeStep === steps.length ? (
-            <React.Fragment>
-              <Typography className="text-center text-xl mb-4">
-                All steps completed - you're finished
-              </Typography>
-              <Box
-                sx={{ display: "flex", flexDirection: "row", pt: 2 }}
-                className="justify-center"
-              >
-                <Button
-                  onClick={handleReset}
-                  className="bg-blue-500 text-white hover:bg-blue-700 px-4 py-2 rounded"
-                >
-                  Reset
-                </Button>
-              </Box>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              {activeStep === 2 && <Step3 onBack={handleBack} />}
-              {activeStep === 1 && (
-                <Step2 onBack={handleBack} onNext={handleNext} />
-              )}
+          <React.Fragment>
+            {activeStep === 2 && (
+              <Step3 onBack={handleBack} orderId={orderId} />
+            )}
+            {activeStep === 1 && (
+              <Step2 onBack={handleBack} onNext={handleNext} />
+            )}
 
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1fr " }, // 1 column for small screens, 2 columns for medium screens
-                  gap: 2,
-                  pt: 2,
-                  // Prevent the box from exceeding the screen width
-                }}
-              >
-                {activeStep === 0 && (
-                  <>
-                    <div className="flex justify-left items-center ">
-                      <div className="relative flex flex-col w-full  bg-white  space-y-2 border border-gray-300   rounded-md mx-auto">
-                        <div className="flex w-full flex-col justify-end  items-center">
-                          {isEditMode && (
-                            <>
-                              <div className=" w-full flex justify-between gap-1 sm:pt-2 space-y-1 border border-gray-300 rounded-md p-1  pt-3">
-                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                  <span className="w-1/3 mt-3">
-                                    Order Number:
-                                  </span>
-                                  <span className="w-1/3  mt-3">
-                                    {orderDetails.OrderNumber}
-                                  </span>
-                                </div>
-                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1fr " }, // 1 column for small screens, 2 columns for medium screens
+                gap: 2,
+                pt: 2,
+                // Prevent the box from exceeding the screen width
+              }}
+            >
+              {activeStep === 0 && (
+                <>
+                  <div className="flex justify-left items-center ">
+                    <div className="relative flex flex-col w-full  bg-white  space-y-2 border border-gray-300   rounded-md mx-auto">
+                      <div className="flex w-full flex-col justify-end  items-center">
+                        {isEditMode && (
+                          <>
+                            <div className=" w-full flex justify-between gap-1 sm:pt-2 space-y-1 border border-gray-300 rounded-md p-1  pt-3">
+                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                <span className="w-1/3 mt-3">
+                                  Order Number:
+                                </span>
+                                <span className="w-1/3  mt-3">
+                                  {orderDetails.OrderNumber}
+                                </span>
+                              </div>
+                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
                                   <span className="w-1/3 mt-2">
                                     Order Status:
                                   </span>
@@ -1647,190 +1589,178 @@ const isEditMode = Boolean(
                                   </span>
                                 </div> */}
                               <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-  <span className="w-1/3 mt-2">Order Status:</span>
+                                <span className="w-1/3 mt-2">
+                                  Order Status:
+                                </span>
 
-  <span className="w-1/3">
-    <StatusBadge status={statusUpdatedData} />
-  </span>
-
-  {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
-  {/* {(statusUpdatedData.StatusID === 4 || 
-    statusUpdatedData.OrderStatus?.includes("Revised Design")) && (
-    <span className="w-1/3 mt-2 ml-2">
-     
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-400 text-white">
-        Substatus: {statusUpdatedData.OrderStatus} 
-      </span>
-    </span>
-  )} */}
-</div>
-
-
-                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                  <span className="w-1/3  mt-2">
-                                    Store Name:
-                                  </span>
-                                  <span className="w-1/3  mt-2">
-                                    {orderDetails.StoreName}
-                                  </span>
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        {/* Render search input only if isEditMode is false */}
-                        {!isEditMode && (
-                          <>
-                            <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
-                              <input
-                                id="searchName"
-                                type="text"
-                                placeholder="Search by Name..."
-                                value={searchValue}
-                                onChange={handleSearchInput}
-                                onFocus={() => setIsFocused(true)}
-                                className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
-                              />
-                              <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
-                                <IoIosSearch aria-label="Search Icon" />
+                                <span className="w-1/3">
+                                  <StatusBadge status={statusUpdatedData} />
+                                </span>
                               </div>
 
-                              {/* Only show the dropdown when searchValue is not empty and input is focused */}
-                              <div
-                                className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
-                                  searchValue && isFocused ? "block" : "hidden"
-                                }`}
-                                style={{
-                                  maxHeight: "200px",
-                                  minHeight: "100px",
-                                  overflowY: "auto",
-                                }}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                              >
-                                {results.length > 0 ? (
-                                  <>
-                                    <div className="mb-2 text-sm text-gray-600">
-                                      {results.length} Result
-                                      {results.length > 1 ? "s" : ""}
-                                    </div>
-
-                                    {/* Map over filtered results */}
-                                    {[
-                                      ...new Map(
-                                        results.map((result) => [
-                                          result.CustomerID,
-                                          result,
-                                        ])
-                                      ).values(),
-                                    ].map((result) => (
-                                      <div
-                                        className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                                        key={result.CustomerID}
-                                        onClick={() =>
-                                          handleCustomerSelect(result)
-                                        }
-                                      >
-                                        <span className="font-medium">
-                                          {result.CustomerFirstName}{" "}
-                                          {result.CustomerLastName}
-                                        </span>
-                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                          <IoIosCall
-                                            className="w-4 h-4 mr-1"
-                                            aria-label="Phone Icon"
-                                          />
-                                          <span>{result.PhoneNumber}</span>
-                                        </div>
-                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
-                                          <IoMdMail
-                                            className="w-4 h-4 mr-1"
-                                            aria-label="Email Icon"
-                                          />
-                                          <span>
-                                            {result.CustomerEmail}
-                                            {result.AddressID}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </>
-                                ) : (
-                                  <div className="p-2 overflow-clip text-gray-500">
-                                    No results found.
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="flex z-10 flex-wrap items-center justify-center w-full gap-2">
-                                {" "}
-                                {/* Reduced gap */}
-                                {/* Store Combobox */}
-                                <div className="-mt-2 p-0 w-full max-w-[84%] ml-16">
-                                  {" "}
-                                  {/* Reduced margin top, width adjusted to 90%, left margin added */}
-                                  <Combobox
-                                    value={selectedStore}
-                                    onChange={setSelectedStore}
-                                  >
-                                    <div className="relative w-full">
-                                      <Combobox.Input
-                                        className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        displayValue={(store) =>
-                                          store?.StoreName || "Select Store ID"
-                                        }
-                                        placeholder="Select Store Name"
-                                      />
-                                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                        <ChevronUpDownIcon
-                                          className="h-5 w-5 text-gray-400"
-                                          aria-hidden="true"
-                                        />
-                                      </Combobox.Button>
-                                      <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                        {/* Add "Select Store ID" option */}
-                                        <Combobox.Option
-                                          key="select-store-id"
-                                          value={{
-                                            StoreID: null,
-                                            StoreName: "Select Store ID",
-                                          }}
-                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                        >
-                                          Select Store ID
-                                        </Combobox.Option>
-                                        {/* Render all store options */}
-                                        {storeNames.map((store) => (
-                                          <Combobox.Option
-                                            key={store.StoreID}
-                                            value={store}
-                                            className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                          >
-                                            <span className="block truncate group-data-[selected]:font-semibold">
-                                              {store.StoreName}
-                                            </span>
-                                            {selectedStore?.StoreID ===
-                                              store.StoreID && (
-                                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                                                <CheckIcon
-                                                  className="h-5 w-5"
-                                                  aria-hidden="true"
-                                                />
-                                              </span>
-                                            )}
-                                          </Combobox.Option>
-                                        ))}
-                                      </Combobox.Options>
-                                    </div>
-                                  </Combobox>
-                                </div>
+                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                <span className="w-1/3  mt-2">Store Name:</span>
+                                <span className="w-1/3  mt-2">
+                                  {orderDetails.StoreName}
+                                </span>
                               </div>
                             </div>
                           </>
                         )}
                       </div>
+                      {/* Render search input only if isEditMode is false */}
+                      {!isEditMode && (
+                        <>
+                          <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
+                            <input
+                              id="searchName"
+                              type="text"
+                              placeholder="Search by Name..."
+                              value={searchValue}
+                              onChange={handleSearchInput}
+                              onFocus={() => setIsFocused(true)}
+                              className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
+                            />
+                            <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
+                              <IoIosSearch aria-label="Search Icon" />
+                            </div>
 
-                      {/* {isDialogOpen && selectedCustomer && (
+                            {/* Only show the dropdown when searchValue is not empty and input is focused */}
+                            <div
+                              className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
+                                searchValue && isFocused ? "block" : "hidden"
+                              }`}
+                              style={{
+                                maxHeight: "200px",
+                                minHeight: "100px",
+                                overflowY: "auto",
+                              }}
+                              onMouseEnter={handleMouseEnter}
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              {results.length > 0 ? (
+                                <>
+                                  <div className="mb-2 text-sm text-gray-600">
+                                    {results.length} Result
+                                    {results.length > 1 ? "s" : ""}
+                                  </div>
+
+                                  {/* Map over filtered results */}
+                                  {[
+                                    ...new Map(
+                                      results.map((result) => [
+                                        result.CustomerID,
+                                        result,
+                                      ])
+                                    ).values(),
+                                  ].map((result) => (
+                                    <div
+                                      className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
+                                      key={result.CustomerID}
+                                      onClick={() =>
+                                        handleCustomerSelect(result)
+                                      }
+                                    >
+                                      <span className="font-medium">
+                                        {result.CustomerFirstName}{" "}
+                                        {result.CustomerLastName}
+                                      </span>
+                                      <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                        <IoIosCall
+                                          className="w-4 h-4 mr-1"
+                                          aria-label="Phone Icon"
+                                        />
+                                        <span>{result.PhoneNumber}</span>
+                                      </div>
+                                      <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                        <IoMdMail
+                                          className="w-4 h-4 mr-1"
+                                          aria-label="Email Icon"
+                                        />
+                                        <span>
+                                          {result.CustomerEmail}
+                                          {result.AddressID}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </>
+                              ) : (
+                                <div className="p-2 overflow-clip text-gray-500">
+                                  No results found.
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex z-10 flex-wrap items-center justify-center w-full gap-2">
+                              {" "}
+                              {/* Reduced gap */}
+                              {/* Store Combobox */}
+                              <div className="-mt-2 p-0 w-full max-w-[84%] ml-16">
+                                {" "}
+                                {/* Reduced margin top, width adjusted to 90%, left margin added */}
+                                <Combobox
+                                  value={selectedStore}
+                                  onChange={setSelectedStore}
+                                >
+                                  <div className="relative w-full">
+                                    <Combobox.Input
+                                      className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                      displayValue={(store) =>
+                                        store?.StoreName || "Select Store ID"
+                                      }
+                                      placeholder="Select Store Name"
+                                    />
+                                    <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                      <ChevronUpDownIcon
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </Combobox.Button>
+                                    <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                      {/* Add "Select Store ID" option */}
+                                      <Combobox.Option
+                                        key="select-store-id"
+                                        value={{
+                                          StoreID: null,
+                                          StoreName: "Select Store ID",
+                                        }}
+                                        className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                      >
+                                        Select Store ID
+                                      </Combobox.Option>
+                                      {/* Render all store options */}
+                                      {storeNames.map((store) => (
+                                        <Combobox.Option
+                                          key={store.StoreID}
+                                          value={store}
+                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                        >
+                                          <span className="block truncate group-data-[selected]:font-semibold">
+                                            {store.StoreName}
+                                          </span>
+                                          {selectedStore?.StoreID ===
+                                            store.StoreID && (
+                                            <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          )}
+                                        </Combobox.Option>
+                                      ))}
+                                    </Combobox.Options>
+                                  </div>
+                                </Combobox>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* {isDialogOpen && selectedCustomer && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
     <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-2xl max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg w-full border border-gray-200 relative" data-aos="zoom-in">
       <div className="absolute top-0 left-0 right-0 bg-gray-600 p-3 sm:p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10" data-aos="fade-up">
@@ -1875,8 +1805,8 @@ const isEditMode = Boolean(
   </div>
 )} */}
 
-                      {/* Dialog for Selected Customer Details */}
-                      {/* {isDialogOpen && selectedCustomer && (
+                    {/* Dialog for Selected Customer Details */}
+                    {/* {isDialogOpen && selectedCustomer && (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-gray-200 relative">
       
@@ -1888,363 +1818,361 @@ const isEditMode = Boolean(
             </span>
           </button>
         </div> */}
-                      {isDialogOpen && selectedCustomer && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-                          <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
-                            {/* Dialog Header */}
-                            <div
-                              className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10"
-                              data-aos="fade-up"
+                    {isDialogOpen && selectedCustomer && (
+                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+                        <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 relative">
+                          {/* Dialog Header */}
+                          <div
+                            className="absolute top-0 left-0 right-0 bg-gray-600 p-4 rounded-t-2xl border-b border-gray-400 flex items-center justify-between z-10"
+                            data-aos="fade-up"
+                          >
+                            <h2 className="text-3xl font-bold text-white">
+                              Customer Details
+                            </h2>
+                            <button
+                              className="flex items-center justify-center text-white"
+                              onClick={handleClose}
                             >
-                              <h2 className="text-3xl font-bold text-white">
-                                Customer Details
-                              </h2>
-                              <button
-                                className="flex items-center justify-center text-white"
-                                onClick={handleClose}
-                              >
-                                {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
+                              {/* <span className="flex items-center justify-center h-5 w-5 bg-red-600 rounded-full hover:bg-red-700 transition-colors duration-300 text-white text-xs">
             &#10005;
           </span> */}
-                              </button>
-                            </div>
+                            </button>
+                          </div>
 
-                            <div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">
-                              <div
-                                className="flex w-full max-w-md items-center justify-start gap-x-2"
-                                data-aos="fade-right"
-                              >
-                                <strong className="text-gray-700 text-lg leading-tight">
-                                  Name:
-                                </strong>
-                                <p className="text-gray-700 text-lg leading-tight">
-                                  {selectedCustomer.CustomerFirstName}{" "}
-                                  {selectedCustomer.CustomerLastName}
-                                </p>
-                              </div>
-                              <div
-                                className="flex w-full max-w-md items-center justify-start gap-x-2"
-                                data-aos="fade-right"
-                              >
-                                <strong className="text-gray-700 text-lg leading-tight">
-                                  Phone:
-                                </strong>
-                                <p className="text-gray-700 text-lg leading-tight">
-                                  {selectedCustomer.PhoneNumber}
-                                </p>
-                              </div>
-                              <div
-                                className="flex w-full max-w-md items-center justify-start gap-x-2"
-                                data-aos="fade-right"
-                              >
-                                <strong className="text-gray-700 text-lg leading-tight">
-                                  Email:
-                                </strong>
-                                <p className="text-gray-700 text-lg leading-tight">
-                                  {selectedCustomer.CustomerEmail}
-                                </p>
-                              </div>
+                          <div className="flex flex-col items-left justify-left pt-20 space-y-2 ml-0">
+                            <div
+                              className="flex w-full max-w-md items-center justify-start gap-x-2"
+                              data-aos="fade-right"
+                            >
+                              <strong className="text-gray-700 text-lg leading-tight">
+                                Name:
+                              </strong>
+                              <p className="text-gray-700 text-lg leading-tight">
+                                {selectedCustomer.CustomerFirstName}{" "}
+                                {selectedCustomer.CustomerLastName}
+                              </p>
                             </div>
+                            <div
+                              className="flex w-full max-w-md items-center justify-start gap-x-2"
+                              data-aos="fade-right"
+                            >
+                              <strong className="text-gray-700 text-lg leading-tight">
+                                Phone:
+                              </strong>
+                              <p className="text-gray-700 text-lg leading-tight">
+                                {selectedCustomer.PhoneNumber}
+                              </p>
+                            </div>
+                            <div
+                              className="flex w-full max-w-md items-center justify-start gap-x-2"
+                              data-aos="fade-right"
+                            >
+                              <strong className="text-gray-700 text-lg leading-tight">
+                                Email:
+                              </strong>
+                              <p className="text-gray-700 text-lg leading-tight">
+                                {selectedCustomer.CustomerEmail}
+                              </p>
+                            </div>
+                          </div>
 
-                            {/* Tabs for Address and Orders */}
-                            <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mt-6">
-                              <ul className="flex flex-wrap -mb-px">
-                                <li className="me-2">
-                                  <button
-                                    className={`inline-block p-4 ${
-                                      selectedTab === "address"
-                                        ? "text-blue-600 border-b-2 border-blue-600"
-                                        : "hover:text-gray-600 hover:border-gray-300"
-                                    } rounded-t-lg`}
-                                    onClick={() => handleTabChange("address")}
+                          {/* Tabs for Address and Orders */}
+                          <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mt-6">
+                            <ul className="flex flex-wrap -mb-px">
+                              <li className="me-2">
+                                <button
+                                  className={`inline-block p-4 ${
+                                    selectedTab === "address"
+                                      ? "text-blue-600 border-b-2 border-blue-600"
+                                      : "hover:text-gray-600 hover:border-gray-300"
+                                  } rounded-t-lg`}
+                                  onClick={() => handleTabChange("address")}
+                                >
+                                  Address
+                                </button>
+                              </li>
+                              <li className="me-2">
+                                <button
+                                  className={`inline-block p-4 ${
+                                    selectedTab === "order"
+                                      ? "text-blue-600 border-b-2 border-blue-600"
+                                      : "hover:text-gray-600 hover:border-gray-300"
+                                  } rounded-t-lg`}
+                                  onClick={() => handleTabChange("order")}
+                                >
+                                  Order
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+
+                          {/* Content based on selected tab */}
+                          <div className="pt-4">
+                            {selectedTab === "address" && (
+                              <div>
+                                {/* <strong className="text-gray-800 text-lg">No Address</strong> */}
+                                <div className="mt-2 space-y-2">
+                                  <TableContainer
+                                    component={Paper}
+                                    sx={{
+                                      width: "100%",
+                                      margin: "0 auto",
+                                      mt: 2,
+                                    }}
                                   >
-                                    Address
-                                  </button>
-                                </li>
-                                <li className="me-2">
-                                  <button
-                                    className={`inline-block p-4 ${
-                                      selectedTab === "order"
-                                        ? "text-blue-600 border-b-2 border-blue-600"
-                                        : "hover:text-gray-600 hover:border-gray-300"
-                                    } rounded-t-lg`}
-                                    onClick={() => handleTabChange("order")}
-                                  >
-                                    Order
-                                  </button>
-                                </li>
-                              </ul>
-                            </div>
-
-                            {/* Content based on selected tab */}
-                            <div className="pt-4">
-                              {selectedTab === "address" && (
-                                <div>
-                                  {/* <strong className="text-gray-800 text-lg">No Address</strong> */}
-                                  <div className="mt-2 space-y-2">
-                                    <TableContainer
-                                      component={Paper}
-                                      sx={{
-                                        width: "100%",
-                                        margin: "0 auto",
-                                        mt: 2,
-                                      }}
-                                    >
-                                      <Table>
-                                        <TableHead>
-                                          <TableRow>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              Address Line 1
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              Address Line 2
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              City Name
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              State Name
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              Zip Code
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              Actions
-                                            </StyledTableCell>
-                                          </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                          {selectedCustomer?.Addresses &&
-                                            selectedCustomer.Addresses.slice(
-                                              page * rowsPerPage,
-                                              page * rowsPerPage + rowsPerPage
-                                            ).map((address, index) => (
-                                              <TableRow key={index}>
-                                                <StyledTableCell>
-                                                  {address.AddressLine1 || ""}
-                                                </StyledTableCell>
-                                                <StyledTableCell>
-                                                  {address.AddressLine2 || ""}
-                                                </StyledTableCell>
-                                                {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
+                                    <Table>
+                                      <TableHead>
+                                        <TableRow>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Address Line 1
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Address Line 2
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            City Name
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            State Name
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Zip Code
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Actions
+                                          </StyledTableCell>
+                                        </TableRow>
+                                      </TableHead>
+                                      <TableBody>
+                                        {selectedCustomer?.Addresses &&
+                                          selectedCustomer.Addresses.slice(
+                                            page * rowsPerPage,
+                                            page * rowsPerPage + rowsPerPage
+                                          ).map((address, index) => (
+                                            <TableRow key={index}>
+                                              <StyledTableCell>
+                                                {address.AddressLine1 || ""}
+                                              </StyledTableCell>
+                                              <StyledTableCell>
+                                                {address.AddressLine2 || ""}
+                                              </StyledTableCell>
+                                              {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
              <StyledTableCell>{stateMap[address.StateID] || "N/A"}</StyledTableCell> */}
-                                                <StyledTableCell>
-                                                  {address.City || "N/A"}
-                                                </StyledTableCell>
-                                                <StyledTableCell>
-                                                  {address.State || "N/A"}
-                                                </StyledTableCell>
-                                                <StyledTableCell>
-                                                  {address.ZipCode || ""}
-                                                </StyledTableCell>
-                                                <StyledTableCell>
-                                                  <div className="button-container">
-                                                    {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
-                                                    <button
-                                                      type="button"
-                                                      onClick={() => {
-                                                        handleAutoFill(
-                                                          address.AddressID
-                                                        );
-                                                        handleClose();
-                                                      }}
-                                                      className="button select-button"
-                                                    >
-                                                      Select
-                                                    </button>
-                                                  </div>
-                                                </StyledTableCell>
-                                              </TableRow>
-                                            ))}
-                                        </TableBody>
-                                        <TableFooter>
-                                          <TableRow>
-                                            <TablePagination
-                                              rowsPerPageOptions={[2, 4, 6]}
-                                              colSpan={6}
-                                              count={totalAddresses}
-                                              rowsPerPage={rowsPerPage}
-                                              page={page}
-                                              onPageChange={handleChangePage}
-                                              onRowsPerPageChange={
-                                                handleChangeRowsPerPage
-                                              }
-                                              ActionsComponent={
-                                                TablePaginationActions
-                                              }
-                                            />
-                                          </TableRow>
-                                        </TableFooter>
-                                      </Table>
-                                    </TableContainer>
-                                  </div>
-                                </div>
-                              )}
-
-                              {selectedTab === "order" && (
-                                <div>
-                                  {/* <strong className="text-gray-800 text-lg">Orders:</strong> */}
-                                  <div className="mt-2">
-                                    <TableContainer
-                                      component={Paper}
-                                      sx={{
-                                        width: "100%",
-                                        margin: "0 auto",
-                                        mt: 2,
-                                      }}
-                                    >
-                                      <Table>
-                                        <TableHead>
-                                          <TableRow>
-                                            <StyledTableCell
-                                              sx={{ whiteSpace: "nowrap" }}
-                                            >
-                                              Order Number
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{ whiteSpace: "nowrap" }}
-                                            >
-                                              Order Date
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{ whiteSpace: "nowrap" }}
-                                            >
-                                              Amount
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{
-                                                whiteSpace: "nowrap",
-                                                padding: "12px 24px",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              Order Status
-                                            </StyledTableCell>
-                                            <StyledTableCell
-                                              sx={{ whiteSpace: "nowrap" }}
-                                            >
-                                              Store Name
-                                            </StyledTableCell>
-                                          </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                          {orders &&
-                                            orders
-                                              .slice(
-                                                orderPage * orderRowsPerPage,
-                                                orderPage * orderRowsPerPage +
-                                                  orderRowsPerPage
-                                              )
-                                              .map((order) => (
-                                                <StyledTableRow
-                                                  key={order.OrderID}
-                                                >
-                                                  <StyledTableCell>
-                                                    {order.OrderNumber}
-                                                  </StyledTableCell>
-                                                  <StyledTableCell>
-                                                    {new Date(
-                                                      order.CreatedAt
-                                                    ).toLocaleDateString()}
-                                                  </StyledTableCell>{" "}
-                                                  {/* Adjusted to use CreatedAt */}
-                                                  <StyledTableCell>
-                                                    ${order.TotalAmount}
-                                                  </StyledTableCell>
-                                                  <StyledTableCell
-                                                    sx={{
-                                                      whiteSpace: "nowrap",
-                                                      padding: "12px 24px",
-                                                      textAlign: "center",
+                                              <StyledTableCell>
+                                                {address.City || "N/A"}
+                                              </StyledTableCell>
+                                              <StyledTableCell>
+                                                {address.State || "N/A"}
+                                              </StyledTableCell>
+                                              <StyledTableCell>
+                                                {address.ZipCode || ""}
+                                              </StyledTableCell>
+                                              <StyledTableCell>
+                                                <div className="button-container">
+                                                  {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      handleAutoFill(
+                                                        address.AddressID
+                                                      );
+                                                      handleClose();
                                                     }}
+                                                    className="button select-button"
                                                   >
-                                                    {order.OrderStatus}
-                                                  </StyledTableCell>
-                                                  <StyledTableCell>
-                                                    {order.Customer?.Store
-                                                      ?.StoreName || "N/A"}
-                                                  </StyledTableCell>{" "}
-                                                  {/* Access StoreName from Customer */}
-                                                </StyledTableRow>
-                                              ))}
-                                        </TableBody>
-                                        <TableFooter>
-                                          <TableRow>
-                                            <TablePagination
-                                              rowsPerPageOptions={[2, 4, 6]}
-                                              colSpan={6}
-                                              count={totalOrders}
-                                              rowsPerPage={orderRowsPerPage}
-                                              page={orderPage}
-                                              onPageChange={
-                                                handleOrderPageChange
-                                              }
-                                              onRowsPerPageChange={
-                                                handleOrderRowsPerPageChange
-                                              }
-                                              ActionsComponent={
-                                                TablePaginationActions
-                                              }
-                                            />
-                                          </TableRow>
-                                        </TableFooter>
-                                      </Table>
-                                    </TableContainer>
-                                  </div>
+                                                    Select
+                                                  </button>
+                                                </div>
+                                              </StyledTableCell>
+                                            </TableRow>
+                                          ))}
+                                      </TableBody>
+                                      <TableFooter>
+                                        <TableRow>
+                                          <TablePagination
+                                            rowsPerPageOptions={[2, 4, 6]}
+                                            colSpan={6}
+                                            count={totalAddresses}
+                                            rowsPerPage={rowsPerPage}
+                                            page={page}
+                                            onPageChange={handleChangePage}
+                                            onRowsPerPageChange={
+                                              handleChangeRowsPerPage
+                                            }
+                                            ActionsComponent={
+                                              TablePaginationActions
+                                            }
+                                          />
+                                        </TableRow>
+                                      </TableFooter>
+                                    </Table>
+                                  </TableContainer>
                                 </div>
-                              )}
-                            </div>
+                              </div>
+                            )}
 
-                            {/* Next Button */}
-                            <div className="flex justify-end mt-6">
-                              <button
-                                className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
-                                // onClick={handleAutoFill}
-                                onClick={() => {
-                                  handleAutoFill(); // Call your autofill logic
-                                  handleClose(); // Close the dialog
-                                }}
-                              >
-                                Close
-                              </button>
-                            </div>
-                            {/* <div className="flex justify-end mt-6">
+                            {selectedTab === "order" && (
+                              <div>
+                                {/* <strong className="text-gray-800 text-lg">Orders:</strong> */}
+                                <div className="mt-2">
+                                  <TableContainer
+                                    component={Paper}
+                                    sx={{
+                                      width: "100%",
+                                      margin: "0 auto",
+                                      mt: 2,
+                                    }}
+                                  >
+                                    <Table>
+                                      <TableHead>
+                                        <TableRow>
+                                          <StyledTableCell
+                                            sx={{ whiteSpace: "nowrap" }}
+                                          >
+                                            Order Number
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{ whiteSpace: "nowrap" }}
+                                          >
+                                            Order Date
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{ whiteSpace: "nowrap" }}
+                                          >
+                                            Amount
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{
+                                              whiteSpace: "nowrap",
+                                              padding: "12px 24px",
+                                              textAlign: "center",
+                                            }}
+                                          >
+                                            Order Status
+                                          </StyledTableCell>
+                                          <StyledTableCell
+                                            sx={{ whiteSpace: "nowrap" }}
+                                          >
+                                            Store Name
+                                          </StyledTableCell>
+                                        </TableRow>
+                                      </TableHead>
+                                      <TableBody>
+                                        {orders &&
+                                          orders
+                                            .slice(
+                                              orderPage * orderRowsPerPage,
+                                              orderPage * orderRowsPerPage +
+                                                orderRowsPerPage
+                                            )
+                                            .map((order) => (
+                                              <StyledTableRow
+                                                key={order.OrderID}
+                                              >
+                                                <StyledTableCell>
+                                                  {order.OrderNumber}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {new Date(
+                                                    order.CreatedAt
+                                                  ).toLocaleDateString()}
+                                                </StyledTableCell>{" "}
+                                                {/* Adjusted to use CreatedAt */}
+                                                <StyledTableCell>
+                                                  ${order.TotalAmount}
+                                                </StyledTableCell>
+                                                <StyledTableCell
+                                                  sx={{
+                                                    whiteSpace: "nowrap",
+                                                    padding: "12px 24px",
+                                                    textAlign: "center",
+                                                  }}
+                                                >
+                                                  {order.OrderStatus}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {order.Customer?.Store
+                                                    ?.StoreName || "N/A"}
+                                                </StyledTableCell>{" "}
+                                                {/* Access StoreName from Customer */}
+                                              </StyledTableRow>
+                                            ))}
+                                      </TableBody>
+                                      <TableFooter>
+                                        <TableRow>
+                                          <TablePagination
+                                            rowsPerPageOptions={[2, 4, 6]}
+                                            colSpan={6}
+                                            count={totalOrders}
+                                            rowsPerPage={orderRowsPerPage}
+                                            page={orderPage}
+                                            onPageChange={handleOrderPageChange}
+                                            onRowsPerPageChange={
+                                              handleOrderRowsPerPageChange
+                                            }
+                                            ActionsComponent={
+                                              TablePaginationActions
+                                            }
+                                          />
+                                        </TableRow>
+                                      </TableFooter>
+                                    </Table>
+                                  </TableContainer>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Next Button */}
+                          <div className="flex justify-end mt-6">
+                            <button
+                              className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
+                              // onClick={handleAutoFill}
+                              onClick={() => {
+                                handleAutoFill(); // Call your autofill logic
+                                handleClose(); // Close the dialog
+                              }}
+                            >
+                              Close
+                            </button>
+                          </div>
+                          {/* <div className="flex justify-end mt-6">
   <button
     className="py-3 px-8 text-white rounded-lg hover:bg-opacity-90 transition-all shadow-lg transform hover:scale-105"
     style={{ backgroundColor: '#EFBC9B' }} // Add custom color here
@@ -2256,13 +2184,13 @@ const isEditMode = Boolean(
     Next
   </button>
 </div> */}
-                          </div>
                         </div>
-                      )}
-                    </div>
-                    <div className="flex gap-10 border border-gray-300 rounded-md">
-                      <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
-                        {/* <div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-10 border border-gray-300 rounded-md">
+                    <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
+                      {/* <div>
                         <label className="block text-xs font-medium text-gray-700">
                           Project Type
                         </label>
@@ -2302,252 +2230,245 @@ const isEditMode = Boolean(
                         )}
                       </div> */}
 
-                        <div className="mt-0 p-0 w-full max-w-full ml-0">
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
-                            Project Type
-                          </label>
-                          <Combobox
-                            value={orderDetails.Type}
-                            onChange={setType}
-                          >
-                            <div className="relative w-full">
-                              <Combobox.Input
-                                className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                displayValue={(type) =>
-                                  type || "Select Project Type"
-                                }
-                                placeholder="Select Project Type"
-                              />
-                              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                <ChevronUpDownIcon
-                                  className="h-5 w-5 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                              </Combobox.Button>
-                              <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {[
-                                  "Kitchen",
-                                  "Wardrobe",
-                                  "Living",
-                                  "2 BHK",
-                                  "3 BHK",
-                                  "TV unit",
-                                  "Crockery",
-                                  "Shoe rack",
-                                  "Vanities",
-                                  "Others",
-                                ].map((type) => (
-                                  <Combobox.Option
-                                    key={type}
-                                    value={type}
-                                    className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                  >
-                                    <span className="block truncate group-data-[selected]:font-semibold">
-                                      {type}
-                                    </span>
-                                    {Type === type && (
-                                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                                        <CheckIcon
-                                          className="h-5 w-5"
-                                          aria-hidden="true"
-                                        />
-                                      </span>
-                                    )}
-                                  </Combobox.Option>
-                                ))}
-                              </Combobox.Options>
-                            </div>
-                          </Combobox>
-
-                          {/* Error Handling */}
-                          {errors.Type && (
-                            <p className="text-red-500 text-sm mt-1">
-                              {errors.Type}
-                            </p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700">
-                            Expected Duration (In Days)
-                          </label>
-                          <input
-                            type="number"
-                            name="ExpectedDurationDays"
-                            value={orderDetails.ExpectedDurationDays}
-                            onChange={handling}
-                            className={` p-1  mt-2 mb-1 w-full border rounded-md ${
-                              errors.ExpectedDurationDays
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                          />
-                          {errors.Comments && (
-                            <p className="text-red-500 text-sm mt-1">
-                              {errors.ExpectedDurationDays}
-                            </p>
-                          )}
-                        </div>
-                        {isEditMode && (
-                          <div>
-                            <label className="block text-xs font-medium text-gray-700">
-                              Order Date
-                            </label>
-                            <input
-                              type="date"
-                              name="OrderDate"
-                              value={
-                                orderDetails.OrderDate
-                                  ? new Date(orderDetails.OrderDate)
-                                      .toISOString()
-                                      .split("T")[0]
-                                  : ""
+                      <div className="mt-0 p-0 w-full max-w-full ml-0">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Project Type
+                        </label>
+                        <Combobox value={orderDetails.Type} onChange={setType}>
+                          <div className="relative w-full">
+                            <Combobox.Input
+                              className="w-full mt-1 mb-0.5 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              displayValue={(type) =>
+                                type || "Select Project Type"
                               }
-                              onChange={handleChange}
-                              className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                                errors.OrderDate
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              }`}
+                              placeholder="Select Project Type"
                             />
-                            {errors.OrderDate && (
-                              <p className="text-red-500 text-sm mt-1">
-                                {errors.OrderDate}
-                              </p>
-                            )}
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                              <ChevronUpDownIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </Combobox.Button>
+                            <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {[
+                                "Kitchen",
+                                "Wardrobe",
+                                "Living",
+                                "2 BHK",
+                                "3 BHK",
+                                "TV unit",
+                                "Crockery",
+                                "Shoe rack",
+                                "Vanities",
+                                "Others",
+                              ].map((type) => (
+                                <Combobox.Option
+                                  key={type}
+                                  value={type}
+                                  className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                >
+                                  <span className="block truncate group-data-[selected]:font-semibold">
+                                    {type}
+                                  </span>
+                                  {Type === type && (
+                                    <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                                      <CheckIcon
+                                        className="h-5 w-5"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  )}
+                                </Combobox.Option>
+                              ))}
+                            </Combobox.Options>
                           </div>
+                        </Combobox>
+
+                        {/* Error Handling */}
+                        {errors.Type && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.Type}
+                          </p>
                         )}
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">
+                          Expected Duration (In Days)
+                        </label>
+                        <input
+                          type="number"
+                          name="ExpectedDurationDays"
+                          value={orderDetails.ExpectedDurationDays}
+                          onChange={handling}
+                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${
+                            errors.ExpectedDurationDays
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        {errors.Comments && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.ExpectedDurationDays}
+                          </p>
+                        )}
+                      </div>
+                      {isEditMode && (
                         <div>
                           <label className="block text-xs font-medium text-gray-700">
-                            Expected Delivery Date
+                            Order Date
                           </label>
                           <input
                             type="date"
-                            name="DeliveryDate"
-                            // value={orderDetails.DeliveryDate}
+                            name="OrderDate"
                             value={
-                              orderDetails.DeliveryDate
-                                ? new Date(orderDetails.DeliveryDate)
+                              orderDetails.OrderDate
+                                ? new Date(orderDetails.OrderDate)
                                     .toISOString()
                                     .split("T")[0]
                                 : ""
                             }
-                            onChange={handleDateChang}
-                            className={` p-1  mt-2 mb-1 w-full border rounded-md ${
-                              errors.DeliveryDate
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                          />
-                          {errors.DeliveryDate && (
-                            <p className="text-red-500 text-sm mt-1">
-                              {errors.DeliveryDate}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block mt-1 text-xs font-medium text-gray-700">
-                            Designer Name
-                          </label>
-
-                          <div className="relative">
-                            <input
-                              type="search"
-                              name="DesginerName"
-                              // value={searchUserValue}
-                              value={
-                                orderDetails.DesginerName || searchUserValue
-                              }
-                              onChange={handleUserChange}
-                              onFocus={() => setIsUserFocused(true)}
-                              // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
-                              className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                                errors.DesginerName
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              }`}
-                              placeholder="Search by User Name..."
-                            />
-                            {errors.DesginerName && (
-                              <p className="text-red-500 text-sm mt-1">
-                                {errors.DesginerName}
-                              </p>
-                            )}
-
-                            {/* Search Icon */}
-                            <div className="absolute right-3 top-5 flex items-center pointer-events-none">
-                              <IoIosSearch aria-label="Search Icon" />
-                            </div>
-
-                            {/* Dropdown for filtered users */}
-                            {isUserFocused &&
-                              searchUserValue &&
-                              searchUserValue.length >= 1 && (
-                                <div
-                                  className={`absolute flex flex-col top-full mt-1 border rounded-lg p-2 w-full bg-white z-10`}
-                                  style={{
-                                    maxHeight: "200px",
-                                    overflowY: "auto",
-                                  }}
-                                >
-                                  {results.length > 0 ? (
-                                    <>
-                                      <div className="mb-2 text-sm text-gray-600">
-                                        {results.length} Result
-                                        {results.length > 1 ? "s" : ""}
-                                      </div>
-
-                                      {/* Map over filtered results and show only user names */}
-                                      {results.map((result) => (
-                                        <div
-                                          className="relative cursor-pointer p-2 hover:bg-gray-100 group"
-                                          key={result.CustomerID}
-                                          onClick={() =>
-                                            handleUserSelect(result)
-                                          } // Ensure this function is defined
-                                        >
-                                          <span className="font-medium">
-                                            {result.FirstName} {result.LastName}{" "}
-                                            {/* Display only user names */}
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </>
-                                  ) : (
-                                    !hasUserSelected && ( // Only show if no selection has been made
-                                      <div className="p-2 overflow-clip text-gray-500">
-                                        No results found.
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              )}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700">
-                            Comments
-                          </label>
-                          <input
-                            type="text"
-                            name="Comments"
-                            value={orderDetails.Comments}
                             onChange={handleChange}
-                            className={` p-1  mt-0 mb-5 w-full border rounded-md ${
-                              errors.Comments
+                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${
+                              errors.OrderDate
                                 ? "border-red-500"
                                 : "border-gray-300"
                             }`}
                           />
-                          {errors.Comments && (
+                          {errors.OrderDate && (
                             <p className="text-red-500 text-sm mt-1">
-                              {errors.Comments}
+                              {errors.OrderDate}
                             </p>
                           )}
+                        </div>
+                      )}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">
+                          Expected Delivery Date
+                        </label>
+                        <input
+                          type="date"
+                          name="DeliveryDate"
+                          // value={orderDetails.DeliveryDate}
+                          value={
+                            orderDetails.DeliveryDate
+                              ? new Date(orderDetails.DeliveryDate)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                          }
+                          onChange={handleDateChang}
+                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${
+                            errors.DeliveryDate
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        {errors.DeliveryDate && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.DeliveryDate}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block mt-1 text-xs font-medium text-gray-700">
+                          Designer Name
+                        </label>
+
+                        <div className="relative">
+                          <input
+                            type="search"
+                            name="DesginerName"
+                            // value={searchUserValue}
+                            value={orderDetails.DesginerName || searchUserValue}
+                            onChange={handleUserChange}
+                            onFocus={() => setIsUserFocused(true)}
+                            // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
+                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${
+                              errors.DesginerName
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                            placeholder="Search by User Name..."
+                          />
+                          {errors.DesginerName && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.DesginerName}
+                            </p>
+                          )}
+
+                          {/* Search Icon */}
+                          <div className="absolute right-3 top-5 flex items-center pointer-events-none">
+                            <IoIosSearch aria-label="Search Icon" />
+                          </div>
+
+                          {/* Dropdown for filtered users */}
+                          {isUserFocused &&
+                            searchUserValue &&
+                            searchUserValue.length >= 1 && (
+                              <div
+                                className={`absolute flex flex-col top-full mt-1 border rounded-lg p-2 w-full bg-white z-10`}
+                                style={{
+                                  maxHeight: "200px",
+                                  overflowY: "auto",
+                                }}
+                              >
+                                {results.length > 0 ? (
+                                  <>
+                                    <div className="mb-2 text-sm text-gray-600">
+                                      {results.length} Result
+                                      {results.length > 1 ? "s" : ""}
+                                    </div>
+
+                                    {/* Map over filtered results and show only user names */}
+                                    {results.map((result) => (
+                                      <div
+                                        className="relative cursor-pointer p-2 hover:bg-gray-100 group"
+                                        key={result.CustomerID}
+                                        onClick={() => handleUserSelect(result)} // Ensure this function is defined
+                                      >
+                                        <span className="font-medium">
+                                          {result.FirstName} {result.LastName}{" "}
+                                          {/* Display only user names */}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </>
+                                ) : (
+                                  !hasUserSelected && ( // Only show if no selection has been made
+                                    <div className="p-2 overflow-clip text-gray-500">
+                                      No results found.
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            )}
                         </div>
                       </div>
-                      <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4">
-                        {/* <div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">
+                          Comments
+                        </label>
+                        <input
+                          type="text"
+                          name="Comments"
+                          value={orderDetails.Comments}
+                          onChange={handleChange}
+                          className={` p-1  mt-0 mb-5 w-full border rounded-md ${
+                            errors.Comments
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        {errors.Comments && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.Comments}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4">
+                      {/* <div>
   <label className="block text-xs font-medium text-gray-700">
     Comments
   </label>
@@ -2567,410 +2488,346 @@ const isEditMode = Boolean(
     </p>
   )}
 </div> */}
-                        <div className="-mt-2">
-                          <label className="block text-xs font-medium text-gray-700 mt-1">
-                            Total amount
-                          </label>
-                          <input
-                            type="number"
-                            name="TotalAmount"
-                            value={orderDetails.TotalAmount}
-                            onChange={handleChange}
-                            className={` p-1  mt-3 w-full border rounded-md ${
-                              errors.TotalAmount
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                          />
-                          {errors.TotalAmount && (
-                            <p className="text-red-500 text-sm mt-1">
-                              {errors.TotalAmount}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mt-1">
-                            Advance amount
-                          </label>
+                      <div className="-mt-2">
+                        <label className="block text-xs font-medium text-gray-700 mt-1">
+                          Total amount
+                        </label>
+                        <input
+                          type="number"
+                          name="TotalAmount"
+                          value={orderDetails.TotalAmount}
+                          onChange={handleChange}
+                          className={` p-1  mt-3 w-full border rounded-md ${
+                            errors.TotalAmount
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        {errors.TotalAmount && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.TotalAmount}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mt-1">
+                          Advance amount
+                        </label>
 
-                          <input
-                            type="number"
-                            name="AdvanceAmount"
-                            value={orderDetails.AdvanceAmount}
-                            onChange={handleChange}
-                            className={` p-1  mt-3  w-full border rounded-md ${
-                              errors.AdvanceAmount
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                          />
-                          {errors.AdvanceAmount && (
-                            <p className="text-red-500 text-sm mt-1">
-                              {errors.AdvanceAmount}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mt-1">
-                            Balance amount
-                          </label>
-                          <input
-                            type="number"
-                            name="AdvanceAmount"
-                            value={
-                              (orderDetails.BalenceAmount =
-                                orderDetails.TotalAmount -
-                                orderDetails.AdvanceAmount)
-                            }
-                            onChange={handleChange}
-                            className={`p-1  mt-3 mb-1 w-full border rounded-md`}
-                          />
-                        </div>
-                        <div className="mb-3 z-10 ">
-                          <label className="block mt-3 text-xs font-medium text-gray-700">
-                            Referred By
-                          </label>
-                          <Combobox
-                            as="div"
-                            value={orderDetails.ReferedBy}
-                            onChange={handleReferralTypeChange}
-                          >
-                            <div className="relative">
-                              <Combobox.Input
-                                className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                onChange={(event) =>
-                                  setQuery(event.target.value)
-                                }
-                                displayValue={(type) => type || ""}
+                        <input
+                          type="number"
+                          name="AdvanceAmount"
+                          value={orderDetails.AdvanceAmount}
+                          onChange={handleChange}
+                          className={` p-1  mt-3  w-full border rounded-md ${
+                            errors.AdvanceAmount
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        {errors.AdvanceAmount && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.AdvanceAmount}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mt-1">
+                          Balance amount
+                        </label>
+                        <input
+                          type="number"
+                          name="AdvanceAmount"
+                          value={
+                            (orderDetails.BalenceAmount =
+                              orderDetails.TotalAmount -
+                              orderDetails.AdvanceAmount)
+                          }
+                          onChange={handleChange}
+                          className={`p-1  mt-3 mb-1 w-full border rounded-md`}
+                        />
+                      </div>
+                      <div className="mb-3 z-10 ">
+                        <label className="block mt-3 text-xs font-medium text-gray-700">
+                          Referred By
+                        </label>
+                        <Combobox
+                          as="div"
+                          value={orderDetails.ReferedBy}
+                          onChange={handleReferralTypeChange}
+                        >
+                          <div className="relative">
+                            <Combobox.Input
+                              className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              onChange={(event) => setQuery(event.target.value)}
+                              displayValue={(type) => type || ""}
+                            />
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                              <ChevronUpDownIcon
+                                className="h-5 w-5  text-gray-400"
+                                aria-hidden="true"
                               />
-                              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                <ChevronUpDownIcon
-                                  className="h-5 w-5  text-gray-400"
-                                  aria-hidden="true"
-                                />
-                              </Combobox.Button>
+                            </Combobox.Button>
 
-                              <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {["Social Media", "Walk-In", "Reference"].map(
-                                  (type, index) => (
-                                    <Combobox.Option
-                                      key={index}
-                                      value={type}
-                                      className="group z-30 relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                    >
-                                      <span className="block truncate group-data-[selected]:font-semibold">
-                                        {type}
-                                      </span>
-                                      <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                        <CheckIcon
-                                          className="h-5 w-5"
-                                          aria-hidden="true"
-                                        />
-                                      </span>
-                                    </Combobox.Option>
-                                  )
-                                )}
-                              </Combobox.Options>
-                            </div>
-                          </Combobox>
-                          {/* Conditionally render the additional input fields */}
-                          {selectedReferralType === "Reference" && (
-                            <div className="mt-4">
-                              <label className="block text-xs font-medium text-gray-700">
-                                Reference Sub-option
-                              </label>
-                              <Combobox
-                                as="div"
-                                value={selectedReferenceSubOption}
-                                onChange={handleReferenceSubOptionChange}
-                              >
-                                <div className="relative">
-                                  <Combobox.Input
-                                    className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={(event) =>
-                                      setQuery(event.target.value)
-                                    }
-                                    displayValue={(option) => option || ""}
+                            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {["Social Media", "Walk-In", "Reference"].map(
+                                (type, index) => (
+                                  <Combobox.Option
+                                    key={index}
+                                    value={type}
+                                    className="group z-30 relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                  >
+                                    <span className="block truncate group-data-[selected]:font-semibold">
+                                      {type}
+                                    </span>
+                                    <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                      <CheckIcon
+                                        className="h-5 w-5"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </Combobox.Option>
+                                )
+                              )}
+                            </Combobox.Options>
+                          </div>
+                        </Combobox>
+                        {/* Conditionally render the additional input fields */}
+                        {selectedReferralType === "Reference" && (
+                          <div className="mt-4">
+                            <label className="block text-xs font-medium text-gray-700">
+                              Reference Sub-option
+                            </label>
+                            <Combobox
+                              as="div"
+                              value={selectedReferenceSubOption}
+                              onChange={handleReferenceSubOptionChange}
+                            >
+                              <div className="relative">
+                                <Combobox.Input
+                                  className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                  onChange={(event) =>
+                                    setQuery(event.target.value)
+                                  }
+                                  displayValue={(option) => option || ""}
+                                />
+                                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
                                   />
-                                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                    <ChevronUpDownIcon
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </Combobox.Button>
+                                </Combobox.Button>
 
-                                  <Combobox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                    {["Director", "Employee", "Existing"].map(
-                                      (option, index) => (
-                                        <Combobox.Option
-                                          key={index}
-                                          value={option}
-                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                        >
-                                          <span className="block truncate group-data-[selected]:font-semibold">
-                                            {option}
-                                          </span>
-                                          <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                            <CheckIcon
-                                              className="h-5 w-5"
-                                              aria-hidden="true"
-                                            />
-                                          </span>
-                                        </Combobox.Option>
-                                      )
-                                    )}
-                                  </Combobox.Options>
-                                </div>
-                              </Combobox>
-                            </div>
-                          )}
-                          {selectedReferralType === "Reference" &&
-                            selectedReferenceSubOption && (
-                              <div className="mt-4">
-                                <label className="block text-xs font-medium text-gray-700">
-                                  Referee Name
-                                </label>
-                                <input
-                                  type="text"
-                                  name="refereeName"
-                                  value={orderDetails.refereeName}
-                                  onChange={handleRefereeNameChange}
-                                  className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
+                                <Combobox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                  {["Director", "Employee", "Existing"].map(
+                                    (option, index) => (
+                                      <Combobox.Option
+                                        key={index}
+                                        value={option}
+                                        className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                      >
+                                        <span className="block truncate group-data-[selected]:font-semibold">
+                                          {option}
+                                        </span>
+                                        <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      </Combobox.Option>
+                                    )
+                                  )}
+                                </Combobox.Options>
                               </div>
-                            )}
-                          {selectedReferralType === "Social Media" && (
+                            </Combobox>
+                          </div>
+                        )}
+                        {selectedReferralType === "Reference" &&
+                          selectedReferenceSubOption && (
                             <div className="mt-4">
                               <label className="block text-xs font-medium text-gray-700">
-                                Social Media Platform
+                                Referee Name
                               </label>
-                              <Combobox
-                                as="div"
-                                value={selectedSocialMediaPlatform}
-                                onChange={handleSocialMediaPlatformChange}
-                              >
-                                <div className="relative">
-                                  <Combobox.Input
-                                    className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={(event) =>
-                                      setQuery(event.target.value)
-                                    }
-                                    displayValue={(platform) => platform || ""}
-                                  />
-                                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                                    <ChevronUpDownIcon
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </Combobox.Button>
-
-                                  <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                    {["Facebook", "Instagram", "Twitter"].map(
-                                      (platform, index) => (
-                                        <Combobox.Option
-                                          key={index}
-                                          value={platform}
-                                          className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
-                                        >
-                                          <span className="block truncate group-data-[selected]:font-semibold">
-                                            {platform}
-                                          </span>
-                                          <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
-                                            <CheckIcon
-                                              className="h-5 w-5"
-                                              aria-hidden="true"
-                                            />
-                                          </span>
-                                        </Combobox.Option>
-                                      )
-                                    )}
-                                  </Combobox.Options>
-                                </div>
-                              </Combobox>
+                              <input
+                                type="text"
+                                name="refereeName"
+                                value={orderDetails.refereeName}
+                                onChange={handleRefereeNameChange}
+                                className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
                             </div>
                           )}
-                          {error && (
-                            <p className="mt-0 text-red-600 text-xs">{error}</p>
-                          )}
-                        </div>
+                        {selectedReferralType === "Social Media" && (
+                          <div className="mt-4">
+                            <label className="block text-xs font-medium text-gray-700">
+                              Social Media Platform
+                            </label>
+                            <Combobox
+                              as="div"
+                              value={selectedSocialMediaPlatform}
+                              onChange={handleSocialMediaPlatformChange}
+                            >
+                              <div className="relative">
+                                <Combobox.Input
+                                  className="w-full mt-2 mb-1 rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                  onChange={(event) =>
+                                    setQuery(event.target.value)
+                                  }
+                                  displayValue={(platform) => platform || ""}
+                                />
+                                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                  />
+                                </Combobox.Button>
+
+                                <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                  {["Facebook", "Instagram", "Twitter"].map(
+                                    (platform, index) => (
+                                      <Combobox.Option
+                                        key={index}
+                                        value={platform}
+                                        className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white"
+                                      >
+                                        <span className="block truncate group-data-[selected]:font-semibold">
+                                          {platform}
+                                        </span>
+                                        <span className="absolute inset-y-0 right-0 hidden items-center pr-4 text-indigo-600 group-data-[selected]:flex group-data-[focus]:text-white">
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      </Combobox.Option>
+                                    )
+                                  )}
+                                </Combobox.Options>
+                              </div>
+                            </Combobox>
+                          </div>
+                        )}
+                        {error && (
+                          <p className="mt-0 text-red-600 text-xs">{error}</p>
+                        )}
                       </div>
                     </div>
-
-                    {/* <div className="flex gap-10 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
-                      
-                      <div className="sm:pt-2 w-full space-y-2 p-4">
-                      <div className="flex  text-sm  font-medium text-gray-700">
-                        <h2>Customer Information</h2>
-                        </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-    <span className="w-1/3">First Name:</span>
-    <span className="w-2/3">{orderDetails.customerFirstName}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-    <span className="w-1/3">Last Name:</span>
-    <span className="w-2/3">{orderDetails.customerLastName}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-    <span className="w-1/3">Email:</span>
-    <span className="w-2/3">{orderDetails.customerEmail}</span>
-  </div>
-  <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-    <span className="w-1/3">Phone:</span>
-    <span className="w-2/3">{orderDetails.customerPhone}</span>
-</div>
-
-</div>
-
-<div className="sm:pt-2 w-full space-y-2 p-4">
-<div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>Address Line 1:</span>
-    <span>{orderDetails.AddressLine1}</span>
-  </div>
-  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>Address Line 2:</span>
-    <span>{orderDetails.AddressLine2}</span>
-  </div>
-  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>Country:</span>
-    <span>{selectedCountry?.CountryName || 'N/A'}</span>
-  </div>
-  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>State:</span>
-    <span>{selectedState?.StateName || 'N/A'}</span>
-  </div>
-  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>City:</span>
-    <span>{selectedCity?.CityName || 'N/A'}</span>
-  </div>
-  <div className="flex justify-between text-sm sm:text-xs font-medium text-gray-700">
-    <span>Zip Code:</span>
-    <span>{orderDetails.ZipCode}</span>
-  </div>
-</div>
-                    </div> */}
-
-                    <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
-                      <div className="flex justify-left text-lg font-medium text-gray-700">
-                        <h2>Customer Information</h2>
-                      </div>
-
-                      <div className="flex gap-10">
-                        <div className="sm:pt-2 w-full space-y-2 p-4">
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">First Name</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-2/3">
-                              {orderDetails.CustomerFirstName}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-                            <span className="w-1/2">Last Name</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-2/3">
-                              {orderDetails.CustomerLastName}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-                            <span className="w-1/2">Email</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-2/3">
-                              {orderDetails.CustomerEmail}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-800">
-                            <span className="w-1/2">Phone</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-2/3">
-                              {orderDetails.customerPhone}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="sm:pt-2 w-full space-y-2 p-4">
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">Address Line 1</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.AddressLine1}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">Address Line 2</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.AddressLine2}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">Country</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.Country || "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">State</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.State || "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">City</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.CityName || "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex text-sm sm:text-xs font-medium text-gray-700">
-                            <span className="w-1/2">Zip Code</span>
-                            <span className="mr-20">:</span>
-                            <span className="w-1/2">
-                              {orderDetails.ZipCode}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </Box>
-
-              <div className="mt-6 flex right-0 justify-end gap-4">
-                {activeStep === 0 && (
-                  <>
-                    {/* <button
-                      type="submit"
-                      onClick={handleSubmit}
-                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                      Save
-                    </button> */}
-                    <button
-                      type="submit"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      onClick={handleSubmit}
-                    >
-                      {orderDetails.OrderID ? "Update" : "Add"}{" "}
-                      {/* Conditional button text */}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                )}
-                {isLoading && (
-                  <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-                    <LoadingAnimation />
                   </div>
-                )}
-              </div>
-            </React.Fragment>
-          )}
+
+                  <div className="flex flex-col gap-4 pt-1 sm:pt-2 w-full bg-white color-white space-y-1 border border-gray-300 rounded-md p-2">
+                    <div className="flex justify-left text-lg font-medium text-gray-700">
+                      <h2>Customer Information</h2>
+                    </div>
+
+                    <div className="flex gap-10">
+                      <div className="sm:pt-2 w-full space-y-2 p-4">
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">First Name</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-2/3">
+                            {orderDetails.CustomerFirstName}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                          <span className="w-1/2">Last Name</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-2/3">
+                            {orderDetails.CustomerLastName}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                          <span className="w-1/2">Email</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-2/3">
+                            {orderDetails.CustomerEmail}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-800">
+                          <span className="w-1/2">Phone</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-2/3">
+                            {orderDetails.customerPhone}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="sm:pt-2 w-full space-y-2 p-4">
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">Address Line 1</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">
+                            {orderDetails.AddressLine1}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">Address Line 2</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">
+                            {orderDetails.AddressLine2}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">Country</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">
+                            {orderDetails.Country || "N/A"}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">State</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">
+                            {orderDetails.State || "N/A"}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">City</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">
+                            {orderDetails.CityName || "N/A"}
+                          </span>
+                        </div>
+                        <div className="flex text-sm sm:text-xs font-medium text-gray-700">
+                          <span className="w-1/2">Zip Code</span>
+                          <span className="mr-20">:</span>
+                          <span className="w-1/2">{orderDetails.ZipCode}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </Box>
+
+            <div className="mt-6 flex right-0 justify-end gap-4">
+              {activeStep === 0 && (
+                <>
+                  <button
+                    type="submit"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={handleSubmit}
+                  >
+                    {orderDetails.OrderID ? "Update" : "Add"}{" "}
+                    {/* Conditional button text */}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+              {isLoading && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
+                  <LoadingAnimation />
+                </div>
+              )}
+            </div>
+          </React.Fragment>
+
           {submittedDetails && (
             <div className="mt-4 bg-gray-100 p-4  rounded shadow-lg">
               <h3 className="text-xl font-bold mb-4">

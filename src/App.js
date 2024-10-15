@@ -125,7 +125,7 @@ function App() {
                                 }
                               />
                               <Route
-                                path="/OrdersAdd"
+                                path="/OrdersAdd/:orderId"
                                 element={
                                   <ProtectedRoute allowedRoles={[1]}>
                                     <AddOrders />

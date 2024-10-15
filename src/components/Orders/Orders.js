@@ -88,7 +88,7 @@ const Orders = () => {
       const response = await axios.get(`${GET_ALL_ORDERS}`, {
         params: {
           pageSize: pageSize,
-          pageNumber: pageNum + 1,
+          page: pageNum + 1,
           searchText: search,
           StoreID: storeID,
           StartDate: startDate,
@@ -146,14 +146,8 @@ const Orders = () => {
       throw error;
     }
   };
-  const handleOrderUpdate = async (orderId) => {
-    try {
-      const orderIdDetails = await getOrderById(orderId);
-      setOrderIdDetails(orderIdDetails);
-      navigate("/OrdersAdd");
-    } catch (error) {
-      console.error("Error fetching UserRole details:", error);
-    }
+  const handleOrderUpdate = (orderId) => {
+    navigate(`/OrdersAdd/${orderId}`);
   };
   const handleCancel = (id) => {
     const newStatus = "Cancelled";
@@ -187,7 +181,7 @@ const Orders = () => {
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
   };
   const handleCreateOrder = () => {
-    navigate("/OrdersAdd");
+    navigate("/OrdersAdd/new");
   };
   const handleExportOrder = async () => {
     setLoading(true);
@@ -558,7 +552,7 @@ const Orders = () => {
 
                     <div className="mt-2">
                       <span className="text-gray-400 ">Amount:</span> &#8377;
-                      {product.TotalAmount ? product.TotalAmount : "N/A"}
+                      {product.TotalAmount ? product.AdvanceAmount : "N/A"}
                     </div>
                   </StyledTableCell>
                   <StyledTableCell align="center">
