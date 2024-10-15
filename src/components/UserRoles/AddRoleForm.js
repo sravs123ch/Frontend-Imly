@@ -118,8 +118,6 @@ const AddRoleForm = () => {
     navigate("/roleuser");
   };
 
-  if (loading || isLoading) return <LoadingAnimation />;
-
   if (error) return <div>{error}</div>;
 
   const storeOptions = stores.map((store) => ({
@@ -223,9 +221,9 @@ const AddRoleForm = () => {
           >
             Save Role
           </button>
-          {isLoading && <LoadingAnimation />}
         </div>
       </div>
+      {loading && <LoadingAnimation />}
     </div>
   );
 };

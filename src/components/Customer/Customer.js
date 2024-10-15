@@ -496,8 +496,8 @@ function Customers() {
             </div>
           </Combobox>
         </div>
-         {/* Date picker on the right with equal width */}
-         <div className="w-1/4">
+        {/* Date picker on the right with equal width */}
+        <div className="w-1/4">
           <div className="border-solid border-gray-400 border-[1px] rounded-lg w-full">
             <Datepicker
               popoverDirection="down"
@@ -532,9 +532,7 @@ function Customers() {
           <TableBody>
             {isLoading ? (
               <StyledTableRow>
-                <StyledTableCell colSpan={5} align="center">
-                  <LoadingAnimation />
-                </StyledTableCell>
+                <StyledTableCell colSpan={5} align="center"></StyledTableCell>
               </StyledTableRow>
             ) : filteredCustomers.length > 0 ? (
               filteredCustomers.map((person, index) => (
@@ -626,11 +624,7 @@ function Customers() {
         </Table>
       </TableContainer>
 
-      {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-          <LoadingAnimation />
-        </div>
-      )}
+      {isLoading && <LoadingAnimation />}
     </div>
     // </div>
   );

@@ -282,62 +282,99 @@ function User() {
   const displayUsers = searchName || selectedStore ? filteredUsers : users;
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto">
-      <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col w-full">
-          <div className="flex flex-wrap items-center justify-between w-full">
-            <h2 className="pl-4 text-xl font-semibold">Users</h2>
+    <div className="main-container">
+      <div className="flex flex-col w-full">
+        <div className="flex flex-wrap items-center justify-between w-full">
+          <h2 className="pl-4 text-xl font-semibold">Users</h2>
 
-            <ul className="flex flex-wrap items-center gap-2 p-2 justify-center w-full sm:w-auto sm:justify-end">
-              <li>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                  onClick={handleAddUserClick}
-                >
-                  <FaPlus aria-hidden="true" className="-ml-0.5 h-4 w-4" />
-                  Add Users
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                  onClick={handleExportUsersData}
-                >
-                  <FaTable aria-hidden="true" className="-ml-0.5 h-4 w-4" />
-                  Export Users
-                </button>
-              </li>
-            </ul>
-          </div>
+          <ul className="flex flex-wrap items-center gap-2 p-2 justify-center w-full sm:w-auto sm:justify-end">
+            <li>
+              <button
+                type="button"
+                className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                onClick={handleAddUserClick}
+              >
+                <FaPlus aria-hidden="true" className="-ml-0.5 h-4 w-4" />
+                Add Users
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                onClick={handleExportUsersData}
+              >
+                <FaTable aria-hidden="true" className="-ml-0.5 h-4 w-4" />
+                Export Users
+              </button>
+            </li>
+          </ul>
+        </div>
 
-          <div className="flex flex-wrap items-center justify-center w-full mt-4 gap-4">
-            <div className="flex-container">
-              <div className="combobox-container">
-                <Combobox value={selectedStore} onChange={setSelectedStore}>
-                  <div className="combobox-wrapper">
-                    <Combobox.Input
-                      className="combobox-input"
-                      displayValue={(store) =>
-                        store?.StoreName || "Select Store ID"
-                      }
-                      placeholder="Select Store Name"
+        <div className="flex flex-wrap items-center justify-center w-full mt-4 gap-4">
+          <div className="flex-container">
+            <div className="combobox-container">
+              <Combobox value={selectedStore} onChange={setSelectedStore}>
+                <div className="combobox-wrapper">
+                  <Combobox.Input
+                    className="combobox-input"
+                    displayValue={(store) =>
+                      store?.StoreName || "Select Store ID"
+                    }
+                    placeholder="Select Store Name"
+                  />
+                  <Combobox.Button className="combobox-button">
+                    <ChevronUpDownIcon
+                      className="combobox-icon"
+                      aria-hidden="true"
                     />
-                    <Combobox.Button className="combobox-button">
-                      <ChevronUpDownIcon
-                        className="combobox-icon"
-                        aria-hidden="true"
-                      />
-                    </Combobox.Button>
-                    <Combobox.Options className="combobox-options">
-                      {/* Add "Select Store ID" option */}
+                  </Combobox.Button>
+                  <Combobox.Options className="combobox-options">
+                    {/* Add "Select Store ID" option */}
+                    <Combobox.Option
+                      key="select-store-id"
+                      className={({ active }) =>
+                        active ? "combobox-option-active" : "combobox-option"
+                      }
+                      value={{ StoreID: null, StoreName: "Select Store ID" }}
+                    >
+                      {({ selected, active }) => (
+                        <>
+                          <span
+                            className={
+                              selected
+                                ? "combobox-option-text font-semibold"
+                                : "combobox-option-text font-normal"
+                            }
+                          >
+                            Select Store ID
+                          </span>
+                          {selected && (
+                            <span
+                              className={
+                                active
+                                  ? "combobox-option-selected-icon active-selected-icon"
+                                  : "combobox-option-selected-icon"
+                              }
+                            >
+                              <CheckIcon
+                                className="combobox-check-icon"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Combobox.Option>
+
+                    {/* Render all store options */}
+                    {stores.map((store) => (
                       <Combobox.Option
-                        key="select-store-id"
+                        key={store.StoreID}
                         className={({ active }) =>
                           active ? "combobox-option-active" : "combobox-option"
                         }
-                        value={{ StoreID: null, StoreName: "Select Store ID" }}
+                        value={store}
                       >
                         {({ selected, active }) => (
                           <>
@@ -348,7 +385,7 @@ function User() {
                                   : "combobox-option-text font-normal"
                               }
                             >
-                              Select Store ID
+                              {store.StoreName}
                             </span>
                             {selected && (
                               <span
@@ -367,196 +404,149 @@ function User() {
                           </>
                         )}
                       </Combobox.Option>
-
-                      {/* Render all store options */}
-                      {stores.map((store) => (
-                        <Combobox.Option
-                          key={store.StoreID}
-                          className={({ active }) =>
-                            active
-                              ? "combobox-option-active"
-                              : "combobox-option"
-                          }
-                          value={store}
-                        >
-                          {({ selected, active }) => (
-                            <>
-                              <span
-                                className={
-                                  selected
-                                    ? "combobox-option-text font-semibold"
-                                    : "combobox-option-text font-normal"
-                                }
-                              >
-                                {store.StoreName}
-                              </span>
-                              {selected && (
-                                <span
-                                  className={
-                                    active
-                                      ? "combobox-option-selected-icon active-selected-icon"
-                                      : "combobox-option-selected-icon"
-                                  }
-                                >
-                                  <CheckIcon
-                                    className="combobox-check-icon"
-                                    aria-hidden="true"
-                                  />
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </Combobox.Option>
-                      ))}
-                    </Combobox.Options>
-                  </div>
-                </Combobox>
-              </div>
-
-              <div className="search-container-c-u">
-                <input
-                  id="searchName"
-                  type="text"
-                  placeholder="Search by Name or Email or Mobile"
-                  value={searchName}
-                  onChange={(e) => searchItems(e.target.value)}
-                  className="search-input"
-                />
-                <div className="search-icon-container-c-u">
-                  <IoIosSearch />
+                    ))}
+                  </Combobox.Options>
                 </div>
+              </Combobox>
+            </div>
+
+            <div className="search-container-c-u">
+              <input
+                id="searchName"
+                type="text"
+                placeholder="Search by Name or Email or Mobile"
+                value={searchName}
+                onChange={(e) => searchItems(e.target.value)}
+                className="search-input"
+              />
+              <div className="search-icon-container-c-u">
+                <IoIosSearch />
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <TableContainer component={Paper} className="mt-4">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell>Email</StyledTableCell>
-                <StyledTableCell>Mobile No</StyledTableCell>
-                <StyledTableCell>Roles</StyledTableCell>
-                <StyledTableCell>Gender</StyledTableCell>
-                <StyledTableCell>Actions</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {isLoading ? ( // Show loading animation while fetching
-                <StyledTableRow>
-                  <StyledTableCell colSpan={6} align="center">
-                    <LoadingAnimation /> {/* Display the loading animation */}
+      <TableContainer component={Paper} className="mt-4">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Mobile No</StyledTableCell>
+              <StyledTableCell>Roles</StyledTableCell>
+              <StyledTableCell>Gender</StyledTableCell>
+              <StyledTableCell>Actions</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading ? ( // Show loading animation while fetching
+              <StyledTableRow></StyledTableRow>
+            ) : (
+              displayUsers.map((person) => (
+                <StyledTableRow key={person.UserID}>
+                  <StyledTableCell>
+                    <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
+                      <img
+                        src={person.ProfileImage}
+                        alt="Profile"
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                      <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
+                        <span>{person.FirstName}</span>
+                        <span>{person.LastName}</span>
+                      </div>
+                    </div>
+                  </StyledTableCell>
+
+                  <StyledTableCell className="whitespace-nowrap overflow-hidden text-ellipsis">
+                    {person.Email}
+                  </StyledTableCell>
+
+                  <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
+
+                  <StyledTableCell>
+                    {(() => {
+                      // Log the RoleID and available options for debugging
+                      console.log("RoleID:", person.RoleID);
+                      console.log("Role Options:", roleOptions);
+
+                      // Ensure person.RoleID is treated as a string for comparison
+                      const role = roleOptions.find(
+                        (role) => role.id === String(person.RoleID)
+                      );
+
+                      // Log the found role
+                      console.log("Found Role:", role);
+
+                      // Return the role name or "Unknown Role"
+                      return role?.name || "Unknown Role";
+                    })()}
+                  </StyledTableCell>
+
+                  <StyledTableCell>
+                    <span
+                      className={`w-[68px] text-center gender-pill ${
+                        person.Gender === "M"
+                          ? "gender-male"
+                          : person.Gender === "F"
+                          ? "gender-female"
+                          : "gender-na"
+                      }`}
+                    >
+                      {person.Gender === null
+                        ? "N/A"
+                        : person.Gender === "M"
+                        ? person.Gender + "ale"
+                        : person.Gender + "emale"}
+                    </span>
+                  </StyledTableCell>
+
+                  <StyledTableCell>
+                    <div className="button-container">
+                      <button
+                        type="button"
+                        onClick={() => handleEditClick(person.UserID)}
+                        className="button edit-button"
+                      >
+                        <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteClick(person.UserID)}
+                        className="button delete-button"
+                      >
+                        <MdOutlineCancel
+                          aria-hidden="true"
+                          className="h-4 w-4"
+                        />
+                        Delete
+                      </button>
+                    </div>
                   </StyledTableCell>
                 </StyledTableRow>
-              ) : (
-                displayUsers.map((person) => (
-                  <StyledTableRow key={person.UserID}>
-                    <StyledTableCell>
-                      <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">
-                        <img
-                          src={person.ProfileImage}
-                          alt="Profile"
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                        <div className="flex flex-col sm:flex-row sm:space-x-2  w-full md:pr-8 lg:pr-8">
-                          <span>{person.FirstName}</span>
-                          <span>{person.LastName}</span>
-                        </div>
-                      </div>
-                    </StyledTableCell>
+              ))
+            )}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 20, 25]}
+                colSpan={6}
+                count={totalUsers}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
 
-                    <StyledTableCell className="whitespace-nowrap overflow-hidden text-ellipsis">
-                      {person.Email}
-                    </StyledTableCell>
-
-                    <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
-
-                    <StyledTableCell>
-                      {(() => {
-                        // Log the RoleID and available options for debugging
-                        console.log("RoleID:", person.RoleID);
-                        console.log("Role Options:", roleOptions);
-
-                        // Ensure person.RoleID is treated as a string for comparison
-                        const role = roleOptions.find(
-                          (role) => role.id === String(person.RoleID)
-                        );
-
-                        // Log the found role
-                        console.log("Found Role:", role);
-
-                        // Return the role name or "Unknown Role"
-                        return role?.name || "Unknown Role";
-                      })()}
-                    </StyledTableCell>
-
-                    <StyledTableCell>
-                      <span
-                        className={`w-[68px] text-center gender-pill ${
-                          person.Gender === "M"
-                            ? "gender-male"
-                            : person.Gender === "F"
-                            ? "gender-female"
-                            : "gender-na"
-                        }`}
-                      >
-                        {person.Gender === null
-                          ? "N/A"
-                          : person.Gender === "M"
-                          ? person.Gender + "ale"
-                          : person.Gender + "emale"}
-                      </span>
-                    </StyledTableCell>
-
-                    <StyledTableCell>
-                      <div className="button-container">
-                        <button
-                          type="button"
-                          onClick={() => handleEditClick(person.UserID)}
-                          className="button edit-button"
-                        >
-                          <AiOutlineEdit
-                            aria-hidden="true"
-                            className="h-4 w-4"
-                          />
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteClick(person.UserID)}
-                          className="button delete-button"
-                        >
-                          <MdOutlineCancel
-                            aria-hidden="true"
-                            className="h-4 w-4"
-                          />
-                          Delete
-                        </button>
-                      </div>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[10, 20, 25]}
-                  colSpan={6}
-                  count={totalUsers}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-      </div>
       {isLoading && <LoadingAnimation />}
     </div>
   );

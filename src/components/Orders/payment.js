@@ -39,16 +39,15 @@ import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
 import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
 import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
-import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.png";
+import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
 
 const Payment = ({ orderId }) => {
   const { generatedId, customerId, orderDate } = useContext(IdContext);
   const [orderDetails, setOrderDetails] = useState({
     PaymentMethod: "",
-    PaymentStatus: "",
     MaskedCardNumber: "",
     PaymentComments: "",
-    AdvanceAmount: "",
+    Amount: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -66,9 +65,8 @@ const Payment = ({ orderId }) => {
   const savePayment = () => {
     // Validation messages
     const validatePaymentData = () => {
-      if (!orderDetails.AdvanceAmount) return "Advance amount is required.";
+      if (!orderDetails.Amount) return "Amount is required.";
       if (!orderDetails.PaymentMethod) return "Payment method is required.";
-      if (!orderDetails.PaymentStatus) return "Payment status is required.";
       if (!orderDetails.MaskedCardNumber)
         return "Masked card number is required.";
       if (!orderDetails.PaymentComments)
@@ -97,14 +95,11 @@ const Payment = ({ orderId }) => {
     const paymentData = {
       TenantID: 1,
       PaymentID: 0,
-      OrderID: generatedId,
+      OrderID: orderId,
       CustomerID: 33,
-      TotalAmount: orderDetails.AdvanceAmount,
-      AdvanceAmount: 500,
-      BalanceAmount: 500,
+      Amount: orderDetails.Amount,
       PaymentComments: orderDetails.PaymentComments,
       PaymentMethod: orderDetails.PaymentMethod,
-      PaymentStatus: orderDetails.PaymentStatus,
       MaskedCardNumber: orderDetails.MaskedCardNumber,
     };
 
@@ -137,9 +132,8 @@ const Payment = ({ orderId }) => {
 
           // Reset the orderDetails state here
           setOrderDetails({
-            AdvanceAmount: "",
+            Amount: "",
             PaymentMethod: "",
-            PaymentStatus: "",
             MaskedCardNumber: "",
             PaymentComments: "",
           });
@@ -221,12 +215,9 @@ const Payment = ({ orderId }) => {
       const paymentDetails = payments.map((payment) => ({
         PaymentID: payment.PaymentID || "",
         PaymentMethod: payment.PaymentMethod || "N/A",
-        PaymentStatus: payment.PaymentStatus || "N/A",
         MaskedCardNumber: payment.MaskedCardNumber || "N/A",
         PaymentComments: payment.PaymentComments || "N/A",
-        TotalAmount: payment.TotalAmount || "N/A",
         Amount: payment.Amount || "N/A",
-        BalanceAmount: payment.BalanceAmount || "N/A",
         PaymentDate: payment.PaymentDate || "N/A",
       }));
 
@@ -256,12 +247,10 @@ const Payment = ({ orderId }) => {
     if (paymentData) {
       setOrderDetails({
         PaymentID: paymentData.PaymentID || "",
-        PaymentStatus: paymentData.PaymentStatus || "",
         PaymentMethod: paymentData.PaymentMethod || "",
         MaskedCardNumber: paymentData.MaskedCardNumber || "",
-        AdvanceAmount: paymentData.AdvanceAmount || "",
-        BalanceAmount: paymentData.BalanceAmount || "",
-        TotalAmount: paymentData.TotalAmount || "",
+        Amount: paymentData.Amount || "",
+
         PaymentComments: paymentData.PaymentComments || "",
       });
       setEditMode(true);
@@ -360,7 +349,7 @@ const Payment = ({ orderId }) => {
               </Combobox.Button>
               <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 {[
-                  "Amazon Pay",
+                  "AmazonPay",
                   "Cash",
                   "Credit Card",
                   "Debit Card",
@@ -446,8 +435,8 @@ const Payment = ({ orderId }) => {
           </label>
           <input
             type="number"
-            name="AdvanceAmount"
-            value={orderDetails.AdvanceAmount}
+            name="Amount"
+            value={orderDetails.Amount}
             onChange={handleChange}
             className={`p-1 w-full sm:w-1/4 border rounded-md ${
               errors.AdvanceAmount ? "border-red-500" : "border-gray-300"

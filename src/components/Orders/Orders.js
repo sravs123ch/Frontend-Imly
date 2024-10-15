@@ -295,6 +295,7 @@ const Orders = () => {
   return (
     <div className="main-container">
       <ToastContainer />
+      {loading && <LoadingAnimation />}
       <div className="body-container">
         <h2 className="heading">Orders</h2>
 
@@ -476,11 +477,7 @@ const Orders = () => {
           <TableBody>
             {loading ? (
               // Show loading animation while fetching
-              <StyledTableRow>
-                <StyledTableCell colSpan={6} align="center">
-                  <LoadingAnimation /> {/* Display the loading animation */}
-                </StyledTableCell>
-              </StyledTableRow>
+              <StyledTableRow></StyledTableRow>
             ) : (
               paginatedData.map((product) => (
                 <StyledTableRow key={product.OrderID}>
@@ -552,7 +549,7 @@ const Orders = () => {
 
                     <div className="mt-2">
                       <span className="text-gray-400 ">Amount:</span> &#8377;
-                      {product.TotalAmount ? product.AdvanceAmount : "N/A"}
+                      {product.TotalAmount ? product.TotalAmount : "N/A"}
                     </div>
                   </StyledTableCell>
                   <StyledTableCell align="center">

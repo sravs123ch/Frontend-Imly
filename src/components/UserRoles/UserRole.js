@@ -52,8 +52,6 @@ function UserRoles() {
     }
   }, [storesData]);
 
-
-
   const getAllRoles = async (pageNum, pageSize, search = "", storeId = "") => {
     try {
       const response = await axios.get(GETALLROLESS_API, {
@@ -160,6 +158,7 @@ function UserRoles() {
 
   return (
     <div className="main-container">
+      {loading && <LoadingAnimation />}
       <div className="body-container">
         <h2 className="heading">Roles</h2>
 
@@ -322,11 +321,7 @@ function UserRoles() {
           </TableHead>
           <TableBody>
             {loading ? ( // Show loading animation while fetching
-              <StyledTableRow>
-                <StyledTableCell colSpan={5} align="center">
-                  <LoadingAnimation /> {/* Display the loading animation */}
-                </StyledTableCell>
-              </StyledTableRow>
+              <StyledTableRow></StyledTableRow>
             ) : (
               roles.map((row) => (
                 <StyledTableRow key={row.RoleID}>

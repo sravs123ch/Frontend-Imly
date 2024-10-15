@@ -33,7 +33,7 @@ import CreditCardIcon from "../../assests/Images/Payments/credit-card.svg";
 import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
 import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
-import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.png";
+import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
 import { ToastContainer, toast } from "react-toastify";
 
 function Payment() {
@@ -237,8 +237,8 @@ function Payment() {
         );
       case "AmazonPay" || "Amazonpay":
         return (
-          <div className=" rounded-full">
-            <img className="w-10 h-8 " src={AmazonPayIcon} alt="Cash Icon" />
+          <div className=" rounded-full ">
+            <img className="w-10 h-10 " src={AmazonPayIcon} alt="Cash Icon" />
           </div>
         );
       case "PayPal":
@@ -452,11 +452,7 @@ function Payment() {
           </div>
         </div>
       </div>
-      {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-          <LoadingAnimation />
-        </div>
-      )}
+      {isLoading && <LoadingAnimation />}
       <TableContainer component={Paper} className="mt-4">
         <Table>
           <TableHead>

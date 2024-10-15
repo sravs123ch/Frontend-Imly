@@ -255,11 +255,7 @@ function Stores() {
           </TableHead>
           <TableBody>
             {isLoading ? ( // Show loading animation while fetching
-              <StyledTableRow>
-                <StyledTableCell colSpan={5} align="center">
-                  <LoadingAnimation /> {/* Display the loading animation */}
-                </StyledTableCell>
-              </StyledTableRow>
+              <StyledTableRow></StyledTableRow>
             ) : (
               filteredStores.map((store, index) => (
                 <StyledTableRow key={store.StoreID}>
@@ -313,11 +309,7 @@ function Stores() {
           </TableFooter>
         </Table>
       </TableContainer>
-      {isLoading && (
-        // <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-        <LoadingAnimation />
-        // </div>
-      )}
+      {isLoading && <LoadingAnimation />}
     </div>
     // </div >
   );

@@ -167,6 +167,10 @@ const Paymentform = () => {
           setAmount(""); // Reset amount
           setSearchValue("");
           setResults([]);
+
+          setTimeout(() => {
+            navigate("/payments");
+          }, 5500);
         } else {
           toast.error(
             data.message || "Error occurred while creating the Payment.",
@@ -413,7 +417,7 @@ const Paymentform = () => {
             <div className="flex gap-10">
               <div className="sm:pt-2 w-full space-y-2 p-4">
                 <div className="flex justify-between flex-col sm:flex-row gap-2 sm:gap-0 ">
-                  <label className="flex items-center w-full sm:w-1/4 text-xs font-medium text-gray-700">
+                  <label className="flex items-center w-full sm:w-1/3 text-xs font-medium text-gray-700">
                     Payment Method:
                   </label>
                   <Combobox
@@ -466,7 +470,7 @@ const Paymentform = () => {
                 </div>
 
                 <div className="flex  justify-between flex-col sm:flex-row gap-2 sm:gap-0">
-                  <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
+                  <label className="flex items-center text-xs w-full sm:w-1/3 text-left font-medium text-gray-700">
                     Card Number:
                   </label>
                   <input
@@ -489,7 +493,7 @@ const Paymentform = () => {
               </div>
               <div className="sm:pt-2 w-full space-y-2 p-4">
                 <div className="flex justify-between flex-col sm:flex-row gap-2 sm:gap-0">
-                  <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700 ">
+                  <label className="flex items-center text-xs w-full sm:w-1/3 text-left font-medium text-gray-700 ">
                     Amount:
                   </label>
                   <input
@@ -501,7 +505,7 @@ const Paymentform = () => {
                   />
                 </div>
                 <div className="flex   justify-between flex-col sm:flex-row gap-2 sm:gap-0">
-                  <label className="flex items-center text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
+                  <label className="flex items-center text-xs w-full sm:w-1/3 text-left font-medium text-gray-700">
                     Comments:
                   </label>
                   <textarea

@@ -21,7 +21,6 @@ import { UserProvider } from "./Context/userContext";
 import { StoreProvider } from "./Context/storeContext";
 import { CustomerProvider } from "./Context/customerContext";
 import { RoleProvider } from "./Context/roleContext";
-import UserRoleform from "./components/UserRoles/UserRoleform";
 import RoleUser from "./components/UserRoles/UserRole";
 
 import { PaymentProvider } from "./Context/paymentContext";
