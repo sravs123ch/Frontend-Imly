@@ -11,12 +11,14 @@ import {
   LOGIN,
   STATES_API,
 } from "../../Constants/apiRoutes";
+import LoadingAnimation from "../Loading/LoadingAnimation";
 
 const Login = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   // Fetch data from the APIs if not present in local storage
@@ -49,6 +51,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch(LOGIN, {
         method: "POST",
@@ -102,12 +105,15 @@ const Login = () => {
     } catch (error) {
       console.error("Login error:", error);
       setError("An error occurred during login");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
       <div className="flex min-h-full p-0 m-0 flex-1 bg-white">
+        {isLoading && <LoadingAnimation />} 
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
@@ -182,8 +188,9 @@ const Login = () => {
                       type="submit"
                       className="flex w-full justify-center rounded-md bg-custom-darkblue hover:bg-custom-lightblue hover:text-gray-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       onClick={(e) => handleLogin(e)}
+                      // Disable the button when loading
                     >
-                      Sign in
+                      {isLoading ? "Please wait..." : "Sign in"}
                     </button>
                     {error && <p className="p-2 text-red-500">{error}</p>}
                   </div>

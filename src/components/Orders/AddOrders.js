@@ -75,25 +75,30 @@ const steps = ["Order Details", "Order Status", "payments"];
 function AddOrders() {
   const { customerDetails } = useContext(CustomerContext);
   const handleCustomerSelect = async (customer) => {
-    setOrderDetails({
+    const updatedOrderDetails = {
       ...orderDetails,
-      CustomerID: customer.customerId,
+      CustomerID: customer.CustomerID || customer.customerId, // Handle both cases
       CustomerFirstName: customer.CustomerFirstName,
       CustomerLastName: customer.CustomerLastName,
       CustomerEmail: customer.CustomerEmail,
-      customerPhone: customer.customerPhone,
-      customerPhone: customer.PhoneNumber,
-    });
-    setSelectedCustomer(customer); // Set selected customer
+      customerPhone: customer.PhoneNumber || customer.customerPhone,
+    };
+
+    setOrderDetails(updatedOrderDetails);
+    setSelectedCustomer(customer);
     setIsDialogOpen(true);
-    setIsFocused(false); // Close the popup after autofill
-    setSearchValue(""); // Clear the search input after selection
+    setIsFocused(false);
+    setSearchValue("");
 
     // Fetch address data
-    const addressData = await fetchAddressData(customer.customerId);
+    const addressData = await fetchAddressData(
+      customer.CustomerID || customer.customerId
+    );
+    // Log the fetched address data
+
     if (addressData) {
-      setOrderDetails((prevDetails) => ({
-        ...prevDetails,
+      const finalOrderDetails = {
+        ...updatedOrderDetails,
         AddressID: addressData.AddressID,
         AddressLine1: addressData.AddressLine1,
         AddressLine2: addressData.AddressLine2,
@@ -101,7 +106,9 @@ function AddOrders() {
         State: addressData.State,
         Country: addressData.Country,
         ZipCode: addressData.ZipCode,
-      }));
+      };
+
+      setOrderDetails(finalOrderDetails);
     }
   };
 
@@ -141,52 +148,48 @@ function AddOrders() {
   // const[totalOrders,setTotalOrders]=useState();
 
   const handleTabChange = (tab) => setSelectedTab(tab);
-
+  const [addressData, setAddressData] = useState([]);
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
   const { orderId } = useParams(); // Get orderId from URL
-
-  //  // Fetch order details when the component mounts
-  // useEffect(() => {
-  //   const fetchOrderDetails = async () => {
-  //     if (orderId==="new") return; // If there is no orderId, return early
-
-  //     try {
-  //       setIsLoading(true);
-  //       setError(null); // Reset error state
-
-  //       const response = await axios.get(`https://imly-b2y.onrender.com/api/orders/getOrderById/${orderId}`);
-  //       if (response.data.order) {
-  //         setOrderIdDetails(response.data.order); // Set the fetched order details
-  //         setOrderDetails(response.data.order); // Set the local order details
-  //       } else {
-  //         setError("Order not found."); // Handle the case where no order is found
-  //       }
-  //     } catch (err) {
-  //       console.error("Error fetching order details:", err);
-  //       setError("Failed to fetch order details.");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchOrderDetails(); // Call the function to fetch order details
-  // }, [orderId]); // Dependency on orderId
-  // const isEditMode = Boolean(orderId !== "new");
+  // const {
+  //   CustomerID = "",
+  //   customerId = "",
+  //   CustomerFirstName = "",
+  //   CustomerLastName = "",
+  //   CustomerEmail = "",
+  //   PhoneNumber = "",
+  //   customerPhone = "",
+  // } = customer;
 
   // Fetch order details when the component mounts or when orderId changes
 
   const fetchAddressData = async (customerId) => {
     try {
+      console.log("Fetching address data for customer ID:", customerId);
       const response = await axios.get(`${ADDRESS_API}/${customerId}`);
-      if (response.data && response.data.address) {
-        return response.data.address;
+      console.log("API Response:", response.data);
+
+      if (
+        response.data &&
+        response.data.StatusCode === "SUCCESS" &&
+        response.data.Addresses
+      ) {
+        const addresses = response.data.Addresses;
+        console.log("Processed addresses:", addresses);
+        setAddressData(addresses);
+        return addresses;
+      } else {
+        console.log(
+          "No address data found in the response or unexpected response structure"
+        );
+        setAddressData([]);
       }
     } catch (error) {
       console.error("Error fetching address data:", error);
+      setAddressData([]);
     }
     return null;
   };
-
   useEffect(() => {
     const fetchOrderDetails = async () => {
       // If the orderId is "new", we're creating a new order so no need to fetch data
@@ -212,8 +215,6 @@ function AddOrders() {
         if (fetchedOrderData) {
           setOrderDetails(fetchedOrderData); // Set the fetched order details
           setOrderIdDetails({ order: fetchedOrderData }); // Optionally store orderIdDetails
-
-          console.log("Order details fetched:", fetchedOrderData);
         } else {
           setError("Order not found."); // Handle no order found case
         }
@@ -248,11 +249,8 @@ function AddOrders() {
     try {
       // If isEditMode is true, return early and do not proceed with the data fetching
       if (isEditMode) {
-        console.log("Edit mode is active, skipping data fetch.");
         return; // Exit the function if in edit mode
       }
-
-      console.log("Fetching data in normal mode...");
 
       let page = 1;
       let pageSize = 10;
@@ -329,12 +327,11 @@ function AddOrders() {
       console.error("No customer selected.");
       return;
     }
-
-    // Find the address that matches the selected AddressID
-    const selectedAddress = selectedCustomer.Addresses?.find(
+  
+    const selectedAddress = addressData.find(
       (address) => address.AddressID === selectedAddressID
     );
-
+  
     if (!selectedAddress) {
       console.error(
         "No matching address found for the given AddressID:",
@@ -342,57 +339,27 @@ function AddOrders() {
       );
       return;
     }
-
-    // Destructure address properties with fallback
-    const {
-      Country = "",
-      State = "",
-      City = "",
-      AddressLine1 = "",
-      AddressLine2 = "",
-      ZipCode = "",
-      PhoneNumber = "",
-      AddressID = "",
-    } = selectedAddress;
-
-    console.log("Address details for autofill:", selectedAddress);
-
-    // Step 1: Set customer details into orderDetails state
+  
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
       CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
-      CustomerFirstName:
-        selectedCustomer.CustomerFirstName ||
-        prevDetails.CustomerFirstName ||
-        "",
-      CustomerLastName:
-        selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
-      CustomerEmail:
-        selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
-      customerPhone:
-        selectedCustomer.PhoneNumber || prevDetails.PhoneNumber || "",
+      CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
+      CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
+      CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
+      customerPhone: selectedCustomer.PhoneNumber || prevDetails.PhoneNumber || "",
       StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
       StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
-      AddressID: AddressID || prevDetails.AddressID || "", // Ensure AddressID is set correctly
-      AddressLine1: AddressLine1 || "",
-      AddressLine2: AddressLine2 || "",
-      ZipCode: ZipCode || "",
-      Country: Country || "",
-      State: State || "",
-      CityName: City || "",
+      AddressID: selectedAddress.AddressID || "",
+      AddressLine1: selectedAddress.AddressLine1 || "",
+      AddressLine2: selectedAddress.AddressLine2 || "",
+      ZipCode: selectedAddress.ZipCode || "",
+      CountryID: selectedAddress.CountryID || "",
+      StateID: selectedAddress.StateID || "",
+      CityID: selectedAddress.CityID || "",
     }));
-
-    // Step 2: Set the selected store based on the StoreID
-    const selectedStore = storeOptions.find(
-      (store) => store.StoreID === selectedCustomer.StoreID || ""
-    );
-
-    setSelectedStore(selectedStore || null);
-
-    // Optionally close dialog
+  
     setIsDialogOpen(false);
   };
-
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
@@ -426,7 +393,6 @@ function AddOrders() {
         `${ORDERBYCUSTOMERID_API}/${customerId}`
       );
       setOrders(response.data.orders || []); // Set fetched orders
-      console.log("Fetched Orders:", response.data.orders);
     } catch (err) {
       console.error("Error fetching orders:", err);
       setError("Failed to fetch orders.");
@@ -503,6 +469,7 @@ function AddOrders() {
     AssainTo: "",
     StoreID: selectedCustomer.StoreID || "",
   });
+
   useEffect(() => {
     if (customerDetails) {
       setOrderDetails((prevDetails) => ({
@@ -514,7 +481,6 @@ function AddOrders() {
     }
   }, [customerDetails]);
 
-  // console.log(results);
   const handleCategoryChange = (category) => {
     setQuery("");
     setSelectedCategory(category);
@@ -691,7 +657,6 @@ function AddOrders() {
   //         if (fetchedOrderData) {
   //           setOrderDetails(fetchedOrderData); // Set fetched order data
   //           setOrderIdDetails({ order: fetchedOrderData }); // Optionally set orderIdDetails for state
-  //           console.log("Order details fetched:", fetchedOrderData);
   //         } else {
   //           setError("Order not found."); // Handle no order found case
   //         }
@@ -758,8 +723,6 @@ function AddOrders() {
               setOrderDetails(data.order); // Update order details from fetched data
               setStatusID(data.order.StatusID);
               setOrderIdDetails({ order: data.order }); // Update orderIdDetails
-              console.log("Order details fetched and updated:", data.order);
-              console.log("status", data.order.StatusID);
             }
           })
           .catch((error) => {
@@ -974,22 +937,18 @@ function AddOrders() {
     setOrderDetails({ ...orderDetails, socialMediaPlatform: value });
   };
 
-  useEffect(
-    () => {
-      if (customerDetails) {
-        setOrderDetails((prevDetails) => ({
-          ...prevDetails,
-          CustomerID: customerDetails.customerId,
-          CustomerFirstName: customerDetails.CustomerFirstName,
-          CustomerLastName: customerDetails.CustomerLastName,
-          CustomerEmail: customerDetails.CustomerEmail,
-          customerPhone: customerDetails.customerPhone,
-        }));
-      }
-    },
-    [customerDetails]
-    // console.log(customerDetails)
-  );
+  useEffect(() => {
+    if (customerDetails) {
+      setOrderDetails((prevDetails) => ({
+        ...prevDetails,
+        CustomerID: customerDetails.customerId,
+        CustomerFirstName: customerDetails.CustomerFirstName,
+        CustomerLastName: customerDetails.CustomerLastName,
+        CustomerEmail: customerDetails.CustomerEmail,
+        customerPhone: customerDetails.customerPhone,
+      }));
+    }
+  }, [customerDetails]);
 
   const handleSearch = async () => {
     try {
@@ -1007,7 +966,6 @@ function AddOrders() {
           CustomerEmail: response.data.CustomerEmail,
           customerPhone: response.data.customerPhone,
         });
-        console.log(orderDetails);
         setError(null);
       } else {
         setError("Please enter a valid search query.");
@@ -1016,6 +974,9 @@ function AddOrders() {
       setError("Error fetching customer data.");
     }
   };
+  useEffect(() => {
+    console.log("addressData updated:", addressData);
+  }, [addressData]);
 
   const [stateQuery, setStateQuery] = useState(""); // Define state for the query input
 
@@ -1025,7 +986,6 @@ function AddOrders() {
         // Fetch Country by CountryID
         if (CountryID && countries.length > 0) {
           const country = countries.find((c) => c.CountryID === CountryID);
-          console.log("Country Found:", country);
           if (country) {
             setOrderDetails((prevDetails) => ({
               ...prevDetails,
@@ -1039,11 +999,9 @@ function AddOrders() {
         // Fetch State by StateID
         if (CountryID && StateID) {
           const stateResponse = await axios.get(`${STATES_API}/${CountryID}`);
-          console.log("State Response:", stateResponse.data);
           if (stateResponse.data.status === "SUCCESS") {
             const stateData = stateResponse.data.data;
             const state = stateData.find((s) => s.StateID === StateID);
-            console.log("State Found:", state);
             if (state) {
               setOrderDetails((prevDetails) => ({
                 ...prevDetails,
@@ -1058,11 +1016,9 @@ function AddOrders() {
         // Fetch City by StateID and CityID
         if (StateID && CityID) {
           const cityResponse = await axios.get(`${CITIES_API}/${StateID}`);
-          console.log("City Response:", cityResponse.data);
           if (cityResponse.data.status === "SUCCESS") {
             const cityData = cityResponse.data.data;
             const city = cityData.find((c) => c.CityID === CityID);
-            console.log("City Found:", city);
             if (city) {
               setOrderDetails((prevDetails) => ({
                 ...prevDetails,
@@ -1082,10 +1038,7 @@ function AddOrders() {
       const order = orderIdDetails?.order || {};
       // const customer = order.Customer || {};
       // const addresses = customer.Address || [];
-      // console.log(customer)
-      // console.log(order.StoreName);
-      // console.log(orderIdDetails?.order.Country);
-      // console.log(order.AddressID);
+
       // // Default to the primary address (first address in the array)
       // const primaryAddress = addresses[0] || {};
       // Set basic order details along with the primary address
@@ -1224,8 +1177,6 @@ function AddOrders() {
           return map;
         }, {});
         setCountryMap(countryMapData);
-
-        console.log("Fetched countries:", countryData);
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -1252,8 +1203,6 @@ function AddOrders() {
           return map;
         }, {});
         setStateMap(stateMapData);
-
-        console.log("Fetched states:", stateData);
       }
     } catch (error) {
       console.error("Error fetching states:", error);
@@ -1278,8 +1227,6 @@ function AddOrders() {
           return map;
         }, {});
         setCityMap(cityMapData);
-
-        console.log("Fetched cities:", cityData);
       }
     } catch (error) {
       console.error("Error fetching cities:", error);
@@ -1335,7 +1282,6 @@ function AddOrders() {
     const fetchStores = async () => {
       try {
         const response = await axios.get(GETALLSTORES_API);
-        console.log("API Response:", response.data);
 
         // Extract the Stores array from the API response
         const storesData = response.data.Stores || [];
@@ -1432,7 +1378,7 @@ function AddOrders() {
   //         if (response.users && response.users.length > 0) {
   //           const designerName = response.users[0].name; // Adjust based on actual user object structure
   //           const designerId=response.users[0].UserID;
-  //           console.log("designerId",designerId);
+
   //           setDesginerID(designerId);
   //           setDesignerName(designerName);
   //         } else {
@@ -1476,11 +1422,9 @@ function AddOrders() {
             const designerName = `${firstUser.FirstName} ${firstUser.LastName}`;
             const designerId = firstUser.UserID;
 
-            console.log("designerId:", designerId);
-
             // Set the designer ID and name
             setDesginerID(designerId);
-            console.log("designerId", designerId);
+
             setDesignerName(designerName);
           } else {
             // Clear if no users are found
@@ -1508,7 +1452,7 @@ function AddOrders() {
       DesginerID: selectedUser.UserID,
       AssainTo: selectedUser.UserID, // Set AssignTo field with UserID
     }));
-    console.log("DesginerID", orderDetails.DesginerID);
+
     // Set the input field with the selected user's full name
     setSearchUserValue(`${selectedUser.FirstName} ${selectedUser.LastName}`);
 
@@ -1948,48 +1892,57 @@ function AddOrders() {
                                         </TableRow>
                                       </TableHead>
                                       <TableBody>
-                                        {selectedCustomer?.Addresses &&
-                                          selectedCustomer.Addresses.slice(
-                                            page * rowsPerPage,
-                                            page * rowsPerPage + rowsPerPage
-                                          ).map((address, index) => (
-                                            <TableRow key={index}>
-                                              <StyledTableCell>
-                                                {address.AddressLine1 || ""}
-                                              </StyledTableCell>
-                                              <StyledTableCell>
-                                                {address.AddressLine2 || ""}
-                                              </StyledTableCell>
-                                              {/* <StyledTableCell>{cityMap[address.CityID] || "N/A"}</StyledTableCell>
-             <StyledTableCell>{stateMap[address.StateID] || "N/A"}</StyledTableCell> */}
-                                              <StyledTableCell>
-                                                {address.City || "N/A"}
-                                              </StyledTableCell>
-                                              <StyledTableCell>
-                                                {address.State || "N/A"}
-                                              </StyledTableCell>
-                                              <StyledTableCell>
-                                                {address.ZipCode || ""}
-                                              </StyledTableCell>
-                                              <StyledTableCell>
-                                                <div className="button-container">
-                                                  {/* <button type="button" onClick={() => { handleAutoFill(); handleClose(); }} className="button select-button">Select</button> */}
-                                                  <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                      handleAutoFill(
-                                                        address.AddressID
-                                                      );
-                                                      handleClose();
-                                                    }}
-                                                    className="button select-button"
-                                                  >
-                                                    Select
-                                                  </button>
-                                                </div>
-                                              </StyledTableCell>
-                                            </TableRow>
-                                          ))}
+                                        {addressData.length > 0 ? (
+                                          addressData
+                                            .slice(
+                                              page * rowsPerPage,
+                                              page * rowsPerPage + rowsPerPage
+                                            )
+                                            .map((address, index) => (
+                                              <TableRow key={address.AddressID}>
+                                                <StyledTableCell>
+                                                  {address.AddressLine1 || ""}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.AddressLine2 || ""}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.CityID || "N/A"}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.StateID || "N/A"}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  {address.ZipCode || ""}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                  <div className="button-container">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        handleAutoFill(
+                                                          address.AddressID
+                                                        );
+                                                        handleClose();
+                                                      }}
+                                                      className="button select-button"
+                                                    >
+                                                      Select
+                                                    </button>
+                                                  </div>
+                                                </StyledTableCell>
+                                              </TableRow>
+                                            ))
+                                        ) : (
+                                          <TableRow>
+                                            <StyledTableCell
+                                              colSpan={6}
+                                              align="center"
+                                            >
+                                              No address data available
+                                            </StyledTableCell>
+                                          </TableRow>
+                                        )}
                                       </TableBody>
                                       <TableFooter>
                                         <TableRow>
@@ -2436,26 +2389,6 @@ function AddOrders() {
                       </div>
                     </div>
                     <div className="relative flex-1  pt-7  sm:pt-5   w-full space-y-2  p-4">
-                      {/* <div>
-  <label className="block text-xs font-medium text-gray-700">
-    Comments
-  </label>
-  <input
-    type="text"
-    name="Comments"
-    value={orderDetails.Comments}
-    onChange={handleChange}
-    className={` p-1  mt-0 mb-5 w-full border rounded-md ${errors.Comments
-      ? "border-red-500"
-      : "border-gray-300"
-      }`}
-  />
-  {errors.Comments && (
-    <p className="text-red-500 text-sm mt-1">
-      {errors.Comments}
-    </p>
-  )}
-</div> */}
                       <div className="-mt-2">
                         <label className="block text-xs font-medium text-gray-700 mt-1">
                           Total amount
