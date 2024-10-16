@@ -249,7 +249,7 @@ const Paymentform = () => {
               onFocus={() => setIsFocused(true)}
               className="mt-0 h-10 pr-10 w-full border border-gray-300 rounded-md text-sm md:text-base pl-2"
             />
-            <div className="absolute right-2 top-2 flex items-center pointer-events-none">
+            <div className="absolute right-2 top-3 flex items-center pointer-events-none">
               <IoIosSearch aria-label="Search Icon" />
             </div>
             {/* Only show the dropdown when searchValue is not empty and input is focused */}
