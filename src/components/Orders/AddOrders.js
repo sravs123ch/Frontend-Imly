@@ -1256,6 +1256,7 @@ function AddOrders() {
 
     fetchStores();
   }, []);
+  console.log(storeOptions)
 
   // Address Table Pagination States
   const [page, setPage] = useState(0);
@@ -1657,7 +1658,7 @@ function AddOrders() {
                                         Select Store ID
                                       </Combobox.Option>
                                       {/* Render all store options */}
-                                      {storeNames.map((store) => (
+                                      {storeOptions.map((store) => (
                                         <Combobox.Option
                                           key={store.StoreID}
                                           value={store}

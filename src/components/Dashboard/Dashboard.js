@@ -15,14 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import "chart.js/auto";
-
-import {
-  CITIES_API,
-  COUNTRIES_API,
-  STATES_API,
-} from "../../Constants/apiRoutes";
-
-// Register the required components globally
+import LoadingAnimation from "../Loading/LoadingAnimation";
 
 Chart.register(...registerables);
 
@@ -36,13 +29,49 @@ const Dashboard = () => {
   const [statesData, setStatesData] = useState([]);
   const [countriesData, setCountriesData] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
+  const [salesAndPaymentData, setSalesAndPaymentData] = useState([]);
+  const [overallData, setOverallData] = useState({});
+  const [loading, setLoading] = useState(true);
+
   const [storeNames, setStoreNames] = useState([]);
   const [value, setValue] = useState({
     startDate: "",
     endDate: "",
   });
-
-
+  const fetchOverallData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getOverAllDataForDashboard"
+      );
+      if (response.data.StatusCode === "SUCCESS") {
+        setOverallData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching overall dashboard data:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching data
+    }
+  };
+  const fetchSalesAndPaymentData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getSalesAndPaymentReportByMonth"
+      );
+      if (response.data.StatusCode === "SUCCESS") {
+        setSalesAndPaymentData(response.data.OrdersAndPayments);
+      }
+    } catch (error) {
+      console.error("Error fetching sales and payment data:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching data
+    }
+  };
+  useEffect(() => {
+    fetchOverallData();
+    fetchSalesAndPaymentData();
+  }, []);
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -65,60 +94,62 @@ const Dashboard = () => {
   // Example data for the charts (you can replace this with actual API data)
 
   const lineData = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-
+    labels: salesAndPaymentData.map((item) => item.Month),
     datasets: [
       {
-        label: "Sales Per Month",
-
-        data: citiesData.length ? citiesData : [65, 59, 80, 81, 56, 55], // Use API data or fallback data
-
+        label: "Orders Per Month",
+        data: salesAndPaymentData.map((item) => parseInt(item.OrderCount)),
         fill: false,
-
         backgroundColor: "rgba(75,192,192,1)",
-
         borderColor: "rgba(75,192,192,1)",
+      },
+      {
+        label: "Total Payments Per Month",
+        data: salesAndPaymentData.map((item) => parseFloat(item.TotalPayments)),
+        fill: false,
+        backgroundColor: "rgba(255,99,132,1)",
+        borderColor: "rgba(255,99,132,1)",
       },
     ],
   };
 
   const doughnutData = {
-    labels: ["Orders Pending", "Dispatched", "Production Design"],
-
+    labels: overallData.OrderStatusCounts
+      ? overallData.OrderStatusCounts.map((item) => item.OrderStatus)
+      : [],
     datasets: [
       {
         label: "Order Status",
-
-        data: statesData.length ? statesData : [120, 80, 50], // Use API data or fallback data
-
+        data: overallData.OrderStatusCounts
+          ? overallData.OrderStatusCounts.map((item) => parseInt(item.Count))
+          : [],
         backgroundColor: [
-          "rgba(255, 99, 132, 0.6)", // Orders Pending
-
-          "rgba(54, 162, 235, 0.6)", // Dispatched
-
-          "rgba(255, 206, 86, 0.6)", // Production Design
+          "rgba( 255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
         ],
-
         borderColor: [
           "rgba(255, 99, 132, 1)",
-
           "rgba(54, 162, 235, 1)",
-
           "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
         ],
-
         borderWidth: 1,
       },
     ],
   };
 
   const bigChartData = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-
+    labels: salesAndPaymentData.map((item) => item.Month),
     datasets: [
       {
         label: "Revenue Generated",
-        data: countriesData.length ? countriesData : [85, 69, 90, 101, 76, 65], // Use API data or fallback data
+        data: salesAndPaymentData.map((item) => parseFloat(item.TotalPayments)),
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
@@ -149,6 +180,7 @@ const Dashboard = () => {
 
   return (
     <div className="main-container">
+      {loading && <LoadingAnimation />}
       {/* Dashboard Header */}
       <div className="flex justify-end items-center space-x-4">
         <div className="flex flex-col items-end">
@@ -157,11 +189,16 @@ const Dashboard = () => {
               <div className="combobox-wrapper">
                 <Combobox.Input
                   className="combobox-input w-full h-10 px-3"
-                  displayValue={(store) => store?.StoreName || "Select Store ID"}
+                  displayValue={(store) =>
+                    store?.StoreName || "Select Store ID"
+                  }
                   placeholder="Select Store Name"
                 />
                 <Combobox.Button className="combobox-button">
-                  <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
+                  <ChevronUpDownIcon
+                    className="combobox-icon"
+                    aria-hidden="true"
+                  />
                 </Combobox.Button>
                 <Combobox.Options className="combobox-options">
                   <Combobox.Option
@@ -190,7 +227,10 @@ const Dashboard = () => {
                                 : "combobox-option-selected-icon"
                             }
                           >
-                            <CheckIcon className="combobox-check-icon" aria-hidden="true" />
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
                           </span>
                         )}
                       </>
@@ -224,7 +264,10 @@ const Dashboard = () => {
                                   : "combobox-option-selected-icon"
                               }
                             >
-                              <CheckIcon className="combobox-check-icon" aria-hidden="true" />
+                              <CheckIcon
+                                className="combobox-check-icon"
+                                aria-hidden="true"
+                              />
                             </span>
                           )}
                         </>
@@ -258,10 +301,8 @@ const Dashboard = () => {
           <div className="flex flex-col justify-between h-full">
             <div>
               <h3 className="text-lg font-semibold">Orders</h3>
-
-              <p className="text-2xl">1346</p>
+              <p className="text-2xl">{overallData.TotalOrderCount || 0}</p>
             </div>
-
             <FontAwesomeIcon
               icon={faChartLine}
               className="text-4xl absolute bottom-4 right-4"
@@ -273,10 +314,8 @@ const Dashboard = () => {
           <div className="flex flex-col justify-between h-full">
             <div>
               <h3 className="text-lg font-semibold">Users Registered</h3>
-
-              <p className="text-2xl">357</p>
+              <p className="text-2xl">{overallData.CustomerCount || 0}</p>
             </div>
-
             <FontAwesomeIcon
               icon={faUsers}
               className="text-4xl absolute bottom-4 right-4"
@@ -288,10 +327,8 @@ const Dashboard = () => {
           <div className="flex flex-col justify-between h-full">
             <div>
               <h3 className="text-lg font-semibold">Revenue Generated</h3>
-
-              <p className="text-2xl">36056</p>
+              <p className="text-2xl">{overallData.PaymentTotal || 0}</p>
             </div>
-
             <FontAwesomeIcon
               icon={faIndianRupeeSign}
               className="text-4xl absolute bottom-4 right-4"
@@ -303,10 +340,10 @@ const Dashboard = () => {
           <div className="flex flex-col justify-between h-full">
             <div>
               <h3 className="text-lg font-semibold">Products Added</h3>
-
-              <p className="text-2xl">865</p>
+              <p className="text-2xl">
+                {overallData.ProductionOrderCount || 0}
+              </p>
             </div>
-
             <FontAwesomeIcon
               icon={faTasks}
               className="text-4xl absolute bottom-4 right-4"
@@ -326,9 +363,9 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white shadow rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">Order Status</h2>
+            <h2 className="text-xl font-semibold mb-4">OrderStatusCounts</h2>
 
-            <div className="w-64 h-64 mx-auto">
+            <div className="w-72 h-72 mx-auto">
               <Doughnut data={doughnutData} ref={doughnutChartRef} />
             </div>
           </div>

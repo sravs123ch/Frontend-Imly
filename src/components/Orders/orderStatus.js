@@ -63,7 +63,6 @@ const YourComponent = ({ onBack, onNext }) => {
   const { orderId } = location.state || {};
   const OrderID = orderId || orderIdDetails?.order?.OrderID;
 
-  console.log(orderIdDetails?.order?.OrderID);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [images, setImages] = useState([]);
@@ -94,7 +93,7 @@ const YourComponent = ({ onBack, onNext }) => {
     desginerID,
     setDesginerID,
     statusID,
-    setStatusID
+    setStatusID,
   } = useContext(IdContext);
   const [orderStatusList, setOrderStatusList] = useState([]);
   const [results, setResults] = useState([]);
@@ -108,9 +107,6 @@ const YourComponent = ({ onBack, onNext }) => {
   const { updatedStatusOrderDetails, setUpdatedStatusOrderDetails } =
     useUpdatedStatusOrderContext();
 
-  console.log("designerName:", designerName);
-  console.log("desginerID:", desginerID);
-  console.log("statusID:", statusID);
   const [formOrderDetails, setFormOrderDetails] = useState({
     OrderStatus: "",
     ExpectedDays: "",
@@ -131,7 +127,6 @@ const YourComponent = ({ onBack, onNext }) => {
         const data = await response.json();
 
         // Log the data to see its structure
-        console.log("Fetched Order Statuses:", data);
 
         // Check if data is in the expected format
         if (Array.isArray(data.data)) {
@@ -184,7 +179,6 @@ const YourComponent = ({ onBack, onNext }) => {
         `${ORDERBYCUSTOMERID_API}/${customerId}`
       );
       setOrders(response.data.orders || []); // Set fetched orders
-      console.log("Fetched Orders:", response.data.orders);
     } catch (err) {
       console.error("Error fetching orders:", err);
       setError("Failed to fetch orders.");
@@ -247,7 +241,6 @@ const YourComponent = ({ onBack, onNext }) => {
     }
 
     const userId = localStorage.getItem("UserID");
-    console.log("UserId", userId);
 
     // Create a new FormData object
     const formData = new FormData();
@@ -299,7 +292,6 @@ const YourComponent = ({ onBack, onNext }) => {
       }
 
       const data = await response.json();
-      console.log("API Response:", data);
 
       // Conditional success messages
       if (data.StatusCode === "SUCCESS") {
@@ -329,7 +321,6 @@ const YourComponent = ({ onBack, onNext }) => {
               setOrderDetails(data.order); // Update order details from fetched data
               // Update the context with the new order details
               setUpdatedStatusOrderDetails(data.order);
-              console.log("Order details fetched and updated:", data.order);
             }
           })
           .catch((error) => {
@@ -370,7 +361,6 @@ const YourComponent = ({ onBack, onNext }) => {
   };
   useEffect(() => {
     // Log the updated order details or perform any side effects here
-    console.log("Updated Order Details:", updatedStatusOrderDetails);
   }, [updatedStatusOrderDetails]);
   const closeModalAndMoveToNextStep = () => {
     setTimeout(() => {
@@ -569,7 +559,6 @@ const YourComponent = ({ onBack, onNext }) => {
   };
   const handleCancel = () => {
     // Example: Reset form or navigate to a different page
-    console.log("Cancel clicked");
     // If you want to navigate away from the form, for example:
     navigate("/Orders"); // This assumes you're using `react-router-dom` for navigation
   };
@@ -582,15 +571,13 @@ const YourComponent = ({ onBack, onNext }) => {
     query === ""
       ? orderStatusList
       : orderStatusList.filter((status) =>
-        status.OrderStatus.toLowerCase().includes(query.toLowerCase())
-      );
+          status.OrderStatus.toLowerCase().includes(query.toLowerCase())
+        );
 
   const handleSelect = (statusID) => {
-    console.log("Selected Status ID:", statusID);
     const selectedStatus = orderStatusList.find(
       (status) => status.StatusID === statusID
     );
-    console.log("Selected Status:", selectedStatus);
 
     setFormOrderDetails({
       ...formOrderDetails,
@@ -623,7 +610,6 @@ const YourComponent = ({ onBack, onNext }) => {
       }
 
       const result = await response.json();
-      console.log("API Response:", result); // Log the entire response
 
       const statuses = Array.isArray(result) ? result : [result];
 
@@ -708,8 +694,6 @@ const YourComponent = ({ onBack, onNext }) => {
   const [IsEditMode, setIsEditMode] = useState(false); // default is not in edit mode
 
   const handleEditstatus = (historyId, statusId) => {
-    console.log("Attempting to edit Payment with historyId:", historyId);
-
     // Find the specific order status based on the selected historyId
     const statusData = statusDetails.find(
       (status) => status.OrderHistoryID === historyId
@@ -736,10 +720,8 @@ const YourComponent = ({ onBack, onNext }) => {
       // setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
       setSelectedRole(statusData.RoleName || "");
-      console.log("RoleName:", statusData.RoleName); // Check if the value exists
       // Set the selected role for the combobox
       setSelectedRole(statusData.RoleName || ""); // Call setSelectedRole only once
-
 
       // Get the index of the current status in the list
       const selectedStepIndex = filteredStatusList.findIndex(
@@ -784,7 +766,7 @@ const YourComponent = ({ onBack, onNext }) => {
       StatusID: "",
       AssignTo: "",
       RoleID: "",
-      RoleName: ""
+      RoleName: "",
     });
   };
 
@@ -792,18 +774,13 @@ const YourComponent = ({ onBack, onNext }) => {
     resetFormOrderDetails();
   };
 
-
-  useEffect(() => {
-    console.log("FormOrderDetails updated:", formOrderDetails);
-  }, [formOrderDetails]);
+  useEffect(() => {}, [formOrderDetails]);
 
   const selectedStatusText =
     orderStatusList.find((status) => status.StatusID === selectedStatus)
       ?.OrderStatus || "";
 
-  useEffect(() => {
-    console.log("Selected Status Updated:", selectedStatusText);
-  }, [selectedStatus]);
+  useEffect(() => {}, [selectedStatus]);
 
   // const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
   // const [completedSteps, setCompletedSteps] = useState({});
@@ -842,7 +819,6 @@ const YourComponent = ({ onBack, onNext }) => {
   //   setCompletedSteps({});
   //   setVisibleSteps(4); // Reset visible steps to initial value
   // };
-
 
   const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
   const [completedSteps, setCompletedSteps] = useState({});
@@ -944,8 +920,6 @@ const YourComponent = ({ onBack, onNext }) => {
             const firstUser = response.users[0]; // Adjust based on your user object
             const designerName = `${firstUser.FirstName} ${firstUser.LastName}`;
             const designerId = firstUser.UserID;
-
-            console.log("designerId:", designerId);
 
             // Set the designer ID and name
             setDesginerID(designerId);
@@ -1059,7 +1033,6 @@ const YourComponent = ({ onBack, onNext }) => {
       // Open the first PDF preview
       window.open(pdfPreviews[0], "_blank");
     } else {
-      console.log("No documents available to view");
     }
   };
 
@@ -1071,8 +1044,6 @@ const YourComponent = ({ onBack, onNext }) => {
     // You can also reset the file input if needed
     document.getElementById("UploadFiles").value = "";
   };
-
-
 
   return (
     <Box
@@ -1098,10 +1069,11 @@ const YourComponent = ({ onBack, onNext }) => {
                 <Combobox value={selectedStatus} onChange={handleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${errors.OrderStatus
-                        ? "border-red-500"
-                        : "border-gray-300"
-                        }`}
+                      className={`p-1 w-full border rounded-md ${
+                        errors.OrderStatus
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(statusID) => {
                         const selected = filteredStatusList.find(
@@ -1121,15 +1093,20 @@ const YourComponent = ({ onBack, onNext }) => {
                       {filteredStatusList.length > 0 ? (
                         // Filter the statuses to only show those after the active step
                         filteredStatusList
-                          .filter((_, index) => index === 3 ? index >= activeStep : index > activeStep) // Show statuses after the active one
+                          .filter((_, index) =>
+                            index === 3
+                              ? index >= activeStep
+                              : index > activeStep
+                          ) // Show statuses after the active one
                           .map((status) => (
                             <Combobox.Option
                               key={status.StatusID}
                               value={status.StatusID}
                               className={({ active }) =>
-                                `cursor-pointer select-none relative p-2 ${active
-                                  ? "bg-blue-500 text-white"
-                                  : "text-gray-900"
+                                `cursor-pointer select-none relative p-2 ${
+                                  active
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-900"
                                 }`
                               }
                             >
@@ -1161,8 +1138,9 @@ const YourComponent = ({ onBack, onNext }) => {
                     value={searchUserValue}
                     onChange={handleUserChange}
                     onFocus={() => setIsUserFocused(true)}
-                    className={`p-1 pr-10 w-full border rounded-md ${errors.AssignedTo ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`p-1 pr-10 w-full border rounded-md ${
+                      errors.AssignedTo ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="Search by User Name..."
                   />
                   {errors.AssignedTo && (
@@ -1220,11 +1198,14 @@ const YourComponent = ({ onBack, onNext }) => {
                 <Combobox value={selectedRole} onChange={handleRoleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${errors.UserRole ? "border-red-500" : "border-gray-300"
-                        }`}
+                      className={`p-1 w-full border rounded-md ${
+                        errors.UserRole ? "border-red-500" : "border-gray-300"
+                      }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(roleID) => {
-                        const selected = roles.find((role) => role.RoleID === roleID);
+                        const selected = roles.find(
+                          (role) => role.RoleID === roleID
+                        );
                         return selected ? selected.RoleName : ""; // Display selected role
                       }}
                     />
@@ -1241,7 +1222,10 @@ const YourComponent = ({ onBack, onNext }) => {
                             key={role.RoleID}
                             value={role.RoleID}
                             className={({ active }) =>
-                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                              `cursor-pointer select-none relative p-2 ${
+                                active
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-900"
                               }`
                             }
                           >
@@ -1254,9 +1238,7 @@ const YourComponent = ({ onBack, onNext }) => {
                     </Combobox.Options>
                   </div>
                 </Combobox>
-
               </div>
-
 
               <div className="flex flex-col hidden sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
@@ -1267,8 +1249,9 @@ const YourComponent = ({ onBack, onNext }) => {
                   name="StartDate"
                   value={formatDate(formOrderDetails.StartDate)}
                   onChange={handleChange}
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.StartDate ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
+                    errors.StartDate ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
               </div>
 
@@ -1282,8 +1265,9 @@ const YourComponent = ({ onBack, onNext }) => {
                     name="ExpectedDays"
                     value={formOrderDetails.ExpectedDays}
                     onChange={handleExpectedDaysChange}
-                    className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.ExpectedDays ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`p-1 w-full sm:w-1/4 border rounded-md ${
+                      errors.ExpectedDays ? "border-red-500" : "border-gray-300"
+                    }`}
                     min="0" // Ensure the user can't select a negative number of days
                   />
                 </div>
@@ -1298,8 +1282,9 @@ const YourComponent = ({ onBack, onNext }) => {
                   name="DeliveryDate"
                   value={formatDate(formOrderDetails.DeliveryDate)}
                   onChange={handleDateChanging} // Manually change if needed
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.DeliveryDate ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
+                    errors.DeliveryDate ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 {errors.DeliveryDate && (
                   <p className="text-red-500 text-sm ml-2">
@@ -1372,18 +1357,21 @@ const YourComponent = ({ onBack, onNext }) => {
                       Comments: e.target.value,
                     })
                   }
-                  className={`p-2 w-full sm:w-1/4 border rounded-md ${errors.Comments ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`p-2 w-full sm:w-1/4 border rounded-md ${
+                    errors.Comments ? "border-red-500" : "border-gray-300"
+                  }`}
                   rows={3} // Set the number of visible rows
                 />
                 {errors.Comments && (
                   <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
                 )}
               </div>
-
             </div>
 
-            <div onScroll={handleScroll} className="overflow-y-auto max-h-[30rem]">
+            <div
+              onScroll={handleScroll}
+              className="overflow-y-auto max-h-[30rem]"
+            >
               <nav aria-label="Progress">
                 <ol role="list">
                   {filteredStatusList
@@ -1391,22 +1379,32 @@ const YourComponent = ({ onBack, onNext }) => {
                     .map((status, index) => (
                       <li
                         key={status.StatusID}
-                        className={`relative pb-12 cursor-pointer ${completedSteps[index] ? "completed" : ""
-                          }`}
+                        className={`relative pb-12 cursor-pointer ${
+                          completedSteps[index] ? "completed" : ""
+                        }`}
                         onClick={() => handleStepClick(index)}
                       >
                         {/* Step rendering logic with lines */}
                         <div
-                          className={`step-indicator flex items-center ${completedSteps[index]
-                            ? "text-gray-800"
-                            : "text-gray-800"
-                            } ${activeStep === index ? "text-orange-500" : ""}`}
+                          className={`step-indicator flex items-center ${
+                            completedSteps[index]
+                              ? "text-gray-800"
+                              : "text-gray-800"
+                          } ${activeStep === index ? "text-orange-500" : ""}`}
                         >
                           {/* Step Circle */}
                           <span
                             className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
-                      ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
-                      ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
+                      ${
+                        completedSteps[index]
+                          ? "bg-green-400 text-white"
+                          : "bg-gray-300"
+                      }
+                      ${
+                        activeStep === index
+                          ? "bg-orange-400 text-white"
+                          : "bg-gray-300"
+                      }`}
                           >
                             {activeStep === index ? (
                               <GrInProgress />
@@ -1424,8 +1422,9 @@ const YourComponent = ({ onBack, onNext }) => {
                         {/* Line between steps */}
                         {index < filteredStatusList.length - 1 && (
                           <div
-                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${completedSteps[index] ? "bg-green-400" : ""
-                              }`}
+                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${
+                              completedSteps[index] ? "bg-green-400" : ""
+                            }`}
                           />
                         )}
                       </li>
@@ -1549,17 +1548,16 @@ const YourComponent = ({ onBack, onNext }) => {
                         <StatusBadge status={status.OrderStatus} />
 
                         {/* Conditionally render the status ID only if OrderStatus is 'Revised Design' and SubStatusId is not 0 */}
-                        {status.OrderStatus === "Revised Design" && status.SubStatusId !== 0 && (
-                          <div className="w-1/3 ml-2">
-                            <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
-                              {`R${status.SubStatusId}`}
+                        {status.OrderStatus === "Revised Design" &&
+                          status.SubStatusId !== 0 && (
+                            <div className="w-1/3 ml-2">
+                              <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                                {`R${status.SubStatusId}`}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </StyledTableCell>
-
-
 
                     <StyledTableCell
                       align="center"
@@ -1570,36 +1568,36 @@ const YourComponent = ({ onBack, onNext }) => {
                         Start Date:{" "}
                         {status.StartDate
                           ? (() => {
-                            const date = new Date(status.StartDate);
-                            const month = date.toLocaleString("en-US", {
-                              month: "short",
-                            });
-                            const day = String(date.getDate()).padStart(
-                              2,
-                              "0"
-                            ); // Pad day with leading zero if needed
-                            const year = date.getFullYear();
+                              const date = new Date(status.StartDate);
+                              const month = date.toLocaleString("en-US", {
+                                month: "short",
+                              });
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0"
+                              ); // Pad day with leading zero if needed
+                              const year = date.getFullYear();
 
-                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                          })()
+                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                            })()
                           : "N/A"}
                         <br />
                         {/* Delivery Date */}
                         End Date:{" "}
                         {status.DeliveryDate
                           ? (() => {
-                            const date = new Date(status.DeliveryDate);
-                            const month = date.toLocaleString("en-US", {
-                              month: "short",
-                            });
-                            const day = String(date.getDate()).padStart(
-                              2,
-                              "0"
-                            ); // Pad day with leading zero if needed
-                            const year = date.getFullYear();
+                              const date = new Date(status.DeliveryDate);
+                              const month = date.toLocaleString("en-US", {
+                                month: "short",
+                              });
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0"
+                              ); // Pad day with leading zero if needed
+                              const year = date.getFullYear();
 
-                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                          })()
+                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                            })()
                           : "N/A"}
                       </p>
                     </StyledTableCell>
@@ -1609,14 +1607,12 @@ const YourComponent = ({ onBack, onNext }) => {
                     >
                       <p className="font-thin">
                         {/* Log the status object */}
-                        {/* {console.log("Status Data: ", status)} */}
                         {/* Display the FirstName */}
                         Assigned To: {status?.AssignTo || "N/A"}
                         <br />
                         Department: {status?.RoleName || "N/A"}
                       </p>
                     </StyledTableCell>
-
 
                     <StyledTableCell
                       align="center"
@@ -1631,15 +1627,13 @@ const YourComponent = ({ onBack, onNext }) => {
                       {status.Comments || "N/A"}
                     </StyledTableCell>
 
-
-
                     {/* Document Links */}
                     <StyledTableCell
                       align="center"
                       className="border-r border-gray-300"
                     >
                       {Array.isArray(status.viewdocuments) &&
-                        status.viewdocuments.length > 0 ? (
+                      status.viewdocuments.length > 0 ? (
                         status.viewdocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1663,7 +1657,7 @@ const YourComponent = ({ onBack, onNext }) => {
                       )}
 
                       {Array.isArray(status.DownloadDocuments) &&
-                        status.DownloadDocuments.length > 0 ? (
+                      status.DownloadDocuments.length > 0 ? (
                         status.DownloadDocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
