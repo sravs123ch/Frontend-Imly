@@ -1,16 +1,15 @@
-
-import * as React from 'react';
-import { useState, useEffect,useContext } from 'react';
+import * as React from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import StatusBadge from './Satus';
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import StatusBadge from "./Satus";
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineCancel } from "react-icons/md";
 import { TableFooter } from "@mui/material";
@@ -18,8 +17,8 @@ import axios from "axios";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import FilterBar from './FilterBar';
-import StatusUpdateDialog from '../Orders/StatusUpdateDialog';
+import FilterBar from "./FilterBar";
+import StatusUpdateDialog from "../Orders/StatusUpdateDialog";
 import { Combobox } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { OrderContext } from "../../Context/orderContext";
@@ -44,7 +43,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-} from '@mui/material';
+} from "@mui/material";
 import {
   StyledTableCell,
   StyledTableRow,
@@ -52,9 +51,7 @@ import {
 } from "../CustomTablePagination";
 import TablePagination from "@mui/material/TablePagination";
 export default function Orders() {
-  const [products, setProducts] = useState([
-
-  ]);
+  const [products, setProducts] = useState([]);
   const { setOrderIdDetails } = useContext(OrderContext);
 
   const { storesData } = useContext(DataContext);
@@ -68,7 +65,10 @@ export default function Orders() {
     setSearchName(value);
   };
 
-  const [selectedFilter, setSelectedFilter] = useState({ label: 'All', subStatusId: '' });
+  const [selectedFilter, setSelectedFilter] = useState({
+    label: "All",
+    subStatusId: "",
+  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -77,6 +77,7 @@ export default function Orders() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [searchName, setSearchName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const [selectedStore, setSelectedStore] = useState({
     StoreID: "",
     StoreName: "Select Store",
@@ -93,22 +94,30 @@ export default function Orders() {
   };
   const handleFilterChange = (filter) => {
     // Default filter: If the filter is not provided, default to 'All'
-    const defaultFilter = { label: 'All', subStatusId: '' };
+    const defaultFilter = { label: "All", subStatusId: "" };
 
     // Use the provided filter or fallback to default 'All' filter
     const selectedFilter = filter || defaultFilter;
 
     // Set selected filter state
-    setSelectedFilter({ label: selectedFilter.label, subStatusId: selectedFilter.subStatusId, status: selectedFilter.status });
+    setSelectedFilter({
+      label: selectedFilter.label,
+      subStatusId: selectedFilter.subStatusId,
+      status: selectedFilter.status,
+    });
 
     // Log selected filter before making API call (optional)
-    console.log("Selected Filter:", { label: selectedFilter.label, subStatusId: selectedFilter.subStatusId, status: selectedFilter.status });
+    console.log("Selected Filter:", {
+      label: selectedFilter.label,
+      subStatusId: selectedFilter.subStatusId,
+      status: selectedFilter.status,
+    });
 
     // Get subStatusId or default to empty string if it's not provided
     const subStatusId = selectedFilter.subStatusId || "";
 
     // Make the API call to get filtered orders
-    getAllOrders(1, 10, '', '', '', '', subStatusId)
+    getAllOrders(1, 10, "", "", "", "", subStatusId)
       .then((response) => {
         // Log the entire API response to check structure
         console.log("API Response:", response);
@@ -131,11 +140,11 @@ export default function Orders() {
   };
   const [totalCount, setTotalCount] = useState(0);
   const statuses = [
-    { label: 'All', }, // Added All label
-    { label: 'In Progress', count: '', status: 'InProgress', subStatusId: 2 },
-    { label: 'Completed', count: '', status: 'Completed', subStatusId: 3 },
-    { label: 'Cancelled', count: '', status: 'Cancelled', subStatusId: 4 },
-    { label: 'Yet to Start', count: '', status: 'YetToStart', subStatusId: 1 },
+    { label: "All" }, // Added All label
+    { label: "In Progress", count: "", status: "InProgress", subStatusId: 2 },
+    { label: "Completed", count: "", status: "Completed", subStatusId: 3 },
+    { label: "Cancelled", count: "", status: "Cancelled", subStatusId: 4 },
+    { label: "Yet to Start", count: "", status: "YetToStart", subStatusId: 1 },
   ];
   const getAllOrders = async (
     pageNum,
@@ -164,7 +173,9 @@ export default function Orders() {
       // Apply the selected filter logic
       const filteredOrders = products.filter((product) => {
         return (
-          (!selectedFilter || selectedFilter.label === "All" || product.SubStatusId === selectedFilter.subStatusId) &&
+          (!selectedFilter ||
+            selectedFilter.label === "All" ||
+            product.SubStatusId === selectedFilter.subStatusId) &&
           (!subStatusId || product.SubStatusId === subStatusId) &&
           product.OrderStatus === "Production"
         );
@@ -172,7 +183,9 @@ export default function Orders() {
 
       // Map the filtered orders to include the status label based on SubStatusId
       const ordersWithStatus = filteredOrders.map((order) => {
-        const status = statuses.find((s) => s.subStatusId === order.SubStatusId);
+        const status = statuses.find(
+          (s) => s.subStatusId === order.SubStatusId
+        );
         return {
           ...order,
           statusLabel: status ? status.label : "Unknown", // Assign status label or 'Unknown' if not found
@@ -202,7 +215,7 @@ export default function Orders() {
         searchName,
         selectedStore.StoreID,
         value.startDate,
-        value.endDate,
+        value.endDate
       );
 
       // Log the result from the API
@@ -214,7 +227,9 @@ export default function Orders() {
 
       // Filter orders based on subStatusId and log the filtered results
       const filteredOrders = selectedFilter.subStatusId
-        ? orders.filter(order => order.SubStatusId === selectedFilter.subStatusId)
+        ? orders.filter(
+            (order) => order.SubStatusId === selectedFilter.subStatusId
+          )
         : orders;
 
       console.log("Filtered orders:", filteredOrders);
@@ -228,7 +243,6 @@ export default function Orders() {
 
       setTotalOrders(filteredOrders.length);
       console.log("Total orders set:", filteredOrders.length);
-
     } catch (error) {
       // Log the error if fetching fails
       console.error("Failed to fetch orders:", error);
@@ -238,6 +252,7 @@ export default function Orders() {
     }
   };
   useEffect(() => {
+    setLoading(true);
     fetchOrders();
   }, [
     page,
@@ -258,12 +273,15 @@ export default function Orders() {
     setIsLoading(true);
     try {
       // Call API to update sub-order status
-      const response = await axios.post('https://imly-b2y.onrender.com/api/orders/updateSubOrderStatus', {
-        OrderID: details.OrderID,
-        SubStatusId: details.SubStatusId,
-      });
+      const response = await axios.post(
+        "https://imly-b2y.onrender.com/api/orders/updateSubOrderStatus",
+        {
+          OrderID: details.OrderID,
+          SubStatusId: details.SubStatusId,
+        }
+      );
 
-      console.log('API Response:', response.data);
+      console.log("API Response:", response.data);
 
       // Show success toast notification
       toast.success("Order status updated successfully!", {
@@ -279,21 +297,24 @@ export default function Orders() {
       // Close dialog after success
       setOpenDialog(false);
 
-      fetchOrders()// Call fetchOrders to retrieve updated data setSelectedFilter({ label: selectedFilter.label, subStatusId: selectedFilter.subStatusId, status: selectedFilter.status });   
+      fetchOrders(); // Call fetchOrders to retrieve updated data setSelectedFilter({ label: selectedFilter.label, subStatusId: selectedFilter.subStatusId, status: selectedFilter.status });
     } catch (error) {
-      console.error('API Call Error:', error);
+      console.error("API Call Error:", error);
       // Handle errors as needed
     }
 
-    console.log('Updated Details:', details);
+    console.log("Updated Details:", details);
 
     // Reset loading state after 2 seconds
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
   };
-  const filteredOrders1 = products.filter(product =>
-    !selectedFilter || selectedFilter.label === 'All' || product.SubStatusId === selectedFilter.subStatusId
+  const filteredOrders1 = products.filter(
+    (product) =>
+      !selectedFilter ||
+      selectedFilter.label === "All" ||
+      product.SubStatusId === selectedFilter.subStatusId
   );
   const paginatedData = filteredOrders1.slice(
     page * rowsPerPage,
@@ -301,7 +322,7 @@ export default function Orders() {
   );
 
   const handleCancel = (id) => {
-    const newStatus = 'Canceled';
+    const newStatus = "Canceled";
     handleStatusChange(id, newStatus);
   };
   const handleChangePage = (event, newPage) => {
@@ -334,6 +355,7 @@ export default function Orders() {
   return (
     <div className="main-container">
       <ToastContainer />
+      {loading && <LoadingAnimation />}
       <div>
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
@@ -341,82 +363,49 @@ export default function Orders() {
           </div>
         </div>
         <div className="flex flex-wrap justify-end gap-2 mt-2">
-        {/* Container for centering search box */}
-        <div className="search-container-c-u">
-          <label htmlFor="searchName" className="sr-only">
-            Search
-          </label>
-          <input
-            id="searchName"
-            type="text"
-            placeholder=" Search by Order Number / Customer Name "
-            value={searchName}
-            onChange={(e) => searchItems(e.target.value)}
-            className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
-          />
-          <div className="search-icon-container-c-u">
-            <IoIosSearch />
+          {/* Container for centering search box */}
+          <div className="search-container-c-u">
+            <label htmlFor="searchName" className="sr-only">
+              Search
+            </label>
+            <input
+              id="searchName"
+              type="text"
+              placeholder=" Search by Order Number / Customer Name "
+              value={searchName}
+              onChange={(e) => searchItems(e.target.value)}
+              className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
+            />
+            <div className="search-icon-container-c-u">
+              <IoIosSearch />
+            </div>
           </div>
-        </div>
 
-        {/* Container for Combo box */}
-        <div className="combobox-container flex items-center">
-          <Combobox value={selectedStore} onChange={setSelectedStore}>
-            <div className="combobox-wrapper h-[40px]">
-              <Combobox.Input
-                className="combobox-input w-full h-full"
-                displayValue={(store) => store?.StoreName || "Select Store ID"}
-                placeholder="Select Store Name"
-              />
-              <Combobox.Button className="combobox-button">
-                <ChevronUpDownIcon className="combobox-icon" aria-hidden="true" />
-              </Combobox.Button>
-              <Combobox.Options className="combobox-options">
-                {/* Add "Select Store ID" option */}
-                <Combobox.Option
-                  key="select-store-id"
-                  className={({ active }) =>
-                    active ? "combobox-option-active" : "combobox-option"
+          {/* Container for Combo box */}
+          <div className="combobox-container flex items-center">
+            <Combobox value={selectedStore} onChange={setSelectedStore}>
+              <div className="combobox-wrapper h-[40px]">
+                <Combobox.Input
+                  className="combobox-input w-full h-full"
+                  displayValue={(store) =>
+                    store?.StoreName || "Select Store ID"
                   }
-                  value={{ StoreID: null, StoreName: "Select Store ID" }}
-                >
-                  {({ selected, active }) => (
-                    <>
-                      <span
-                        className={
-                          selected
-                            ? "combobox-option-text font-semibold"
-                            : "combobox-option-text font-normal"
-                        }
-                      >
-                        Select Store ID
-                      </span>
-                      {selected && (
-                        <span
-                          className={
-                            active
-                              ? "combobox-option-selected-icon active-selected-icon"
-                              : "combobox-option-selected-icon"
-                          }
-                        >
-                          <CheckIcon
-                            className="combobox-check-icon"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      )}
-                    </>
-                  )}
-                </Combobox.Option>
-
-                {/* Render all store options */}
-                {stores.map((store) => (
+                  placeholder="Select Store Name"
+                />
+                <Combobox.Button className="combobox-button">
+                  <ChevronUpDownIcon
+                    className="combobox-icon"
+                    aria-hidden="true"
+                  />
+                </Combobox.Button>
+                <Combobox.Options className="combobox-options">
+                  {/* Add "Select Store ID" option */}
                   <Combobox.Option
-                    key={store.StoreID}
+                    key="select-store-id"
                     className={({ active }) =>
                       active ? "combobox-option-active" : "combobox-option"
                     }
-                    value={store}
+                    value={{ StoreID: null, StoreName: "Select Store ID" }}
                   >
                     {({ selected, active }) => (
                       <>
@@ -427,7 +416,7 @@ export default function Orders() {
                               : "combobox-option-text font-normal"
                           }
                         >
-                          {store.StoreName}
+                          Select Store ID
                         </span>
                         {selected && (
                           <span
@@ -446,27 +435,65 @@ export default function Orders() {
                       </>
                     )}
                   </Combobox.Option>
-                ))}
-              </Combobox.Options>
-            </div>
-          </Combobox>
-        </div>
 
-        {/* Container for Date Pickers */}
-        <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6">
-          <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
-            <Datepicker
-              popoverDirection="down"
-              showShortcuts={true}
-              showFooter={true}
-              placeholder="Start Date and End Date"
-              primaryColor={"purple"}
-              value={value}
-              onChange={(newValue) => setValue(newValue)}
-            />
+                  {/* Render all store options */}
+                  {stores.map((store) => (
+                    <Combobox.Option
+                      key={store.StoreID}
+                      className={({ active }) =>
+                        active ? "combobox-option-active" : "combobox-option"
+                      }
+                      value={store}
+                    >
+                      {({ selected, active }) => (
+                        <>
+                          <span
+                            className={
+                              selected
+                                ? "combobox-option-text font-semibold"
+                                : "combobox-option-text font-normal"
+                            }
+                          >
+                            {store.StoreName}
+                          </span>
+                          {selected && (
+                            <span
+                              className={
+                                active
+                                  ? "combobox-option-selected-icon active-selected-icon"
+                                  : "combobox-option-selected-icon"
+                              }
+                            >
+                              <CheckIcon
+                                className="combobox-check-icon"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
+              </div>
+            </Combobox>
+          </div>
+
+          {/* Container for Date Pickers */}
+          <div className="flex justify-center items-center gap-4 w-full p-2 sm:w-auto md:w-80 text-sm leading-6">
+            <div className="border-solid border-gray-400 w-full border-[1px] rounded-lg">
+              <Datepicker
+                popoverDirection="down"
+                showShortcuts={true}
+                showFooter={true}
+                placeholder="Start Date and End Date"
+                primaryColor={"purple"}
+                value={value}
+                onChange={(newValue) => setValue(newValue)}
+              />
+            </div>
           </div>
         </div>
-      </div>
         <div className="flex flex-wrap">
           {isLoading && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
@@ -474,7 +501,11 @@ export default function Orders() {
             </div>
           )}
           {/* Left Column (25%) */}
-          <FilterBar selectedFilter={selectedFilter} onFilterChange={handleFilterChange} totalCount={totalCount} />
+          <FilterBar
+            selectedFilter={selectedFilter}
+            onFilterChange={handleFilterChange}
+            totalCount={totalCount}
+          />
           <div className="w-full sm:w-3/4 md:w-2/3 lg:w-3/4 p-4">
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 400 }} aria-label="customized table">
@@ -482,9 +513,9 @@ export default function Orders() {
                   <TableRow>
                     <StyledTableCell
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -493,9 +524,9 @@ export default function Orders() {
 
                     <StyledTableCell
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -504,9 +535,9 @@ export default function Orders() {
 
                     <StyledTableCell
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -515,9 +546,9 @@ export default function Orders() {
 
                     <StyledTableCell
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -527,9 +558,9 @@ export default function Orders() {
                     <StyledTableCell
                       align="center"
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -539,9 +570,9 @@ export default function Orders() {
                     <StyledTableCell
                       align="center"
                       sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        padding: '4px',
-                        whiteSpace: 'nowrap'
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        padding: "4px",
+                        whiteSpace: "nowrap",
                       }}
                       className="font-semibold"
                     >
@@ -559,28 +590,39 @@ export default function Orders() {
                   ) : (
                     paginatedData.map((product) => (
                       <StyledTableRow key={product.OrderID}>
-                        <StyledTableCell className="text-xs text-center">{product.OrderNumber}</StyledTableCell>
-                        <StyledTableCell className="text-xxs text-center"> {/* Adjust size here */}
-                          {product.OrderDate ? (() => {
-                            const date = new Date(product.OrderDate);
-                            const month = date.toLocaleString("en-US", { month: "short" });
-                            const day = String(date.getDate()).padStart(2, "0");
-                            const year = date.getFullYear();
-                            return `${month} ${day}, ${year}`;
-                          })() : "N/A"}{" "}
+                        <StyledTableCell className="text-xs text-center">
+                          {product.OrderNumber}
+                        </StyledTableCell>
+                        <StyledTableCell className="text-xxs text-center">
+                          {" "}
+                          {/* Adjust size here */}
+                          {product.OrderDate
+                            ? (() => {
+                                const date = new Date(product.OrderDate);
+                                const month = date.toLocaleString("en-US", {
+                                  month: "short",
+                                });
+                                const day = String(date.getDate()).padStart(
+                                  2,
+                                  "0"
+                                );
+                                const year = date.getFullYear();
+                                return `${month} ${day}, ${year}`;
+                              })()
+                            : "N/A"}{" "}
                           <span className="text-[10px] whitespace-nowrap">
-                            {new Date(product.OrderDate).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            }).toUpperCase()}
+                            {new Date(product.OrderDate)
+                              .toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                              .toUpperCase()}
                           </span>
-
                           <br />
                           <div className="mt-1 text-gray-500 text-[10px] whitespace-nowrap">
                             Project: <strong>{product.Type || "N/A"}</strong>
                           </div>
-
                         </StyledTableCell>
 
                         <StyledTableCell align="left" className="text-xs">
@@ -589,22 +631,35 @@ export default function Orders() {
                             <strong>{product.CustomerName || "N/A"}</strong>
                           </div>
 
-
                           <div className="mt-1">
-                            <span className="text-gray-500 text-xs">Phone: </span>
-                            <span className="text-[10px]">{product.Phone || "N/A"}</span> {/* Decreased font size here */}
+                            <span className="text-gray-500 text-xs">
+                              Phone:{" "}
+                            </span>
+                            <span className="text-[10px]">
+                              {product.Phone || "N/A"}
+                            </span>{" "}
+                            {/* Decreased font size here */}
                           </div>
                         </StyledTableCell>
                         <StyledTableCell className="text-xs text-center">
-                          {product.DeliveryDate ? (() => {
-                            const date = new Date(product.DeliveryDate);
-                            const month = date.toLocaleString("en-US", { month: "short" });
-                            const day = String(date.getDate()).padStart(2, "0");
-                            const year = date.getFullYear();
-                            return `${month} ${day}, ${year}`;
-                          })() : "N/A"}
+                          {product.DeliveryDate
+                            ? (() => {
+                                const date = new Date(product.DeliveryDate);
+                                const month = date.toLocaleString("en-US", {
+                                  month: "short",
+                                });
+                                const day = String(date.getDate()).padStart(
+                                  2,
+                                  "0"
+                                );
+                                const year = date.getFullYear();
+                                return `${month} ${day}, ${year}`;
+                              })()
+                            : "N/A"}
                           <br />
-                          <div className="mt-1 text-gray-500 text-xs">Amount: &#8377;{product.TotalAmount || "N/A"}</div>
+                          <div className="mt-1 text-gray-500 text-xs">
+                            Amount: &#8377;{product.TotalAmount || "N/A"}
+                          </div>
                         </StyledTableCell>
                         <StyledTableCell align="center" className="text-xs">
                           <StatusBadge status={product.statusLabel} />
@@ -613,12 +668,16 @@ export default function Orders() {
                             {product.OntimeorDelay === "1" ? (
                               <span className="inline-flex items-center bg-green-100 px-1 py-1 rounded">
                                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                <span className="text-green-600 text-xs ml-1"><strong>On time</strong></span>
+                                <span className="text-green-600 text-xs ml-1">
+                                  <strong>On time</strong>
+                                </span>
                               </span>
                             ) : product.OntimeorDelay === "2" ? (
                               <span className="inline-flex items-center bg-orange-100 px-1 py-1 rounded">
                                 <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                                <span className="text-orange-600 text-xs ml-1"><strong>Delay</strong></span>
+                                <span className="text-orange-600 text-xs ml-1">
+                                  <strong>Delay</strong>
+                                </span>
                               </span>
                             ) : null}
                           </div>
@@ -630,7 +689,10 @@ export default function Orders() {
                               onClick={() => handleEditClick(product)}
                               className="text-xs button edit-button flex items-center"
                             >
-                              <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
+                              <AiOutlineEdit
+                                aria-hidden="true"
+                                className="h-4 w-4"
+                              />
                               Edit
                             </button>
                           </div>
@@ -669,9 +731,15 @@ export default function Orders() {
           onClose={() => setOpenDialog(false)}
           maxWidth="xs" // Change this to a smaller size (xs, sm)
           fullWidth={false} // Set this to false for more control over width
-          sx={{ zIndex: 30, ml: 'auto', '& .MuiDialog-paper': { width: '500px', maxHeight: '90vh' } }} // Set a specific width and max height
+          sx={{
+            zIndex: 30,
+            ml: "auto",
+            "& .MuiDialog-paper": { width: "500px", maxHeight: "90vh" },
+          }} // Set a specific width and max height
         >
-          <DialogTitle sx={{ fontWeight: 'bold', fontSize: '1.5rem', textAlign: 'center' }}>
+          <DialogTitle
+            sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "center" }}
+          >
             Edit Production Details
           </DialogTitle>
           <DialogContent>
@@ -682,7 +750,7 @@ export default function Orders() {
               type="text"
               fullWidth
               variant="outlined"
-              value={details.OrderNumber || ''} // Display and allow editing of 'OrderNumber'
+              value={details.OrderNumber || ""} // Display and allow editing of 'OrderNumber'
               onChange={(e) => handleOrderNumberChange(e)} // Handle change in OrderNumber
               sx={{ mb: 2 }}
               helperText="Enter the order number"
@@ -692,18 +760,20 @@ export default function Orders() {
             <input
               type="hidden"
               name="OrderID"
-              value={details.OrderID || ''} // Submit 'OrderID' without displaying it
+              value={details.OrderID || ""} // Submit 'OrderID' without displaying it
             />
             <FormControl fullWidth variant="outlined" margin="dense">
               <InputLabel id="substatus-id-label">Production Status</InputLabel>
               <Select
                 labelId="substatus-id-label"
                 name="SubStatusId"
-                value={details.SubStatusId || ''}
+                value={details.SubStatusId || ""}
                 onChange={handleChange}
                 label="Production Status"
               >
-                <MenuItem value="" disabled>Select Production Status</MenuItem>
+                <MenuItem value="" disabled>
+                  Select Production Status
+                </MenuItem>
                 <MenuItem value="1">Yet to Start</MenuItem>
                 <MenuItem value="2">In Progress</MenuItem>
                 <MenuItem value="3">Completed</MenuItem>
@@ -728,9 +798,7 @@ export default function Orders() {
             </button>
           </DialogActions>
         </Dialog>
-
       </div>
     </div>
-
   );
 }
