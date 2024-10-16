@@ -327,11 +327,11 @@ function AddOrders() {
       console.error("No customer selected.");
       return;
     }
-  
+
     const selectedAddress = addressData.find(
       (address) => address.AddressID === selectedAddressID
     );
-  
+
     if (!selectedAddress) {
       console.error(
         "No matching address found for the given AddressID:",
@@ -339,14 +339,20 @@ function AddOrders() {
       );
       return;
     }
-  
+
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
       CustomerID: selectedCustomer.CustomerID || prevDetails.CustomerID || 0,
-      CustomerFirstName: selectedCustomer.CustomerFirstName || prevDetails.CustomerFirstName || "",
-      CustomerLastName: selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
-      CustomerEmail: selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
-      customerPhone: selectedCustomer.PhoneNumber || prevDetails.PhoneNumber || "",
+      CustomerFirstName:
+        selectedCustomer.CustomerFirstName ||
+        prevDetails.CustomerFirstName ||
+        "",
+      CustomerLastName:
+        selectedCustomer.CustomerLastName || prevDetails.CustomerLastName || "",
+      CustomerEmail:
+        selectedCustomer.CustomerEmail || prevDetails.CustomerEmail || "",
+      customerPhone:
+        selectedCustomer.PhoneNumber || prevDetails.PhoneNumber || "",
       StoreCode: selectedCustomer.StoreCode || prevDetails.StoreCode || "",
       StoreID: selectedCustomer.StoreID || prevDetails.StoreID || "",
       AddressID: selectedAddress.AddressID || "",
@@ -357,7 +363,7 @@ function AddOrders() {
       StateID: selectedAddress.StateID || "",
       CityID: selectedAddress.CityID || "",
     }));
-  
+
     setIsDialogOpen(false);
   };
   useEffect(() => {
@@ -1410,7 +1416,10 @@ function AddOrders() {
   const handleUserChange = (e) => {
     const value = e.target.value;
     setSearchUserValue(value);
-
+    setOrderDetails(prevDetails => ({
+      ...prevDetails,
+      DesginerName: value  // Update DesginerName as user types
+    }));
     // Call the API to get users only if the input has more than 0 characters
     if (value.trim().length > 0) {
       getAllUsers(0, 10, value)
@@ -1447,7 +1456,7 @@ function AddOrders() {
     // Set the Order Details with the selected user info
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
-      DesginerName: `${selectedUser.FirstName} ${selectedUser.LastName}`, // Set Designer Name
+      DesginerName: `${selectedUser.FirstName} ${selectedUser.LastName}`,
       UserID: selectedUser.UserID, // Set UserID
       DesginerID: selectedUser.UserID,
       AssainTo: selectedUser.UserID, // Set AssignTo field with UserID
@@ -2298,7 +2307,7 @@ function AddOrders() {
 
                         <div className="relative">
                           <input
-                            type="search"
+                            type="text"
                             name="DesginerName"
                             // value={searchUserValue}
                             value={orderDetails.DesginerName || searchUserValue}
