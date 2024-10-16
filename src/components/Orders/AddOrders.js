@@ -151,17 +151,7 @@ function AddOrders() {
   const [addressData, setAddressData] = useState([]);
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
   const { orderId } = useParams(); // Get orderId from URL
-  // const {
-  //   CustomerID = "",
-  //   customerId = "",
-  //   CustomerFirstName = "",
-  //   CustomerLastName = "",
-  //   CustomerEmail = "",
-  //   PhoneNumber = "",
-  //   customerPhone = "",
-  // } = customer;
 
-  // Fetch order details when the component mounts or when orderId changes
 
   const fetchAddressData = async (customerId) => {
     try {
@@ -507,6 +497,7 @@ function AddOrders() {
   const [orderID, setOrderID] = useState(null); // Or an initial value
   const [IsEditMode, setIsEditMode] = useState(false);
   const [statusUpdatedData, setStatusUpdatedData] = useState(false);
+  const [updatedsubStatusId, setUpdatedSubStatusId] = useState("");
   const handleNext = () => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
@@ -635,46 +626,6 @@ function AddOrders() {
       location.state?.orderIdDetails?.order ||
       orderIdDetails?.order
   );
-
-  // Determine if we are in edit mode based on orderId or location.state
-  // const isEditMode = Boolean(
-  //   orderDetails.OrderID ||
-  //   location.state?.orderIdDetails?.order ||
-  //   orderIdDetails?.order
-  // );
-
-  // Fetch order details when in edit mode or on page load
-  // useEffect(() => {
-  //   const fetchOrderDetails = async () => {
-  //     if (orderId==="new") return;
-  //     try {
-  //       setError(null);
-
-  //       // Check if in edit mode (based on URL orderId or existing state)
-  //       if (isEditMode || orderId) {
-  //         const orderIdToFetch = orderDetails.OrderID || orderId;
-
-  //         // Fetch order details using orderId
-  //         const response = await axios.get(
-  //           `https://imly-b2y.onrender.com/api/orders/getOrderById/${orderIdToFetch}`
-  //         );
-
-  //         const fetchedOrderData = response.data.order;
-  //         if (fetchedOrderData) {
-  //           setOrderDetails(fetchedOrderData); // Set fetched order data
-  //           setOrderIdDetails({ order: fetchedOrderData }); // Optionally set orderIdDetails for state
-  //         } else {
-  //           setError("Order not found."); // Handle no order found case
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching order details:", error);
-  //       setError("Failed to fetch order details.");
-  //     }
-  //   };
-
-  //   fetchOrderDetails();
-  // }, [isEditMode, orderId]); // Depend on orderId to fetch data on page load or refresh
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1059,6 +1010,7 @@ function AddOrders() {
         TotalQuantity: order.TotalQuantity || "",
         TotalAmount: order.TotalAmount || "",
         OrderStatus: order.OrderStatus || "",
+        subStatusId: order.SubStatusId || "",
         DeliveryDate: order.DeliveryDate || "",
         Type: order.Type || "",
         AdvanceAmount: order.AdvanceAmount || "",
@@ -1096,6 +1048,7 @@ function AddOrders() {
         StoreCode: order.StoreCode || "",
       }));
       setStatusUpdatedData(orderDetails.OrderStatus);
+      setUpdatedSubStatusId(order.SubStatusId);
       // Pass DesignerName to context
       setDesignerName(order.DesginerName || ""); // Set the designer name in context
       setDesginerID(order.DesginerID || "");
@@ -1157,6 +1110,7 @@ function AddOrders() {
 
   useEffect(() => {
     // Compare and update statusUpdatedData if different
+    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId)
     setStatusUpdatedData(orderDetails.OrderStatus);
     if (
       updatedStatusOrderDetails.OrderStatus !== orderDetails.OrderStatus ||
@@ -1281,6 +1235,8 @@ function AddOrders() {
     });
   };
 
+
+
   const [selectedStore, setSelectedStore] = useState("");
   const [storeNames, setStoreNames] = useState([]);
 
@@ -1369,50 +1325,6 @@ function AddOrders() {
       throw error;
     }
   };
-
-  // const handleUserChange = (e) => {
-  //   const value = e.target.value;
-  //   setSearchUserValue(value);
-
-  //   // Call the API to get users only if the input has more than 0 characters
-  //   if (value.trim().length > 0) {
-  //     getAllUsers(0, 10, value)
-  //       .then(response => {
-  //         setResults(response.users || []); // Use empty array as fallback
-
-  //         // If the API returns an array of users, set the designer name based on the first user (or any other logic)
-  //         if (response.users && response.users.length > 0) {
-  //           const designerName = response.users[0].name; // Adjust based on actual user object structure
-  //           const designerId=response.users[0].UserID;
-
-  //           setDesginerID(designerId);
-  //           setDesignerName(designerName);
-  //         } else {
-  //           setDesignerName(null); // Clear if no users found
-  //           setDesginerID(null);
-  //         }
-  //       })
-  //       .catch(error => {
-  //         console.error("Error fetching users:", error);
-  //         setResults([]); // Clear results on error
-  //       });
-  //   } else {
-  //     setResults([]); // Clear results if input is empty
-  //     setDesignerName(null); // Clear designer name if input is empty
-  //   }
-  // };
-
-  // const handleUserSelect = (selectedUser) => {
-  //   setOrderDetails((prevDetails) => ({
-  //     ...prevDetails,
-  //     DesginerName: `${selectedUser.FirstName} ${selectedUser.LastName}`, // Set Designer Name
-  //     UserID: selectedUser.UserID, // Set UserID
-  //     AssainTo: selectedUser.UserID, // Set AssainTo to UserID
-  //   }));
-
-  //   setSearchUserValue(`${selectedUser.FirstName} ${selectedUser.LastName}`); // Update the input value
-  //   setIsUserFocused(false); // Close dropdown
-  // };
   const handleUserChange = (e) => {
     const value = e.target.value;
     setSearchUserValue(value);
@@ -1562,51 +1474,83 @@ function AddOrders() {
                                   {orderDetails.OrderNumber}
                                 </span>
                               </div>
-                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-                                  <span className="w-1/3 mt-2">
-                                    Order Status:
-                                  </span>
-                                 
-                                  <span className="w-1/3">
-                                    <StatusBadge status={statusUpdatedData} />
-                                  </span>
-                                </div> */}
+                             
                               <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
                                 <span className="w-1/3 mt-2">
                                   Order Status:
                                 </span>
 
-                                <span className="w-1/3">
-                                  <StatusBadge status={statusUpdatedData} />
-                                </span>
-                              </div>
+                                  <span className="w-1/3">
+                                    <StatusBadge status={statusUpdatedData} />
+                                  </span>
+                                  {orderDetails.StatusID === 4 && orderDetails.subStatusId !== 0 && (
+                                    <div className="w-1/3 ml-2">
+                                      <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                                        {`R${updatedsubStatusId}`}
+                                      </div>
+                                    </div>
+                                  )}
 
-                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                <span className="w-1/3  mt-2">Store Name:</span>
-                                <span className="w-1/3  mt-2">
-                                  {orderDetails.StoreName}
-                                </span>
+                                </div>
+                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+  <span className="w-1/3 mt-2">Order Status:</span>
+
+  <span className="w-1/3">
+    <StatusBadge status={statusUpdatedData} />
+  </span> */}
+
+                                {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
+                                {/* {(statusUpdatedData.StatusID === 4 || 
+    statusUpdatedData.OrderStatus?.includes("Revised Design")) && (
+    <span className="w-1/3 mt-2 ml-2">
+     
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-400 text-white">
+        Substatus: {statusUpdatedData.OrderStatus} 
+      </span>
+    </span>
+  )} */}
+                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+                                  <span className="w-1/3 mt-2">Order Status:</span>
+
+                                  <span className="w-1/3">
+                                    <div className="w-6 h-6 bg-green-500 text-white flex items-center justify-center rounded-sm">
+                                    <StatusBadge status={statusUpdatedData} />
+                                    </div>
+                                  </span>
+
+                                  
+                                </div> */}
+
+
+
+                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                  <span className="w-1/3  mt-2">
+                                    Store Name:
+                                  </span>
+                                  <span className="w-1/3  mt-2">
+                                    {orderDetails.StoreName}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      {/* Render search input only if isEditMode is false */}
-                      {!isEditMode && (
-                        <>
-                          <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
-                            <input
-                              id="searchName"
-                              type="text"
-                              placeholder="Search by Name..."
-                              value={searchValue}
-                              onChange={handleSearchInput}
-                              onFocus={() => setIsFocused(true)}
-                              className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
-                            />
-                            <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
-                              <IoIosSearch aria-label="Search Icon" />
-                            </div>
+                            </>
+                          )}
+                        </div>
+                        {/* Render search input only if isEditMode is false */}
+                        {!isEditMode && (
+                          <>
+                            <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
+                              <input
+                                id="searchName"
+                                type="text"
+                                placeholder="Search by Name..."
+                                value={searchValue}
+                                onChange={handleSearchInput}
+                                onFocus={() => setIsFocused(true)}
+                                className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
+                              />
+                              <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
+                                <IoIosSearch aria-label="Search Icon" />
+                              </div>
 
                             {/* Only show the dropdown when searchValue is not empty and input is focused */}
                             <div
@@ -1839,9 +1783,11 @@ function AddOrders() {
                                       width: "100%",
                                       margin: "0 auto",
                                       mt: 2,
+                                      maxHeight: 220,  // Approximate height for 3 rows
+                                      overflowY: "auto",
                                     }}
                                   >
-                                    <Table>
+                                    <Table stickyHeader>
                                       <TableHead>
                                         <TableRow>
                                           <StyledTableCell
@@ -2089,76 +2035,25 @@ function AddOrders() {
                             )}
                           </div>
 
-                          {/* Next Button */}
-                          <div className="flex justify-end mt-6">
-                            <button
-                              className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
-                              // onClick={handleAutoFill}
-                              onClick={() => {
-                                handleAutoFill(); // Call your autofill logic
-                                handleClose(); // Close the dialog
-                              }}
-                            >
-                              Close
-                            </button>
+                            {/* Next Button */}
+                            <div className="flex justify-end mt-6">
+                              <button
+                                className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
+                                // onClick={handleAutoFill}
+                                onClick={() => {
+                                  handleAutoFill(); // Call your autofill logic
+                                  handleClose(); // Close the dialog
+                                }}
+                              >
+                                Close
+                              </button>
+                            </div>
                           </div>
-                          {/* <div className="flex justify-end mt-6">
-  <button
-    className="py-3 px-8 text-white rounded-lg hover:bg-opacity-90 transition-all shadow-lg transform hover:scale-105"
-    style={{ backgroundColor: '#EFBC9B' }} // Add custom color here
-    onClick={() => {
-      handleAutoFill(); // Call your autofill logic
-      handleClose(); // Close the dialog
-    }}
-  >
-    Next
-  </button>
-</div> */}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-10 border border-gray-300 rounded-md">
-                    <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
-                      {/* <div>
-                        <label className="block text-xs font-medium text-gray-700">
-                          Project Type
-                        </label>
-                        <select
-                          name="Type"
-                          value={orderDetails.Type}
-                          onChange={handleChange}
-                          className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.Type ? "border-red-500" : "border-gray-300"
-                            }`}
-                        >
-                          <option value="select a type">Select a Type</option>
-                          <option value="Kitchen">Kitchen</option>
-                          <option value="Wardrobe">Wardrobe</option>
-                          <option value="Living">Living</option>
-                          <option value="2 BHK">2 BHK</option>
-                          <option value="3 BHK">3 BHK</option>
-                          <option value="TV unit">
-                            TV unit
-                          </option>
-                          <option value="Crockery">
-                            Crockery
-                          </option>
-                          <option value=" Shoe rack">
-                            Shoe rack
-                          </option>
-                          <option value="Vanities">
-                            Vanities
-                          </option>
-                          <option value="Others">
-                            Others
-                          </option>
-                        </select>
-                        {errors.Type && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {errors.Type}
-                          </p>
-                        )}
-                      </div> */}
+                      )}
+                    </div>
+                    <div className="flex gap-10 border border-gray-300 rounded-md">
+                      <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
 
                       <div className="mt-0 p-0 w-full max-w-full ml-0">
                         <label className="block text-xs font-medium text-gray-700 mb-1">

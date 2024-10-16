@@ -1,7 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import LoadingAnimation from "../Loading/LoadingAnimation";
+import { IoIosSearch } from "react-icons/io";
+import { Combobox } from "@headlessui/react";
+import { DataContext } from "../../Context/DataContext";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 const Tasks = () => {
+  const { storesData } = useContext(DataContext);
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  useEffect(() => {
+    if (storesData) {
+      setStores(storesData || []);
+    }
+  }, [storesData]);
+
   const [taskData, setTaskData] = useState({
     toDo: [],
     inProgress: [],
@@ -10,6 +23,7 @@ const Tasks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userID, setUserID] = useState("1"); // Default user ID (Admin)
+  const [searchName, setSearchName] = useState("");
 
   const userOptions = [
     { id: "3", name: "Admin" },
@@ -78,20 +92,136 @@ const Tasks = () => {
       <h1 className="text-3xl font-semibold mb-6">User Tasks</h1>
       <hr className="border-t border-gray-300 mb-6" />
 
-      {/* Dropdown for User Selection */}
-      <div className="mb-4">
-        <label className="mr-2">Select User:</label>
-        <select
-          value={userID}
-          onChange={handleUserChange}
-          className="border rounded p-2"
-        >
-          {userOptions.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          ))}
-        </select>
+      <div className="flex flex-wrap justify-end gap-2 mt-2">
+        {/* Dropdown for User Selection */}
+        <div className="search-container-c-u">
+          <label className="mr-2">Select User:</label>
+          <select
+            value={userID}
+            onChange={handleUserChange}
+            className="border rounded p-2"
+          >
+            {userOptions.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Container for centering search box */}
+        <div className="search-container-c-u">
+          <label htmlFor="searchName" className="sr-only">
+            Search
+          </label>
+          <input
+            id="searchName"
+            type="text"
+            placeholder=" Search by Order Number / Customer Name "
+            value={searchName}
+            onChange={(e) => searchItems(e.target.value)}
+            className="mt-1 p-1 pr-10 border border-gray-400 rounded-md w-full sm:w-64 text-sm leading-6 h-[40px]"
+          />
+          <div className="search-icon-container-c-u">
+            <IoIosSearch />
+          </div>
+        </div>
+
+        {/* Container for Combo box */}
+        <div className="combobox-container flex items-center">
+          <Combobox value={selectedStore} onChange={setSelectedStore}>
+            <div className="combobox-wrapper h-[40px]">
+              <Combobox.Input
+                className="combobox-input w-full h-full"
+                displayValue={(store) => store?.StoreName || "Select Store ID"}
+                placeholder="Select Store Name"
+              />
+              <Combobox.Button className="combobox-button">
+                <ChevronUpDownIcon
+                  className="combobox-icon"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+              <Combobox.Options className="combobox-options">
+                {/* Add "Select Store ID" option */}
+                <Combobox.Option
+                  key="select-store-id"
+                  className={({ active }) =>
+                    active ? "combobox-option-active" : "combobox-option"
+                  }
+                  value={{ StoreID: null, StoreName: "Select Store ID" }}
+                >
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={
+                          selected
+                            ? "combobox-option-text font-semibold"
+                            : "combobox-option-text font-normal"
+                        }
+                      >
+                        Select Store ID
+                      </span>
+                      {selected && (
+                        <span
+                          className={
+                            active
+                              ? "combobox-option-selected-icon active-selected-icon"
+                              : "combobox-option-selected-icon"
+                          }
+                        >
+                          <CheckIcon
+                            className="combobox-check-icon"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+
+                {/* Render all store options */}
+                {stores.map((store) => (
+                  <Combobox.Option
+                    key={store.StoreID}
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={store}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          {store.StoreName}
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </div>
+          </Combobox>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

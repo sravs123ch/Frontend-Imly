@@ -111,7 +111,7 @@ const YourComponent = ({ onBack, onNext }) => {
   console.log("designerName:", designerName);
   console.log("desginerID:", desginerID);
   console.log("statusID:", statusID);
-  const [formOrderDetails, setFormOrderDetails] =  useState({
+  const [formOrderDetails, setFormOrderDetails] = useState({
     OrderStatus: "",
     ExpectedDays: "",
     DeliveryDate: "",
@@ -368,310 +368,6 @@ const YourComponent = ({ onBack, onNext }) => {
       setIsLoading(false); // Hide loader when done
     }
   };
-
-  // Use `useEffect` to perform an action when `updatedOrderDetails` changes
-  
-  // const saveOrderHistory = async () => {
-  //   const {
-  //     StatusID,
-  //     OrderStatus,
-  //     DeliveryDate,
-  //     Comments,
-  //     AssignTo,
-  //     RoleID,
-  //     UserID,
-  //     OrderHistoryID,
-  //   } = formOrderDetails;
-  
-  //   // Validate required fields
-  //   if (!DeliveryDate) {
-  //     toast.error("Delivery date is required.", {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //     return;
-  //   }
-  
-  //   const userId = localStorage.getItem("UserID");
-  
-  //   // Create a new FormData object
-  //   const formData = new FormData();
-  //   formData.append("TenantID", 1);
-  //   formData.append(
-  //     "OrderHistoryID",
-  //     editMode ? formOrderDetails.OrderHistoryID : 0
-  //   );
-  //   formData.append("OrderID", OrderID);
-  //   formData.append("StartDate", orderDate);
-  //   formData.append("EndDate", DeliveryDate);
-  //   formData.append("AssignTo", desginerID);
-  //   formData.append("Comments", Comments);
-  //   formData.append("UserID", userId);
-  //   formData.append("UserRoleID", RoleID);
-  //   formData.append("CreatedBy", "sandy");
-  //   formData.append("OrderStatus", selectedStatus || "N/A");
-  
-  //   const selectedOrderStatus = orderStatusList.find(
-  //     (status) => status.StatusID === selectedStatus
-  //   );
-  
-  //   formData.append("StatusID", selectedStatus || 1);
-  //   formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
-  
-  //   if (images && images.length > 0) {
-  //     images.forEach((fileData, index) => {
-  //       const { data, name, type } = fileData;
-  //       const blob = new Blob([data], { type });
-  //       formData.append("UploadDocument", blob, name);
-  //     });
-  //   }
-  
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  
-  //     const data = await response.json();
-  //     console.log("API Response:", data);
-  
-  //     if (data.StatusCode === "SUCCESS") {
-  //       toast.success(
-  //         editMode
-  //           ? "Order status updated successfully!"
-  //           : "Order history created successfully!",
-  //         {
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: true,
-  //           draggable: true,
-  //           progress: undefined,
-  //         }
-  //       );
-  
-  //       // Reset form fields here after successful creation/updating
-  //       setFormOrderDetails({
-  //         StatusID: "",
-  //         OrderStatus: "",
-  //         DeliveryDate: "",
-  //         Comments: "",
-  //         AssignTo: "",
-  //         RoleID: "",
-  //         UserID: "",
-  //         OrderHistoryID: "",
-  //         ExpectedDays: "",
-  //       });
-  //       setSelectedRole(statusData.RoleName || "");
-  //       setSelectedStatus("");
-  //       fetchOrderDetails(OrderID); // Refetch order details
-       
-  //       setSelectedStatus("");
-          
-  //     setImagePreviews([]);  // Clear image previews
-  //     setPdfPreviews([]);    // Clear PDF previews
-  
-  //       fetch(
-  //         `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
-  //       )
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //           if (data?.order) {
-  //             setOrderDetails(data.order);
-  //             setUpdatedStatusOrderDetails(data.order);
-  //             console.log("Order details fetched and updated:", data.order);
-  //           }
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error fetching order:", error);
-  //           toast.error("Failed to fetch the order details!");
-  //         });
-  
-  //       closeModalAndMoveToNextStep();
-  //     } else {
-  //       toast.error(
-  //         data.message || "Error occurred while processing the request.",
-  //         {
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: true,
-  //           draggable: true,
-  //           progress: undefined,
-  //         }
-  //       );
-  //       closeModalAfterDelay();
-  //     }
-  //   } catch (error) {
-  //     toast.error("" + error.message, {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //     closeModalAfterDelay();
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  
-  // const saveOrderHistory = async () => {
-  //   const {
-  //     StatusID,
-  //     OrderStatus,
-  //     DeliveryDate,
-  //     Comments,
-  //     AssignTo,
-  //     RoleID,
-  //     UserID,
-  //     OrderHistoryID,
-  //   } = formOrderDetails;
-  
-  //   // Validate required fields
-  //   if (!DeliveryDate) {
-  //     toast.error("Delivery date is required.", {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //     return;
-  //   }
-  
-  //   const userId = localStorage.getItem("UserID");
-  
-  //   // Create a new FormData object
-  //   const formData = new FormData();
-  //   formData.append("TenantID", 1);
-  //   formData.append("OrderHistoryID", editMode ? formOrderDetails.OrderHistoryID : 0);
-  //   formData.append("OrderID", OrderID);
-  //   formData.append("StartDate", orderDate);
-  //   formData.append("EndDate", DeliveryDate);
-  //   formData.append("AssignTo", desginerID);
-  //   formData.append("Comments", Comments);
-  //   formData.append("UserID", userId);
-  //   formData.append("UserRoleID", RoleID);
-  //   formData.append("CreatedBy", "sandy");
-  //   formData.append("OrderStatus", selectedStatus || "N/A");
-  
-  //   const selectedOrderStatus = orderStatusList.find(
-  //     (status) => status.StatusID === selectedStatus
-  //   );
-  
-  //   formData.append("StatusID", selectedStatus || 1);
-  //   formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
-  
-  //   if (images && images.length > 0) {
-  //     images.forEach((fileData) => {
-  //       const { data, name, type } = fileData;
-  //       const blob = new Blob([data], { type });
-  //       formData.append("UploadDocument", blob, name);
-  //     });
-  //   }
-  
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  
-  //     const data = await response.json();
-  //     console.log("API Response:", data);
-  
-  //     if (data.StatusCode === "SUCCESS") {
-  //       toast.success(
-  //         editMode ? "Order status updated successfully!" : "Order history created successfully!",
-  //         {
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: true,
-  //           draggable: true,
-  //           progress: undefined,
-  //         }
-  //       );
-  
-  //       // Reset form fields here after successful creation/updating
-  //       setFormOrderDetails({
-  //         StatusID: "",
-  //         OrderStatus: "",
-  //         DeliveryDate: "",
-  //         Comments: "",
-  //         AssignTo: "",
-  //         RoleID: "",
-  //         UserID: "",
-  //         OrderHistoryID: "",
-  //         ExpectedDays: "",
-  //       });
-  //       setSelectedRole(statusData.RoleName || "");
-  //       setSelectedStatus("");
-  //       setImagePreviews([]);  // Clear image previews
-  //       setPdfPreviews([]);    // Clear PDF previews
-  
-  //       // Fetch updated order details
-  //       fetchOrderDetails(OrderID);
-  
-  //       // Reset editMode to false to return to normal view
-  //       setEditMode(false); // Add this line to reset edit mode
-  
-  //       // Close modal and return to normal view
-  //       closeModalAndMoveToNextStep();
-  //     } else {
-  //       toast.error(
-  //         data.message || "Error occurred while processing the request.",
-  //         {
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: true,
-  //           draggable: true,
-  //           progress: undefined,
-  //         }
-  //       );
-  //       closeModalAfterDelay();
-  //     }
-  //   } catch (error) {
-  //     toast.error("" + error.message, {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //     closeModalAfterDelay();
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  
-  
   useEffect(() => {
     // Log the updated order details or perform any side effects here
     console.log("Updated Order Details:", updatedStatusOrderDetails);
@@ -886,8 +582,8 @@ const YourComponent = ({ onBack, onNext }) => {
     query === ""
       ? orderStatusList
       : orderStatusList.filter((status) =>
-          status.OrderStatus.toLowerCase().includes(query.toLowerCase())
-        );
+        status.OrderStatus.toLowerCase().includes(query.toLowerCase())
+      );
 
   const handleSelect = (statusID) => {
     console.log("Selected Status ID:", statusID);
@@ -940,8 +636,8 @@ const YourComponent = ({ onBack, onNext }) => {
         AssignTo: `${status.FirstName || "N/A"} ${status.LastName || ""}`,
         UserRoleID: status.RoleID || "N/A",
         RoleName: status.RoleName || "N/A",
-        OrderStatus: status.OrderStatus || "N/A",
-        OrderStatus: status.OrderStatus || "N/A",
+        OrderStatus: status.OrderStatus || "0",
+        SubStatusId: status.SubStatusId || "N/A",
         DeliveryDate: status.EndDate || "N/A",
         Comments: status.Comment || "N/A",
         OrderHistoryID: status.OrderHistoryID || "N/A",
@@ -979,7 +675,7 @@ const YourComponent = ({ onBack, onNext }) => {
       "Quick Quote": 0,
       "Initial Design": 1,
       "Initial Measurements": 2,
-      "Revised Design(R1,R2,R#)": 3, // You could adjust this for specific revision numbers like R1, R2, etc.
+      "Revised Design": 3, // You could adjust this for specific revision numbers like R1, R2, etc.
       "Final Measurement": 4,
       "Signup Document": 5,
       Production: 6,
@@ -1041,9 +737,9 @@ const YourComponent = ({ onBack, onNext }) => {
       // Set the selected role for the combobox
       setSelectedRole(statusData.RoleName || "");
       console.log("RoleName:", statusData.RoleName); // Check if the value exists
-       // Set the selected role for the combobox
-    setSelectedRole(statusData.RoleName || ""); // Call setSelectedRole only once
-   
+      // Set the selected role for the combobox
+      setSelectedRole(statusData.RoleName || ""); // Call setSelectedRole only once
+
 
       // Get the index of the current status in the list
       const selectedStepIndex = filteredStatusList.findIndex(
@@ -1075,147 +771,28 @@ const YourComponent = ({ onBack, onNext }) => {
       );
     }
   };
+  const resetFormOrderDetails = () => {
+    setFormOrderDetails({
+      OrderID: "",
+      OrderHistoryID: "",
+      OrderStatus: "N/A",
+      DeliveryDate: "",
+      Comments: "",
+      StartDate: "",
+      DownloadDocuments: [],
+      viewdocuments: [],
+      StatusID: "",
+      AssignTo: "",
+      RoleID: "",
+      RoleName: ""
+    });
+  };
+
+  const handleCancel2 = () => {
+    resetFormOrderDetails();
+  };
 
 
-  // const handleEditstatus = (historyId, statusId) => {
-  //   console.log("Attempting to edit Payment with historyId:", historyId);
-  
-  //   // Find the specific order status based on the selected historyId
-  //   const statusData = statusDetails.find(
-  //     (status) => status.OrderHistoryID === historyId
-  //   );
-  
-  //   if (statusData) {
-  //     // Populate file previews if documents are available
-  //     const images = statusData.DownloadDocuments?.filter((file) =>
-  //       file.includes("image")
-  //     );
-  //     const pdfs = statusData.DownloadDocuments?.filter((file) =>
-  //       file.includes("pdf")
-  //     );
-  
-  //     // Set the previews
-  //     setImagePreviews(images || []);
-  //     setPdfPreviews(pdfs || []);
-  
-  //     // Set form order details with the data found from the backend
-  //     setFormOrderDetails({
-  //       OrderID: statusData.OrderID || "",
-  //       OrderHistoryID: statusData.OrderHistoryID || "",
-  //       OrderStatus: statusData.OrderStatus || "N/A",
-  //       DeliveryDate: statusData.DeliveryDate || "",
-  //       Comments: statusData.Comments || "",
-  //       StartDate: statusData.StartDate || "",
-  //       DownloadDocuments: statusData.DownloadDocuments || [], // Populate from backend
-  //       viewdocuments: statusData.viewdocuments || [],
-  //       StatusID: statusId || "",
-  //       AssignTo: statusData.AssignTo || "",
-  //       RoleID: statusData.RoleName || "",
-  //     });
-  
-  //     setSelectedRole(statusData.RoleName || "");
-  
-  //     // Update steps logic, completed steps, etc.
-  //     const selectedStepIndex = filteredStatusList.findIndex(
-  //       (status) => status.StatusID === statusId
-  //     );
-  //     const newCompletedSteps = {};
-  //     for (let i = 0; i <= selectedStepIndex; i++) {
-  //       newCompletedSteps[i] = true; // Mark previous steps as completed
-  //     }
-  //     for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
-  //       newCompletedSteps[i] = false;
-  //     }
-  
-  //     setCompletedSteps(newCompletedSteps);
-  //     setActiveStep(selectedStepIndex); // Set the active step to the current one
-  //     setSelectedStatus(statusId); // Update the selected status ID
-  //     setEditMode(true); // Enable edit mode
-  //   } else {
-  //     console.error(
-  //       "No valid data found for the provided historyId:",
-  //       historyId
-  //     );
-  //   }
-  // };
-  
-
-  // const handleEditstatus = (historyId, statusId) => {
-  //   console.log("Attempting to edit Payment with historyId:", historyId);
-  
-  //   // Find the specific order status based on the selected historyId
-  //   const statusData = statusDetails.find(
-  //     (status) => status.OrderHistoryID === historyId
-  //   );
-  
-  //   if (statusData) {
-  //       // Set the selected role for the Combobox (Department)
-  //   setSelectedRole(statusData.RoleName || ""); // This will set the RoleName
-  //     // 1. Populate file previews if documents are available
-  //     const documents = statusData.DownloadDocuments || []; // Default to an empty array if undefined or null
-    
-  //     // Check if documents is an array before filtering
-  //     const images = Array.isArray(documents)
-  //       ? documents.filter((file) => file.includes("image"))
-  //       : []; // Use an empty array if documents is not an array
-    
-  //     const pdfs = Array.isArray(documents)
-  //       ? documents.filter((file) => file.includes("pdf"))
-  //       : []; // Use an empty array if documents is not an array
-    
-  //     // Set the image and PDF previews
-  //     setImagePreviews(images);
-  //     setPdfPreviews(pdfs);
-  
-  //     // Set the image and PDF previews
-  //     setImagePreviews(images || []||"");
-  //     setPdfPreviews(pdfs || [] || "");
-  
-  //     // 2. Set form order details from the backend
-  //     setFormOrderDetails({
-  //       OrderID: statusData.OrderID || "",
-  //       OrderHistoryID: statusData.OrderHistoryID || "",
-  //       OrderStatus: statusData.OrderStatus || "N/A",
-  //       DeliveryDate: statusData.DeliveryDate || "",
-  //       Comments: statusData.Comments || "",
-  //       StartDate: statusData.StartDate || "",
-  //       DownloadDocuments: statusData.DownloadDocuments || [], // Backend data
-  //       viewdocuments: statusData.viewdocuments || [], // Backend data
-  //       StatusID: statusId || "",
-  //       AssignTo: statusData.AssignTo || "",
-  //       RoleID: statusData.RoleName || "", // Set RoleName here
-  //     });
-  
-  //     // 3. Set the selected role for the Combobox (Department)
-  //     // setSelectedRole(statusData.RoleName || "");
-
-  //     console.log("Role name",selectedRole);
-  
-  //     // 4. Steps handling (completed steps logic)
-  //     const selectedStepIndex = filteredStatusList.findIndex(
-  //       (status) => status.StatusID === statusId
-  //     );
-  //     const newCompletedSteps = {};
-  //     for (let i = 0; i <= selectedStepIndex; i++) {
-  //       newCompletedSteps[i] = true; // Mark previous steps as completed
-  //     }
-  //     for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
-  //       newCompletedSteps[i] = false;
-  //     }
-  
-  //     // Update state for steps and mode
-  //     setCompletedSteps(newCompletedSteps);
-  //     setActiveStep(selectedStepIndex); // Set the active step
-  //     setSelectedStatus(statusId); // Update selected status ID
-  //     setEditMode(true); // Enable edit mode
-  //   } else {
-  //     console.error(
-  //       "No valid data found for the provided historyId:",
-  //       historyId
-  //     );
-  //   }
-  // };
-  
   useEffect(() => {
     console.log("FormOrderDetails updated:", formOrderDetails);
   }, [formOrderDetails]);
@@ -1268,51 +845,51 @@ const YourComponent = ({ onBack, onNext }) => {
 
 
   const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
-const [completedSteps, setCompletedSteps] = useState({});
-// const [activeStep, setActiveStep] = useState(null);
+  const [completedSteps, setCompletedSteps] = useState({});
+  // const [activeStep, setActiveStep] = useState(null);
 
-const handleCompleteStep = (statusID) => {
-  const newCompletedSteps = { ...completedSteps };
-  // Mark the selected StatusID and all previous steps as completed
-  filteredStatusList.forEach((status) => {
-    if (status.StatusID <= statusID) {
-      newCompletedSteps[status.StatusID] = true;
+  const handleCompleteStep = (statusID) => {
+    const newCompletedSteps = { ...completedSteps };
+    // Mark the selected StatusID and all previous steps as completed
+    filteredStatusList.forEach((status) => {
+      if (status.StatusID <= statusID) {
+        newCompletedSteps[status.StatusID] = true;
+      }
+    });
+    setCompletedSteps(newCompletedSteps);
+    setActiveStep(statusID); // Set the current StatusID as active
+  };
+
+  const handleStepClick = (statusID) => {
+    handleCompleteStep(statusID); // Complete the step and all before it
+    const currentIndex = filteredStatusList.findIndex(
+      (status) => status.StatusID === statusID
+    );
+
+    // Show more steps if the current step is within visible range
+    if (currentIndex < visibleSteps) {
+      setVisibleSteps((prevSteps) =>
+        Math.min(prevSteps + 1, filteredStatusList.length)
+      );
     }
-  });
-  setCompletedSteps(newCompletedSteps);
-  setActiveStep(statusID); // Set the current StatusID as active
-};
+  };
 
-const handleStepClick = (statusID) => {
-  handleCompleteStep(statusID); // Complete the step and all before it
-  const currentIndex = filteredStatusList.findIndex(
-    (status) => status.StatusID === statusID
-  );
-  
-  // Show more steps if the current step is within visible range
-  if (currentIndex < visibleSteps) {
-    setVisibleSteps((prevSteps) =>
-      Math.min(prevSteps + 1, filteredStatusList.length)
-    );
-  }
-};
+  const handleScroll = (e) => {
+    const bottom =
+      Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
+      e.target.clientHeight;
+    if (bottom && visibleSteps < filteredStatusList.length) {
+      setVisibleSteps((prevSteps) =>
+        Math.min(prevSteps + 5, filteredStatusList.length)
+      );
+    }
+  };
 
-const handleScroll = (e) => {
-  const bottom =
-    Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
-    e.target.clientHeight;
-  if (bottom && visibleSteps < filteredStatusList.length) {
-    setVisibleSteps((prevSteps) =>
-      Math.min(prevSteps + 5, filteredStatusList.length)
-    );
-  }
-};
-
-const handleReset = () => {
-  setActiveStep(null); // Reset the active step
-  setCompletedSteps({}); // Clear all completed steps
-  setVisibleSteps(5); // Reset visible steps to initial value
-};
+  const handleReset = () => {
+    setActiveStep(null); // Reset the active step
+    setCompletedSteps({}); // Clear all completed steps
+    setVisibleSteps(5); // Reset visible steps to initial value
+  };
 
   // const [searchUserValue, setSearchUserValue]=useState();
   const [isUserFocused, setIsUserFocused] = useState();
@@ -1473,7 +1050,7 @@ const handleReset = () => {
   }, [statusData]);
 
   const handleViewDocuments = (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     // Logic to handle viewing documents
     if (imagePreviews.length > 0) {
       // Open the first image preview, for example
@@ -1496,7 +1073,7 @@ const handleReset = () => {
   };
 
 
-  
+
   return (
     <Box
       sx={{
@@ -1521,11 +1098,10 @@ const handleReset = () => {
                 <Combobox value={selectedStatus} onChange={handleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${
-                        errors.OrderStatus
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
+                      className={`p-1 w-full border rounded-md ${errors.OrderStatus
+                        ? "border-red-500"
+                        : "border-gray-300"
+                        }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(statusID) => {
                         const selected = filteredStatusList.find(
@@ -1545,16 +1121,15 @@ const handleReset = () => {
                       {filteredStatusList.length > 0 ? (
                         // Filter the statuses to only show those after the active step
                         filteredStatusList
-                          .filter((_, index) => index === 3?index >= activeStep:index >activeStep) // Show statuses after the active one
+                          .filter((_, index) => index === 3 ? index >= activeStep : index > activeStep) // Show statuses after the active one
                           .map((status) => (
                             <Combobox.Option
                               key={status.StatusID}
                               value={status.StatusID}
                               className={({ active }) =>
-                                `cursor-pointer select-none relative p-2 ${
-                                  active
-                                    ? "bg-blue-500 text-white"
-                                    : "text-gray-900"
+                                `cursor-pointer select-none relative p-2 ${active
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-900"
                                 }`
                               }
                             >
@@ -1586,9 +1161,8 @@ const handleReset = () => {
                     value={searchUserValue}
                     onChange={handleUserChange}
                     onFocus={() => setIsUserFocused(true)}
-                    className={`p-1 pr-10 w-full border rounded-md ${
-                      errors.AssignedTo ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`p-1 pr-10 w-full border rounded-md ${errors.AssignedTo ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="Search by User Name..."
                   />
                   {errors.AssignedTo && (
@@ -1639,23 +1213,19 @@ const handleReset = () => {
                   )}
                 </div>
               </div>
-
-              {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
                   Department:
                 </label>
                 <Combobox value={selectedRole} onChange={handleRoleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${
-                        errors.UserRole ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`p-1 w-full border rounded-md ${errors.UserRole ? "border-red-500" : "border-gray-300"
+                        }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(roleID) => {
-                        const selected = roles.find(
-                          (role) => role.RoleID === roleID
-                        );
-                        return selected ? selected.RoleName : ""; // Make sure selected value is returned
+                        const selected = roles.find((role) => role.RoleID === roleID);
+                        return selected ? selected.RoleName : ""; // Display selected role
                       }}
                     />
                     <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
@@ -1671,10 +1241,7 @@ const handleReset = () => {
                             key={role.RoleID}
                             value={role.RoleID}
                             className={({ active }) =>
-                              `cursor-pointer select-none relative p-2 ${
-                                active
-                                  ? "bg-blue-500 text-white"
-                                  : "text-gray-900"
+                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
                               }`
                             }
                           >
@@ -1687,58 +1254,8 @@ const handleReset = () => {
                     </Combobox.Options>
                   </div>
                 </Combobox>
-                {errors.UserRole && (
-                  <p className="text-red-500 text-sm ml-2">{errors.UserRole}</p>
-                )}
-              </div> */}
 
- <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-    Department:
-  </label>
-  <Combobox value={selectedRole} onChange={handleRoleChanging}>
-    <div className="relative w-full sm:w-1/4">
-      <Combobox.Input
-        className={`p-1 w-full border rounded-md ${
-          errors.UserRole ? "border-red-500" : "border-gray-300"
-        }`}
-        onChange={(e) => setQuery(e.target.value)}
-        displayValue={(roleID) => {
-          const selected = roles.find((role) => role.RoleID === roleID);
-          return selected ? selected.RoleName : ""; // Display selected role
-        }}
-      />
-      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-        <ChevronUpDownIcon
-          className="h-5 w-5 text-gray-400"
-          aria-hidden="true"
-        />
-      </Combobox.Button>
-      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
-        {filteredRolesList.length > 0 ? (
-          filteredRolesList.map((role) => (
-            <Combobox.Option
-              key={role.RoleID}
-              value={role.RoleID}
-              className={({ active }) =>
-                `cursor-pointer select-none relative p-2 ${
-                  active ? "bg-blue-500 text-white" : "text-gray-900"
-                }`
-              }
-            >
-              {role.RoleName}
-            </Combobox.Option>
-          ))
-        ) : (
-          <div className="p-2 text-gray-500">No roles found</div>
-        )}
-      </Combobox.Options>
-    </div>
-  </Combobox>
-  {errors.UserRole && (
-    <p className="text-red-500 text-sm ml-2">{errors.UserRole}</p>
-  )}
-</div> 
+              </div>
 
 
               <div className="flex flex-col hidden sm:flex-row justify-center items-center gap-4 w-full">
@@ -1750,29 +1267,27 @@ const handleReset = () => {
                   name="StartDate"
                   value={formatDate(formOrderDetails.StartDate)}
                   onChange={handleChange}
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.StartDate ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.StartDate ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
               </div>
-           
-                {!editMode && (
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-                  Expected Delivery in Days:
-                </label>
-                <input
-                  type="number"
-                  name="ExpectedDays"
-                  value={formOrderDetails.ExpectedDays}
-                  onChange={handleExpectedDaysChange}
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.ExpectedDays ? "border-red-500" : "border-gray-300"
-                  }`}
-                  min="0" // Ensure the user can't select a negative number of days
-                />
-              </div>
-             )}   
+
+              {!editMode && (
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+                  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+                    Expected Delivery in Days:
+                  </label>
+                  <input
+                    type="number"
+                    name="ExpectedDays"
+                    value={formOrderDetails.ExpectedDays}
+                    onChange={handleExpectedDaysChange}
+                    className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.ExpectedDays ? "border-red-500" : "border-gray-300"
+                      }`}
+                    min="0" // Ensure the user can't select a negative number of days
+                  />
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
@@ -1783,9 +1298,8 @@ const handleReset = () => {
                   name="DeliveryDate"
                   value={formatDate(formOrderDetails.DeliveryDate)}
                   onChange={handleDateChanging} // Manually change if needed
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.DeliveryDate ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.DeliveryDate ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
                 {errors.DeliveryDate && (
                   <p className="text-red-500 text-sm ml-2">
@@ -1793,119 +1307,6 @@ const handleReset = () => {
                   </p>
                 )}
               </div>
-              {/* 
-<div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-        Upload Document:
-      </label>
-      <div className="flex items-center sm:w-1/4 w-full border rounded-md bg-white p-2">
-        <input
-          type="file"
-          multiple
-          accept="image/*,application/pdf,.doc,.docx"
-          onChange={handleFileChange}
-          className="hidden"
-          id="UploadFiles"
-        />
-      
-         <label
-          htmlFor="UploadFiles"
-          className="flex items-center justify-center text-black-500 cursor-pointer"
-        >
-          <FaUpload className="mr-2" />
-          <span>Upload</span>
-        </label>
-
-      
-        {imagePreviews.length > 0 && (
-          <div className="flex items-center ml-2">
-            {imagePreviews.map((preview, index) => (
-              <div key={index} className="relative inline-block">
-                <img
-                  src={preview}
-                  alt={`Preview ${index}`}
-                  className="w-5 h-5 object-cover mr-2"
-                />
-                <button
-                  onClick={() => handleImageRemove(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full text-xs"
-                >
-                  *
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-       
-        {pdfPreviews.length > 0 && (
-          <div className="flex items-center ml-2">
-            {pdfPreviews.map((pdfPreview, index) => (
-              <div key={index} className="flex items-center">
-                           <a
-  href={pdfPreview}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-blue-600 underline mx-1 flex items-center mr-2"  // Added flex and items-center
->
-  <FaEye className="mr-1 ml-3" /> 
-  View
-</a>
-                <button
-                  onClick={() => handlePdfRemove(index)}
-                  className="ml-2 bg-red-500 text-white p-1 rounded-full text-xs"
-                >
-                  *
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div> */}
-
-              {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-    Upload Document:
-  </label>
-  
-  
-  <div className="flex items-center sm:w-1/4 w-full border rounded-md bg-white p-2 gap-2">
-
-    <div className="flex flex-1 items-center">
-      <input
-        type="file"
-        multiple
-        accept="image/*,application/pdf,.doc,.docx"
-        onChange={handleFileChange}
-        className="hidden"
-        id="UploadFiles"
-      />
-      <label
-        htmlFor="UploadFiles"
-        className="flex items-center justify-center text-black-500 cursor-pointer bg-gray-200 rounded-md px-3 py-1"
-      >
-        <FaUpload className="mr-2" />
-        <span>Upload</span>
-      </label>
-    </div>
-
-   
-    <div className="flex flex-1 items-center">
-      {(imagePreviews.length > 0 || pdfPreviews.length > 0) && (
-        <button
-          onClick={handleViewDocuments}  // This function will handle the view action
-          className="flex items-center justify-center bg-blue-500 text-white rounded-md px-3 py-1"
-        >
-          <FaEye className="mr-2" />
-          View
-        </button>
-  
-      )}
-    </div>
-    
-  </div>
-</div> */}
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
                   Upload Document:
@@ -1959,83 +1360,79 @@ const handleReset = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-  <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-    Comments
-  </label>
-  <textarea
-    name="Comments"
-    value={formOrderDetails.Comments}
-    onChange={(e) =>
-      setFormOrderDetails({
-        ...formOrderDetails,
-        Comments: e.target.value,
-      })
-    }
-    className={`p-2 w-full sm:w-1/4 border rounded-md ${
-      errors.Comments ? "border-red-500" : "border-gray-300"
-    }`}
-    rows={3} // Set the number of visible rows
-  />
-  {errors.Comments && (
-    <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
-  )}
-</div>
+                <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
+                  Comments
+                </label>
+                <textarea
+                  name="Comments"
+                  value={formOrderDetails.Comments}
+                  onChange={(e) =>
+                    setFormOrderDetails({
+                      ...formOrderDetails,
+                      Comments: e.target.value,
+                    })
+                  }
+                  className={`p-2 w-full sm:w-1/4 border rounded-md ${errors.Comments ? "border-red-500" : "border-gray-300"
+                    }`}
+                  rows={3} // Set the number of visible rows
+                />
+                {errors.Comments && (
+                  <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
+                )}
+              </div>
 
             </div>
 
-<div onScroll={handleScroll} className="overflow-y-auto max-h-80">
-      <nav aria-label="Progress">
-        <ol role="list">
-          {filteredStatusList
-            .slice(0, visibleSteps)
-            .map((status, index) => (
-              <li
-                key={status.StatusID}
-                className={`relative pb-7 cursor-pointer ${
-                  completedSteps[index] ? "completed" : ""
-                }`}
-                onClick={() => handleStepClick(index)}
-              >
-                {/* Step rendering logic with lines */}
-                <div
-                  className={`step-indicator flex items-center ${
-                    completedSteps[index]
-                      ? "text-gray-800"
-                      : "text-gray-800"
-                  } ${activeStep === index ? "text-orange-500" : ""}`}
-                >
-                  {/* Step Circle */}
-                  <span
-                    className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
+            <div onScroll={handleScroll} className="overflow-y-auto max-h-[30rem]">
+              <nav aria-label="Progress">
+                <ol role="list">
+                  {filteredStatusList
+                    .slice(0, visibleSteps)
+                    .map((status, index) => (
+                      <li
+                        key={status.StatusID}
+                        className={`relative pb-12 cursor-pointer ${completedSteps[index] ? "completed" : ""
+                          }`}
+                        onClick={() => handleStepClick(index)}
+                      >
+                        {/* Step rendering logic with lines */}
+                        <div
+                          className={`step-indicator flex items-center ${completedSteps[index]
+                            ? "text-gray-800"
+                            : "text-gray-800"
+                            } ${activeStep === index ? "text-orange-500" : ""}`}
+                        >
+                          {/* Step Circle */}
+                          <span
+                            className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
                       ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
                       ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
-                  >
-                    {activeStep === index ? (
-                      <GrInProgress />
-                    ) : completedSteps[index] ? (
-                      "✓"
-                    ) : (
-                      <FaRegUserCircle />
-                    )}
-                  </span>
+                          >
+                            {activeStep === index ? (
+                              <GrInProgress />
+                            ) : completedSteps[index] ? (
+                              "✓"
+                            ) : (
+                              <FaRegUserCircle />
+                            )}
+                          </span>
 
-                  {/* Status Text */}
-                  {status.OrderStatus}
-                </div>
+                          {/* Status Text */}
+                          {status.OrderStatus}
+                        </div>
 
-                {/* Line between steps */}
-                {index < filteredStatusList.length - 1 && (
-                  <div
-                    className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${
-                      completedSteps[index] ? "bg-green-400" : ""
-                    }`}
-                  />
-                )}
-              </li>
-            ))}
-        </ol>
-      </nav>
-    </div>
+                        {/* Line between steps */}
+                        {index < filteredStatusList.length - 1 && (
+                          <div
+                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${completedSteps[index] ? "bg-green-400" : ""
+                              }`}
+                          />
+                        )}
+                      </li>
+                    ))}
+                </ol>
+              </nav>
+            </div>
           </div>
           <div className="relative mt-10 flex justify-end gap-4">
             <div className="mt-6 flex justify-end gap-4">
@@ -2048,7 +1445,7 @@ const handleReset = () => {
               </button>
               <button
                 type="button"
-                onClick={handleCancel}
+                onClick={handleCancel2}
                 className="button-base cancel-btn"
               >
                 Cancel
@@ -2107,19 +1504,19 @@ const handleReset = () => {
                   Assigned To
                 </StyledTableCell>
                 <StyledTableCell
-  align="center"
-  sx={{
-    borderRight: "1px solid #e5e7eb",
-    color: "white",
-    fontWeight: "bold",
-    width: "200px", // Set a fixed width for the comments column
-    overflow: "hidden", // Hide overflow text
-    whiteSpace: "nowrap", // Prevent text from wrapping to the next line
-    textOverflow: "ellipsis", // Show ellipsis (...) for overflowing text
-  }}
->
-  Comments
-</StyledTableCell>
+                  align="center"
+                  sx={{
+                    borderRight: "1px solid #e5e7eb",
+                    color: "white",
+                    fontWeight: "bold",
+                    width: "200px", // Set a fixed width for the comments column
+                    overflow: "hidden", // Hide overflow text
+                    whiteSpace: "nowrap", // Prevent text from wrapping to the next line
+                    textOverflow: "ellipsis", // Show ellipsis (...) for overflowing text
+                  }}
+                >
+                  Comments
+                </StyledTableCell>
                 <StyledTableCell
                   align="center"
                   sx={{
@@ -2147,8 +1544,22 @@ const handleReset = () => {
                       align="center"
                       className="border-r border-gray-300"
                     >
-                      <StatusBadge status={status.OrderStatus} />
+                      <div className="flex items-center justify-center">
+                        {/* Status Badge */}
+                        <StatusBadge status={status.OrderStatus} />
+
+                        {/* Conditionally render the status ID only if OrderStatus is 'Revised Design' and SubStatusId is not 0 */}
+                        {status.OrderStatus === "Revised Design" && status.SubStatusId !== 0 && (
+                          <div className="w-1/3 ml-2">
+                            <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                              {`R${status.SubStatusId}`}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </StyledTableCell>
+
+
 
                     <StyledTableCell
                       align="center"
@@ -2159,49 +1570,39 @@ const handleReset = () => {
                         Start Date:{" "}
                         {status.StartDate
                           ? (() => {
-                              const date = new Date(status.StartDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.StartDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                         <br />
                         {/* Delivery Date */}
                         End Date:{" "}
                         {status.DeliveryDate
                           ? (() => {
-                              const date = new Date(status.DeliveryDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.DeliveryDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                       </p>
                     </StyledTableCell>
-
-                    {/* Assigned To: {status.FirstName && status.LastName ? `${status.FirstName} ${status.LastName}` : "N/A"} */}
-                    {/* <StyledTableCell align="center" className="border-r border-gray-300">
-  <p className="font-thin">
-    Assigned To: {status.FirstName||"N/A"}
-    <br />
-    Department: {status.RoleName || "N/A"}
-  </p>
-</StyledTableCell> */}
-
                     <StyledTableCell
                       align="center"
                       className="border-r border-gray-300"
@@ -2216,41 +1617,19 @@ const handleReset = () => {
                       </p>
                     </StyledTableCell>
 
-                    {/* Comments */}
-                  
-                    {/* <StyledTableCell
-  align="center"
-  className="border-r border-gray-300"
-  // sx={{
-  //   width: "200px", // Set a fixed width for the comments column
-  //   overflow: "hidden", // Hide overflow text
-  //   whiteSpace: "normal", // Allow text to wrap to the next line
-  //   wordWrap: "break-word", // Break long words onto the next line
-  //   padding: "8px", // Add consistent padding
-  //   height: "100px", // Allow the cell to auto-adjust based on content
-  //   whiteSpace: "normal", // Allow text to wrap to the next line
-  //                       wordWrap: "break-word", // Break long words onto the next line
-  //                       display: "block", // Make it block to allow wrapping
-  //                       lineClamp: 4, // Limit the number of lines to show
-  //                       display: "-webkit-box", // Required for line clamping
-  //                       WebkitLineClamp: 4, // Limit to two lines
-  //                       WebkitBoxOrient: "vertical", // Required for line clamping
-  // }}
->
-  {status.Comments || "N/A"}
-</StyledTableCell> */}
-<StyledTableCell
-  align="center"
-  className="border-r border-gray-300"
-  sx={{
-    width: "100px", // Set a fixed width for the column if needed
-    wordBreak: "break-word", // Ensures long words break and wrap correctly
-    whiteSpace: "normal", // Allow text to wrap to the next line
-    overflow: "hidden", // Prevent overflow from growing the cell size
-  }}
->
-  {status.Comments || "N/A"}
-</StyledTableCell>
+
+                    <StyledTableCell
+                      align="center"
+                      className="border-r border-gray-300"
+                      sx={{
+                        width: "100px", // Set a fixed width for the column if needed
+                        wordBreak: "break-word", // Ensures long words break and wrap correctly
+                        whiteSpace: "normal", // Allow text to wrap to the next line
+                        overflow: "hidden", // Prevent overflow from growing the cell size
+                      }}
+                    >
+                      {status.Comments || "N/A"}
+                    </StyledTableCell>
 
 
 
@@ -2260,7 +1639,7 @@ const handleReset = () => {
                       className="border-r border-gray-300"
                     >
                       {Array.isArray(status.viewdocuments) &&
-                      status.viewdocuments.length > 0 ? (
+                        status.viewdocuments.length > 0 ? (
                         status.viewdocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -2284,7 +1663,7 @@ const handleReset = () => {
                       )}
 
                       {Array.isArray(status.DownloadDocuments) &&
-                      status.DownloadDocuments.length > 0 ? (
+                        status.DownloadDocuments.length > 0 ? (
                         status.DownloadDocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}

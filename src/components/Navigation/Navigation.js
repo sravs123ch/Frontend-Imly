@@ -23,6 +23,7 @@ import {
   UserIcon,
   DocumentMagnifyingGlassIcon,
   ChatBubbleLeftEllipsisIcon,
+  ClipboardDocumentCheckIcon
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
@@ -65,7 +66,7 @@ const allNavigation = {
   Inventory: [
     { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
     { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1, 2] },
-    { name: "Tasks", href: "/tasks", icon: ShoppingBagIcon, roles: [1, 2] },
+    { name: "Tasks", href: "/tasks", icon:ClipboardDocumentCheckIcon , roles: [1, 2] },
     {
       name: "Feedbacks",
       href: "/feedback",
@@ -237,7 +238,7 @@ export default function Navigation() {
 
 
 
-            <nav className="flex flex-col flex-1 w-full">
+            <nav className="flex flex-col mt-2 flex-1 w-full">
               <ul role="list" className="space-y-6 w-full">
                 {Object.entries(navigation).map(([key, items]) => (
                   <li key={key} className="w-full">

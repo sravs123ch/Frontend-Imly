@@ -479,9 +479,12 @@ function ReportGenerator() {
     console.log("Selected OrderID:", selectedOrder.OrderID); // Log OrderID after selection
     setFilteredOrders([]); // Clear dropdown after selection
   };
+
   useEffect(() => {
     console.log("Selected OrderId:", selectedOrderId); // This should log the correct OrderId
   }, [selectedOrderId]);
+
+
   // Define handleInputChange2 function
   const postData = async () => {
     setIsLoading(true);
@@ -689,6 +692,7 @@ function ReportGenerator() {
     }
     setIsLoading(false);
   };
+  
   const postData1 = async () => {
     setIsLoading(true);
     const url = CUSTOMER_REPORT_API; // New API endpoint
