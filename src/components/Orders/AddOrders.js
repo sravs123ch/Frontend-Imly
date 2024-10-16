@@ -13,13 +13,10 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import StatusBadge from "./Statuses";
 import {
-  CREATE_ORDERS,
   COUNTRIES_API,
   GETALLUSERS_API,
-  GET_ALL_ORDERS,
   STATES_API,
   CITIES_API,
-  SEARCH_CUSTOMERS,
   GETALLCUSTOMERS_API,
   GETALLSTORES_API,
   ORDERBYCUSTOMERID_API,
@@ -144,16 +141,15 @@ function AddOrders() {
     setStatusID,
   } = useContext(IdContext);
   const [selectedTab, setSelectedTab] = useState("address");
-  // const[totalAddresses,setTotalAddresses]=useState();
-  // const[totalOrders,setTotalOrders]=useState();
 
   const handleTabChange = (tab) => setSelectedTab(tab);
   const [addressData, setAddressData] = useState([]);
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
   const { orderId } = useParams(); // Get orderId from URL
 
-
   const fetchAddressData = async (customerId) => {
+    setIsLoading(true);
+
     try {
       console.log("Fetching address data for customer ID:", customerId);
       const response = await axios.get(`${ADDRESS_API}/${customerId}`);
@@ -177,14 +173,15 @@ function AddOrders() {
     } catch (error) {
       console.error("Error fetching address data:", error);
       setAddressData([]);
+    } finally {
+      setIsLoading(false);
     }
     return null;
   };
   useEffect(() => {
     const fetchOrderDetails = async () => {
-      // If the orderId is "new", we're creating a new order so no need to fetch data
       if (orderId === "new") {
-        setOrderDetails({}); // Set an empty object for new order creation
+        setOrderDetails({});
         return;
       }
 
@@ -231,45 +228,27 @@ function AddOrders() {
       AOS.init(); // Reinitialize AOS animations
     }
   }, [isDialogOpen]);
-  useEffect(() => {
-    fetchData(searchValue);
-  }, []);
+
+  let debounceTimeout;
 
   const fetchData = async (value) => {
+    setIsLoading(true);
     try {
-      // If isEditMode is true, return early and do not proceed with the data fetching
       if (isEditMode) {
-        return; // Exit the function if in edit mode
+        return;
       }
 
-      let page = 1;
-      let pageSize = 10;
+      // Make a single API call without pagination logic
+      const response = await axios.get(GETALLCUSTOMERS_API, {
+        params: {
+          searchText: value, // Only pass the search text
+        },
+      });
 
-      let allResults = [];
-      let hasMoreData = true;
+      const customers = response.data.customers;
 
-      while (hasMoreData) {
-        const response = await axios.get(GETALLCUSTOMERS_API, {
-          params: {
-            limit: pageSize,
-            page: page,
-            searchText: value,
-          },
-        });
-
-        const customers = response.data.customers;
-        allResults = [...allResults, ...customers];
-
-        // Determine if there are more pages to fetch
-        if (customers.length < pageSize) {
-          hasMoreData = false;
-        } else {
-          page++;
-        }
-      }
-
-      // Filter the combined results
-      const filteredUsers = allResults.filter((customer) => {
+      // Filter the results
+      const filteredUsers = customers.filter((customer) => {
         return (
           (value &&
             customer &&
@@ -306,9 +285,11 @@ function AddOrders() {
         );
       });
 
-      setResults(filteredUsers);
+      setResults(filteredUsers); // Set the filtered users to the state
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -370,13 +351,12 @@ function AddOrders() {
   const handleSearchInput = (e) => {
     const { value } = e.target;
     setSearchValue(value);
-    fetchData(value); // Trigger the search based on input value
+    fetchData(value);
   };
 
   // Assuming 'selectedCustomer' is set when a customer is selected from the search
   useEffect(() => {
     if (selectedCustomer?.CustomerID) {
-      // Fetch orders for the selected customer
       fetchOrdersByCustomerId(selectedCustomer.CustomerID);
     }
   }, [selectedCustomer]);
@@ -384,6 +364,7 @@ function AddOrders() {
   // Fetch orders based on selected customer ID
   const fetchOrdersByCustomerId = async (customerId) => {
     try {
+      setIsLoading(true);
       if (!customerId) return; // Ensure customerId exists
       const response = await axios.get(
         `${ORDERBYCUSTOMERID_API}/${customerId}`
@@ -392,11 +373,12 @@ function AddOrders() {
     } catch (err) {
       console.error("Error fetching orders:", err);
       setError("Failed to fetch orders.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Hide the popup if clicked outside
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setIsFocused(false);
@@ -617,9 +599,6 @@ function AddOrders() {
     setImages(newImages);
     setImagePreviews(newPreviews);
   };
-  // const isEditMode = Boolean(
-  //   location.state?.orderIdDetails?.order || orderIdDetails?.order
-  // );
 
   const isEditMode = Boolean(
     orderDetails.OrderID ||
@@ -652,6 +631,7 @@ function AddOrders() {
     };
 
     try {
+      setIsLoading(true);
       const response = await axios.post(
         "https://imly-b2y.onrender.com/api/orders/createOrderOrUpdate",
         data,
@@ -907,38 +887,11 @@ function AddOrders() {
     }
   }, [customerDetails]);
 
-  const handleSearch = async () => {
-    try {
-      if (query.trim()) {
-        const response = await axios.get(
-          // `https://imlystudios-backend-mqg4.onrender.com/api/customers/getCustomerById/${query}`
-
-          `${SEARCH_CUSTOMERS}/${query}`
-        );
-        setOrderDetails({
-          ...orderDetails,
-          CustomerID: response.data.customerId,
-          CustomerFirstName: response.data.CustomerFirstName,
-          CustomerLastName: response.data.CustomerLastName,
-          CustomerEmail: response.data.CustomerEmail,
-          customerPhone: response.data.customerPhone,
-        });
-        setError(null);
-      } else {
-        setError("Please enter a valid search query.");
-      }
-    } catch (err) {
-      setError("Error fetching customer data.");
-    }
-  };
-  useEffect(() => {
-    console.log("addressData updated:", addressData);
-  }, [addressData]);
-
   const [stateQuery, setStateQuery] = useState(""); // Define state for the query input
 
   useEffect(() => {
     const fetchLocationData = async (CountryID, StateID, CityID) => {
+      setIsLoading(true);
       try {
         // Fetch Country by CountryID
         if (CountryID && countries.length > 0) {
@@ -988,17 +941,14 @@ function AddOrders() {
         }
       } catch (error) {
         console.error("Error fetching location data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     if (isEditMode) {
       const order = orderIdDetails?.order || {};
-      // const customer = order.Customer || {};
-      // const addresses = customer.Address || [];
 
-      // // Default to the primary address (first address in the array)
-      // const primaryAddress = addresses[0] || {};
-      // Set basic order details along with the primary address
       setOrderDetails((prevDetails) => ({
         ...prevDetails,
         OrderID: order.OrderID || "",
@@ -1110,7 +1060,7 @@ function AddOrders() {
 
   useEffect(() => {
     // Compare and update statusUpdatedData if different
-    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId)
+    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId);
     setStatusUpdatedData(orderDetails.OrderStatus);
     if (
       updatedStatusOrderDetails.OrderStatus !== orderDetails.OrderStatus ||
@@ -1123,6 +1073,7 @@ function AddOrders() {
 
   useEffect(() => {
     const fetchCountries = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           // 'https://imlystudios-backend-mqg4.onrender.com/api/cities/getCountries'
@@ -1139,6 +1090,8 @@ function AddOrders() {
         setCountryMap(countryMapData);
       } catch (error) {
         console.error("Error fetching countries:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -1149,6 +1102,7 @@ function AddOrders() {
     if (!countryId) return;
 
     try {
+      setIsLoading(true);
       const response = await axios.get(
         // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getStatesByCountry?$filter=CountryID eq ${countryId}`
         `${STATES_API}/${countryId}`
@@ -1166,6 +1120,8 @@ function AddOrders() {
       }
     } catch (error) {
       console.error("Error fetching states:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1173,6 +1129,7 @@ function AddOrders() {
     if (!stateId) return;
 
     try {
+      setIsLoading(true);
       const response = await axios.get(
         // `https://imlystudios-backend-mqg4.onrender.com/api/cities/getCitiesByState?$filter=StateID eq ${stateId}`);
         `${CITIES_API}/${stateId}`
@@ -1190,6 +1147,8 @@ function AddOrders() {
       }
     } catch (error) {
       console.error("Error fetching cities:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1235,13 +1194,12 @@ function AddOrders() {
     });
   };
 
-
-
   const [selectedStore, setSelectedStore] = useState("");
   const [storeNames, setStoreNames] = useState([]);
 
   useEffect(() => {
     const fetchStores = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(GETALLSTORES_API);
 
@@ -1251,17 +1209,19 @@ function AddOrders() {
         setStoreOptions(Array.isArray(storesData) ? storesData : []);
       } catch (error) {
         console.error("Error fetching stores:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchStores();
   }, []);
-  console.log(storeOptions)
+  console.log(storeOptions);
 
   // Address Table Pagination States
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2); // Default rows per page for addresses
-  const totalAddresses = selectedCustomer?.Addresses?.length || 0; // Total number of addresses
+  const totalAddresses = addressData?.length || 0; // Total number of addresses
 
   // Order Table Pagination States
   const [orderPage, setOrderPage] = useState(0);
@@ -1296,6 +1256,7 @@ function AddOrders() {
   // Function to fetch users from API
   const getAllUsers = async (pageNum, pageSize, search = "") => {
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
@@ -1324,14 +1285,16 @@ function AddOrders() {
     } catch (error) {
       console.error("Error fetching users:", error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleUserChange = (e) => {
     const value = e.target.value;
     setSearchUserValue(value);
-    setOrderDetails(prevDetails => ({
+    setOrderDetails((prevDetails) => ({
       ...prevDetails,
-      DesginerName: value  // Update DesginerName as user types
+      DesginerName: value, // Update DesginerName as user types
     }));
     // Call the API to get users only if the input has more than 0 characters
     if (value.trim().length > 0) {
@@ -1475,33 +1438,33 @@ function AddOrders() {
                                   {orderDetails.OrderNumber}
                                 </span>
                               </div>
-                             
+
                               <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
                                 <span className="w-1/3 mt-2">
                                   Order Status:
                                 </span>
 
-                                  <span className="w-1/3">
-                                    <StatusBadge status={statusUpdatedData} />
-                                  </span>
-                                  {orderDetails.StatusID === 4 && orderDetails.subStatusId !== 0 && (
+                                <span className="w-1/3">
+                                  <StatusBadge status={statusUpdatedData} />
+                                </span>
+                                {orderDetails.StatusID === 4 &&
+                                  orderDetails.subStatusId !== 0 && (
                                     <div className="w-1/3 ml-2">
                                       <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
                                         {`R${updatedsubStatusId}`}
                                       </div>
                                     </div>
                                   )}
-
-                                </div>
-                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+                              </div>
+                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
   <span className="w-1/3 mt-2">Order Status:</span>
 
   <span className="w-1/3">
     <StatusBadge status={statusUpdatedData} />
   </span> */}
 
-                                {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
-                                {/* {(statusUpdatedData.StatusID === 4 || 
+                              {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
+                              {/* {(statusUpdatedData.StatusID === 4 || 
     statusUpdatedData.OrderStatus?.includes("Revised Design")) && (
     <span className="w-1/3 mt-2 ml-2">
      
@@ -1510,7 +1473,7 @@ function AddOrders() {
       </span>
     </span>
   )} */}
-                                {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
+                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
                                   <span className="w-1/3 mt-2">Order Status:</span>
 
                                   <span className="w-1/3">
@@ -1522,36 +1485,32 @@ function AddOrders() {
                                   
                                 </div> */}
 
-
-
-                                <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                  <span className="w-1/3  mt-2">
-                                    Store Name:
-                                  </span>
-                                  <span className="w-1/3  mt-2">
-                                    {orderDetails.StoreName}
-                                  </span>
-                                </div>
+                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                <span className="w-1/3  mt-2">Store Name:</span>
+                                <span className="w-1/3  mt-2">
+                                  {orderDetails.StoreName}
+                                </span>
                               </div>
-                            </>
-                          )}
-                        </div>
-                        {/* Render search input only if isEditMode is false */}
-                        {!isEditMode && (
-                          <>
-                            <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
-                              <input
-                                id="searchName"
-                                type="text"
-                                placeholder="Search by Name..."
-                                value={searchValue}
-                                onChange={handleSearchInput}
-                                onFocus={() => setIsFocused(true)}
-                                className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
-                              />
-                              <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
-                                <IoIosSearch aria-label="Search Icon" />
-                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      {/* Render search input only if isEditMode is false */}
+                      {!isEditMode && (
+                        <>
+                          <div className="w-full flex justify-between sm:pt-1 space-y-1 p-1 relative">
+                            <input
+                              id="searchName"
+                              type="text"
+                              placeholder="Search by Name..."
+                              value={searchValue}
+                              onChange={handleSearchInput}
+                              onFocus={() => setIsFocused(true)}
+                              className="mt-0 h-8 pr-10 w-4/5 border border-gray-300 rounded-md text-sm md:text-base pl-2"
+                            />
+                            <div className="absolute right-[54%] top-3 flex items-center pr-3 pointer-events-none">
+                              <IoIosSearch aria-label="Search Icon" />
+                            </div>
 
                             {/* Only show the dropdown when searchValue is not empty and input is focused */}
                             <div
@@ -1784,7 +1743,7 @@ function AddOrders() {
                                       width: "100%",
                                       margin: "0 auto",
                                       mt: 2,
-                                      maxHeight: 220,  // Approximate height for 3 rows
+                                      maxHeight: 220, // Approximate height for 3 rows
                                       overflowY: "auto",
                                     }}
                                   >
@@ -1848,6 +1807,7 @@ function AddOrders() {
                                         </TableRow>
                                       </TableHead>
                                       <TableBody>
+                                        {console.log(addressData)}
                                         {addressData.length > 0 ? (
                                           addressData
                                             .slice(
@@ -2036,26 +1996,25 @@ function AddOrders() {
                             )}
                           </div>
 
-                            {/* Next Button */}
-                            <div className="flex justify-end mt-6">
-                              <button
-                                className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
-                                // onClick={handleAutoFill}
-                                onClick={() => {
-                                  handleAutoFill(); // Call your autofill logic
-                                  handleClose(); // Close the dialog
-                                }}
-                              >
-                                Close
-                              </button>
-                            </div>
+                          {/* Next Button */}
+                          <div className="flex justify-end mt-6">
+                            <button
+                              className="py-3 px-8 bg-gray-600 text-white rounded-lg hover:bg-gray-600 transition-all shadow-lg transform hover:scale-105"
+                              // onClick={handleAutoFill}
+                              onClick={() => {
+                                handleAutoFill(); // Call your autofill logic
+                                handleClose(); // Close the dialog
+                              }}
+                            >
+                              Close
+                            </button>
                           </div>
                         </div>
-                      )}
-                    </div>
-                    <div className="flex gap-10 border border-gray-300 rounded-md">
-                      <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
-
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-10 border border-gray-300 rounded-md">
+                    <div className=" flex-1 pt-2 sm:pt-3 mt-2 w-full space-y-2  p-4">
                       <div className="mt-0 p-0 w-full max-w-full ml-0">
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                           Project Type
