@@ -3,7 +3,7 @@ import LoadingAnimation from "../Loading/LoadingAnimation";
 import { IoIosSearch } from "react-icons/io";
 import { Combobox } from "@headlessui/react";
 import { DataContext } from "../../Context/DataContext";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 const Tasks = () => {
   const { storesData } = useContext(DataContext);
@@ -74,6 +74,9 @@ const Tasks = () => {
       setError("Failed to fetch tasks"); // Set error message
       setLoading(false);
     }
+  };
+  const searchItems = (value) => {
+    setSearchName(value);
   };
 
   useEffect(() => {
