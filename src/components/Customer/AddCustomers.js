@@ -22,19 +22,13 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+
 import {
   CREATEORUPDATE_CUSTOMERS_API,
   CREATEORUPDATE_CUSTOMERS_ADDRESS_API,
   DELETE_CUSTOMERS_ADDRESS_API,
   ORDERBYCUSTOMERID_API,
-  COUNTRIES_API,
-  STATES_API,
-  CITIES_API,
-  GETALLSTORES_API,
-  GETALLCUSTOMERSBYID_API,
-  CUSTOMERID_API,
+
   ADDRESS_API,
 } from "../../Constants/apiRoutes";
 import { MdOutlineCancel } from "react-icons/md";
