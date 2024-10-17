@@ -83,6 +83,7 @@ const Paymentform = () => {
 
   const fetchData = useCallback(async (value) => {
     try {
+      setLoading(true);
       console.log("Fetching data in normal mode...");
       const response = await axios.get(GET_ALL_ORDERS, {
         params: {
@@ -97,14 +98,16 @@ const Paymentform = () => {
       setResults(customers);
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching (success or error)
     }
   }, []);
 
   const savePayment = () => {
     // Validation messages
     const validatePaymentData = () => {
-      if (!selectedCustomer) return"Please select a customer.";
-      if (!amount || amount<=0) return "Amount is required.";
+      if (!selectedCustomer) return "Please select a customer.";
+      if (!amount || amount <= 0) return "Amount is required.";
       if (!paymentMethod) return "Payment method is required.";
       if (!maskedCardNumber) return "Card Number is required.";
     };
@@ -138,6 +141,8 @@ const Paymentform = () => {
       PaymentMethod: paymentMethod || "",
       MaskedCardNumber: maskedCardNumber || null,
     };
+
+    setLoading(true);
 
     // Proceed with the fetch request if validation passes
     fetch(CREATEORUPDATE_PAYMENT_API, {
@@ -198,6 +203,9 @@ const Paymentform = () => {
           draggable: true,
           progress: undefined,
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 

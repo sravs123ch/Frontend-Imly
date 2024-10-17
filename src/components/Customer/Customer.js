@@ -84,7 +84,14 @@ function Customers() {
     endDate: "",
   });
 
-  const getAllCustomers = async (pageNum, pageSize, searchName, storeId) => {
+  const getAllCustomers = async (
+    pageNum,
+    pageSize,
+    searchName,
+    storeId,
+    startDate,
+    endDate
+  ) => {
     console.log("Final API URL:", GETALLCUSTOMERS_API);
 
     try {
@@ -94,7 +101,9 @@ function Customers() {
           pageSize: pageSize,
           limit: pageSize,
           SearchText: searchName,
-          StoreID: storeId, // Add StoreID parameter
+          StoreID: storeId,
+          StartDate: startDate,
+          EndDate: endDate,
         },
       });
 
@@ -116,7 +125,9 @@ function Customers() {
         page,
         rowsPerPage,
         searchName,
-        selectedStore?.StoreID // Pass the selected store ID
+        selectedStore?.StoreID,
+        value.startDate,
+        value.endDate
       );
       setCustomers(customers);
       setPaginatedPeople(customers);
@@ -135,7 +146,7 @@ function Customers() {
   };
   useEffect(() => {
     fetchCustomers(); // Fetch customers on component mount or whenever page/rowsPerPage changes
-  }, [page, rowsPerPage, searchName, selectedStore]);
+  }, [page, rowsPerPage, searchName, selectedStore, value]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

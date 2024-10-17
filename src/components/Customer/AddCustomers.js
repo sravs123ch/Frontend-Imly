@@ -28,7 +28,6 @@ import {
   CREATEORUPDATE_CUSTOMERS_ADDRESS_API,
   DELETE_CUSTOMERS_ADDRESS_API,
   ORDERBYCUSTOMERID_API,
-
   ADDRESS_API,
 } from "../../Constants/apiRoutes";
 import { MdOutlineCancel } from "react-icons/md";
@@ -397,6 +396,10 @@ function AddCustomers() {
     } finally {
       setIsLoading(false); // Hide loading animation
     }
+  };
+
+  const handleFinish = () => {
+    navigate("/Customer");
   };
 
   const handleAddressFormSubmit = async (customerId) => {
@@ -844,22 +847,7 @@ function AddCustomers() {
           </Stepper>
 
           {activeStep === steps.length ? (
-            <React.Fragment>
-              <Typography className="text-center text-xl mb-4">
-                All steps completed - you're finished
-              </Typography>
-              <Box
-                sx={{ display: "flex", flexDirection: "row", pt: 2 }}
-                className="justify-center"
-              >
-                <Button
-                  onClick={handleReset}
-                  className="bg-blue-500 text-white hover:bg-blue-700 px-4 py-2 rounded"
-                >
-                  Reset
-                </Button>
-              </Box>
-            </React.Fragment>
+            <React.Fragment></React.Fragment>
           ) : (
             <React.Fragment>
               <Box
@@ -1714,11 +1702,13 @@ function AddCustomers() {
                 </Button>
 
                 <Button
-                  onClick={() => handleNext()}
-                  className="bg-blue-500 text-white hover:bg-blue-700 px-4 py-2 rounded"
-                >
-                  Next
-                </Button>
+                onClick={
+                  activeStep === steps.length - 1 ? handleFinish : handleNext
+                }
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                {activeStep === steps.length - 1 ? "Finish" : "Next"}
+              </Button>
               </Box>
             </React.Fragment>
           )}
