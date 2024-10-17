@@ -72,10 +72,11 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const [pdfPreview, setPdfPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [orders, setOrders] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [totalRecords, setTotalRecords] = useState("");
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -258,21 +259,14 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     formData.append("UserID", userId);
     formData.append("UserRoleID", RoleID);
     formData.append("CreatedBy", "sandy");
-    formData.append("OrderStatus", selectedStatus || "N/A"); // selectedStatus holds StatusID
-
-    // If you're passing the full status object and need the status text:
+    formData.append("OrderStatus", selectedStatus || "N/A");
+  
     const selectedOrderStatus = orderStatusList.find(
       (status) => status.StatusID === selectedStatus
     );
-
-    // formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
-
-    // Assuming `selectedStatus` is the StatusID selected from the combobox
-    formData.append("StatusID", selectedStatus || 1); // selectedStatus holds StatusID
-
-    // Append the `OrderStatus` text to formData, fallback to "N/A" if not found
+    formData.append("StatusID", selectedStatus || 1);
     formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
-    // Append the binary data of each file as UploadDocument
+  
     if (images && images.length > 0) {
       images.forEach((fileData, index) => {
         const { data, name, type } = fileData;
@@ -284,69 +278,28 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     try {
       // API request to create or update order history
       const response = await fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
-        method: "POST", // Use PUT for updates
+        method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+  
+      const data = await response.json(); // Parse the JSON response
+  
+      if (data.StatusCode === "FAILURE" || data.error) {
+        // Show the error message from the API response's `error` field
+        toast.error(data.error || "Error occurred while processing the request.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
       }
-
-      const data = await response.json();
-
-      // Conditional success messages
-      if (data.StatusCode === "SUCCESS") {
-        toast.success(
-          editMode
-            ? "Order status updated successfully!"
-            : "Order history created successfully!",
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }
-        );
-        const updatedCustomer = await fetchOrderDetails(OrderID);
-        // Fetch the order details using the generated ID
-
-        fetch(
-          `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data?.order) {
-              setOrderDetails(data.order); // Update order details from fetched data
-              // Update the context with the new order details
-              setUpdatedStatusOrderDetails(data.order);
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching order:", error);
-            toast.error("Failed to fetch the order details!");
-          });
-
-        closeModalAndMoveToNextStep();
-      } else {
-        toast.error(
-          data.message || "Error occurred while processing the request.",
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }
-        );
-        closeModalAfterDelay();
-      }
-    } catch (error) {
-      toast.error("" + error.message, {
+  
+      // Show success message from the API response
+      toast.success(data.message || "Order history created successfully!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -355,7 +308,54 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         draggable: true,
         progress: undefined,
       });
-      closeModalAfterDelay();
+  
+      const updatedCustomer = await fetchOrderDetails(OrderID);
+  
+      fetch(
+        `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.order) {
+            setOrderDetails(data.order);
+            setUpdatedStatusOrderDetails(data.order);
+          }
+        })
+        .catch((error) => {
+          toast.error("Failed to fetch the order details!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        });
+  
+      closeModalAndMoveToNextStep();
+      setSelectedRole("");
+      setSelectedStatus("");
+      setSearchUserValue("");
+      setImagePreviews("");
+      setImages("");
+      setFormOrderDetails({
+        ...formOrderDetails,       // Preserve other fields
+        DeliveryDate: "",          // Clear Delivery Date
+        Comments: "", 
+        ExpectedDays:"",             // Clear Comments
+      });
+    } catch (error) {
+      // Show the actual error message from the try-catch block
+      toast.error(error.message || "An unexpected error occurred.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setIsLoading(false); // Hide loader when done
     }
@@ -520,13 +520,13 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   };
 
   // Clean up object URLs to avoid memory leaks
-  useEffect(() => {
-    return () => {
-      // Clean up image previews
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
-      pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
-    };
-  }, [imagePreviews, pdfPreviews]);
+  // useEffect(() => {
+  //   return () => {
+  //     // Clean up image previews
+  //     imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
+  //     pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
+  //   };
+  // }, [imagePreviews, pdfPreviews]);
 
   const handleImageRemove = (index) => {
     const newImages = images.filter((_, i) => i !== index);
@@ -614,7 +614,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       const result = await response.json();
 
       const statuses = Array.isArray(result) ? result : [result];
-
+      const totalRecords = statuses.length;
+      setTotalRecords(totalRecords)
       // Map the result to statusDetails
       const mappedStatusDetails = statuses.map((status) => ({
         StatusID: status.StatusID || "N/A",
@@ -715,15 +716,17 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         StatusID: statusId || "",
         AssignTo: statusData.AssignTo || "",
         AssignTo: desginerID || "",
-        RoleID: statusData.RoleName || "", // Corrected key if needed
+        RoleID: statusData.UserRoleID|| "", // Corrected key if needed
         RoleName: statusData.RoleName || "",
       });
       // Set the search user value for the input field
       // setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
-      setSelectedRole(statusData.RoleName || "");
+      setSelectedRole(statusData.UserRoleID|| "");
+     
       // Set the selected role for the combobox
-      setSelectedRole(statusData.RoleName || ""); // Call setSelectedRole only once
+  // Call setSelectedRole only once
+
 
       // Get the index of the current status in the list
       const selectedStepIndex = filteredStatusList.findIndex(
@@ -740,7 +743,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       for (let i = selectedStepIndex + 1; i < filteredStatusList.length; i++) {
         newCompletedSteps[i] = false;
       }
-      setSelectedRole(statusData.RoleName || "");
       // Update completed steps and active step
       setCompletedSteps(newCompletedSteps);
       setActiveStep(selectedStepIndex); // Set the active step to the current one
@@ -755,73 +757,32 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       );
     }
   };
-  const resetFormOrderDetails = () => {
+  const handleCancel2 = () => {
+    setSelectedRole("");
+    setSelectedStatus("");
+    setSearchUserValue("");
+    setImagePreviews("");
+    setImages("");
     setFormOrderDetails({
-      OrderID: "",
-      OrderHistoryID: "",
-      OrderStatus: "N/A",
-      DeliveryDate: "",
-      Comments: "",
-      StartDate: "",
-      DownloadDocuments: [],
-      viewdocuments: [],
-      StatusID: "",
-      AssignTo: "",
-      RoleID: "",
-      RoleName: "",
+      ...formOrderDetails,       // Preserve other fields
+      DeliveryDate: "",          // Clear Delivery Date
+      Comments: "", 
+      ExpectedDays:"",             // Clear Comments
     });
   };
 
-  const handleCancel2 = () => {
-    resetFormOrderDetails();
-  };
 
-  useEffect(() => {}, [formOrderDetails]);
+  useEffect(() => {
+    console.log("FormOrderDetails updated:", formOrderDetails);
+  }, [formOrderDetails]);
 
   const selectedStatusText =
     orderStatusList.find((status) => status.StatusID === selectedStatus)
       ?.OrderStatus || "";
 
-  useEffect(() => {}, [selectedStatus]);
-
-  // const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
-  // const [completedSteps, setCompletedSteps] = useState({});
-
-  // const handleCompleteStep = (stepIndex) => {
-  //   const newCompletedSteps = { ...completedSteps };
-  //   for (let i = 0; i <= stepIndex; i++) {
-  //     newCompletedSteps[i] = true; // Mark all steps before and including the selected one as completed
-  //   }
-  //   setCompletedSteps(newCompletedSteps);
-  //   setActiveStep(stepIndex); // Set the current step as active
-  // };
-
-  // const handleStepClick = (index) => {
-  //   handleCompleteStep(index); // Complete the step and all before it
-  //   if (index < visibleSteps) {
-  //     setVisibleSteps((prevSteps) =>
-  //       Math.min(prevSteps + 1, filteredStatusList.length)
-  //     );
-  //   }
-  // };
-
-  // const handleScroll = (e) => {
-  //   const bottom =
-  //     Math.ceil(e.target.scrollHeight - e.target.scrollTop) <=
-  //     e.target.clientHeight;
-  //   if (bottom && visibleSteps < filteredStatusList.length) {
-  //     setVisibleSteps((prevSteps) =>
-  //       Math.min(prevSteps + 5, filteredStatusList.length)
-  //     );
-  //   }
-  // };
-
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  //   setCompletedSteps({});
-  //   setVisibleSteps(4); // Reset visible steps to initial value
-  // };
-
+  useEffect(() => {
+    console.log("Selected Status Updated:", selectedStatusText);
+  }, [selectedStatus]);
   const [visibleSteps, setVisibleSteps] = useState(5); // Initially show 5 steps
   const [completedSteps, setCompletedSteps] = useState({});
   // const [activeStep, setActiveStep] = useState(null);
@@ -1071,11 +1032,10 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 <Combobox value={selectedStatus} onChange={handleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${
-                        errors.OrderStatus
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
+                      className={`p-1 w-full border rounded-md ${errors.OrderStatus
+                        ? "border-red-500"
+                        : "border-gray-300"
+                        }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(statusID) => {
                         const selected = filteredStatusList.find(
@@ -1095,20 +1055,15 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       {filteredStatusList.length > 0 ? (
                         // Filter the statuses to only show those after the active step
                         filteredStatusList
-                          .filter((_, index) =>
-                            index === 3
-                              ? index >= activeStep
-                              : index > activeStep
-                          ) // Show statuses after the active one
+                          .filter((_, index) => index === 3 ? index >= activeStep : index > activeStep) // Show statuses after the active one
                           .map((status) => (
                             <Combobox.Option
                               key={status.StatusID}
                               value={status.StatusID}
                               className={({ active }) =>
-                                `cursor-pointer select-none relative p-2 ${
-                                  active
-                                    ? "bg-blue-500 text-white"
-                                    : "text-gray-900"
+                                `cursor-pointer select-none relative p-2 ${active
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-900"
                                 }`
                               }
                             >
@@ -1370,10 +1325,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </div>
             </div>
 
-            <div
-              onScroll={handleScroll}
-              className="overflow-y-auto max-h-[30rem]"
-            >
+            <div onScroll={handleScroll} className="overflow-y-auto max-h-[30rem] w-[20rem]">
               <nav aria-label="Progress">
                 <ol role="list">
                   {filteredStatusList
@@ -1381,32 +1333,22 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                     .map((status, index) => (
                       <li
                         key={status.StatusID}
-                        className={`relative pb-12 cursor-pointer ${
-                          completedSteps[index] ? "completed" : ""
-                        }`}
+                        className={`relative pb-12 cursor-pointer ${completedSteps[index] ? "completed" : ""
+                          }`}
                         onClick={() => handleStepClick(index)}
                       >
                         {/* Step rendering logic with lines */}
                         <div
-                          className={`step-indicator flex items-center ${
-                            completedSteps[index]
-                              ? "text-gray-800"
-                              : "text-gray-800"
-                          } ${activeStep === index ? "text-orange-500" : ""}`}
+                          className={`step-indicator flex items-center ${completedSteps[index]
+                            ? "text-gray-800"
+                            : "text-gray-800"
+                            } ${activeStep === index ? "text-orange-500" : ""}`}
                         >
                           {/* Step Circle */}
                           <span
                             className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
-                      ${
-                        completedSteps[index]
-                          ? "bg-green-400 text-white"
-                          : "bg-gray-300"
-                      }
-                      ${
-                        activeStep === index
-                          ? "bg-orange-400 text-white"
-                          : "bg-gray-300"
-                      }`}
+                      ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
+                      ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
                           >
                             {activeStep === index ? (
                               <GrInProgress />
@@ -1424,9 +1366,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         {/* Line between steps */}
                         {index < filteredStatusList.length - 1 && (
                           <div
-                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${
-                              completedSteps[index] ? "bg-green-400" : ""
-                            }`}
+                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${completedSteps[index] ? "bg-green-400" : ""
+                              }`}
                           />
                         )}
                       </li>
@@ -1550,14 +1491,13 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         <StatusBadge status={status.OrderStatus} />
 
                         {/* Conditionally render the status ID only if OrderStatus is 'Revised Design' and SubStatusId is not 0 */}
-                        {status.OrderStatus === "Revised Design" &&
-                          status.SubStatusId !== 0 && (
-                            <div className="w-1/3 ml-2">
-                              <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
-                                {`R${status.SubStatusId}`}
-                              </div>
+                        {status.OrderStatus === "Revised Design" && status.SubStatusId !== 0 && (
+                          <div className="w-1/3 ml-2">
+                            <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                              {`R${status.SubStatusId}`}
                             </div>
-                          )}
+                          </div>
+                        )}
                       </div>
                     </StyledTableCell>
 
@@ -1570,36 +1510,36 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         Start Date:{" "}
                         {status.StartDate
                           ? (() => {
-                              const date = new Date(status.StartDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.StartDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                         <br />
                         {/* Delivery Date */}
                         End Date:{" "}
                         {status.DeliveryDate
                           ? (() => {
-                              const date = new Date(status.DeliveryDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.DeliveryDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                       </p>
                     </StyledTableCell>
@@ -1635,7 +1575,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       className="border-r border-gray-300"
                     >
                       {Array.isArray(status.viewdocuments) &&
-                      status.viewdocuments.length > 0 ? (
+                        status.viewdocuments.length > 0 ? (
                         status.viewdocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1659,7 +1599,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       )}
 
                       {Array.isArray(status.DownloadDocuments) &&
-                      status.DownloadDocuments.length > 0 ? (
+                        status.DownloadDocuments.length > 0 ? (
                         status.DownloadDocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1732,7 +1672,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={orders.length}
+          count={totalRecords}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

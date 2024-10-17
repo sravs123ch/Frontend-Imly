@@ -60,7 +60,6 @@ export const FETCH_PERMISSION_URL = `${BASE_URL}/permissions/getAllPermissions`;
 
 export const FETCH_PERMISSION_URL_BY_ROLEID = `${BASE_URL}/permissions/getAllPermissionsByRoleId`;
 
-
 export const CREATE_OR_UPDATE_ROLE_URL = `${BASE_URL}/permissions/createOrUpdateRolePermissions`;
 export const ORDER_STATUS_API = `${BASE_URL}/Orderstatus/getAllOrderStatus`;
 export const PAYMENT_REPORT_API = `${BASE_URL}/reports/getPaymentReport`;
@@ -69,3 +68,8 @@ export const GET_INVENTORY_FILE_API = (fileID) =>
   `${BASE_URL}/InventoryFile/getInventoryFileById/${fileID}`;
 export const GET_INVENTORY_FILE_UPL_API = `${BASE_URL}/InventoryFile/uploadInventoryFile`;
 export const GET_ORDER_REPORT = `${BASE_URL}/reports/getOrderReport`;
+
+export const GET_SALES_AND_PAYMENT_REPORT_BY_MONTH = `${BASE_URL}/Dashboard/getSalesAndPaymentReportByMonth
+`;
+export const GET_OVERALL_DATA_FOR_DASHBOARD = `${BASE_URL}/Dashboard/getOverAllDataForDashboard`;
+

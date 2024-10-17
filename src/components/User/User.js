@@ -74,12 +74,13 @@ function User() {
     { id: "4", name: "Production" },
     { id: "5", name: "Technical" },
   ];
-
-  const getAllUsers = async (pageNum, pageSize, search = "") => {
+  const handleStoreChange = (newStore) => {
+    setSelectedStore(newStore);
+    setPage(0); // Reset to first page when store changes
+  };
+  const getAllUsers = async (pageNum, pageSize, search = "", storeId = "") => {
     try {
-      // Retrieve the token from localStorage
       const token = localStorage.getItem("token");
-      console.log(token);
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -89,9 +90,10 @@ function User() {
           page: pageNum + 1,
           limit: pageSize,
           SearchText: search,
+          StoreID: storeId, // Add this parameter
         },
         headers: {
-          Authorization: `Bearer ${token}`, // Add the token to the request
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -108,29 +110,24 @@ function User() {
 
   useEffect(() => {
     fetchUsers();
-  }, [page, rowsPerPage, searchName]);
+  }, [page, rowsPerPage, searchName, selectedStore]);
 
   const fetchUsers = async () => {
-    setIsLoading(true); // Set isLoading to true before making the network call
+    setIsLoading(true);
     try {
       const { users, totalCount } = await getAllUsers(
         page,
         rowsPerPage,
-        searchName
+        searchName,
+        selectedStore?.StoreID || "" // Pass the selected store ID
       );
       setUsers(users);
       setPaginatedPeople(users);
-
-      // Only update filtered customers if no search is active
-      if (!isSearching) {
-        setFilteredUsers(users); // Set initial filtered customers to all fetched data
-      }
-
       setTotalUsers(totalCount);
     } catch (error) {
-      console.error("Failed to fetch customers", error);
+      console.error("Failed to fetch users", error);
     } finally {
-      setIsLoading(false); // Set isLoading to false in the finally block
+      setIsLoading(false);
     }
   };
 
@@ -314,7 +311,7 @@ function User() {
         <div className="flex flex-wrap items-center justify-center w-full mt-4 gap-4">
           <div className="flex-container">
             <div className="combobox-container">
-              <Combobox value={selectedStore} onChange={setSelectedStore}>
+              <Combobox value={selectedStore} onChange={handleStoreChange}>
                 <div className="combobox-wrapper">
                   <Combobox.Input
                     className="combobox-input"
@@ -443,7 +440,7 @@ function User() {
             {isLoading ? ( // Show loading animation while fetching
               <StyledTableRow></StyledTableRow>
             ) : (
-              displayUsers.map((person) => (
+              users.map((person) => (
                 <StyledTableRow key={person.UserID}>
                   <StyledTableCell>
                     <div className="flex flex-col md:flex-col lg:flex-row items-center lg:space-x-2 space-y-2 lg:space-y-0 w-full">

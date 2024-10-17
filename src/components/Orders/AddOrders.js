@@ -4,8 +4,6 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { IoIosCall, IoMdMail } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ADDRESS_API } from "../../Constants/apiRoutes";
@@ -18,11 +16,9 @@ import {
   GETALLSTORES_API,
   ORDERBYCUSTOMERID_API,
 } from "../../Constants/apiRoutes";
-import { MdArrowBackIosNew, MdOutlineArrowForwardIos } from "react-icons/md";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { RxCross1 } from "react-icons/rx";
 
 import { Combobox } from "@headlessui/react";
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
@@ -161,6 +157,8 @@ function AddOrders() {
   const [addressData, setAddressData] = useState([]);
   const { updatedStatusOrderDetails } = useUpdatedStatusOrderContext();
   const { orderId } = useParams(); // Get orderId from URL
+
+  // console.log(updatedStatusOrderDetails,"uSOD")
 
   const fetchAddressData = async (customerId) => {
     setIsLoading(true);
@@ -474,9 +472,9 @@ function AddOrders() {
     if (customerDetails) {
       setOrderDetails((prevDetails) => ({
         ...prevDetails,
+        TenantID: 1,
         CustomerID: customerDetails.customerId,
         AddressID: customerDetails.addressId,
-        TenantID: 1,
       }));
     }
   }, [customerDetails]);
@@ -523,7 +521,11 @@ function AddOrders() {
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOrderDetails({ ...orderDetails, [name]: value });
+    setOrderDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+      TenantID: prevDetails.TenantID || 1,
+    }));
   };
   const handledate = (e) => {
     const { name, value } = e.target;
@@ -761,13 +763,7 @@ function AddOrders() {
     }
     return addresses.split(",")[0]; // Return the first address from a comma-separated string
   };
-  const handleDateChanging = (e) => {
-    const { value } = e.target;
-    setOrderDetails((prevDetails) => ({
-      ...prevDetails,
-      DeliveryDate: value, // Manually update the DeliveryDate
-    }));
-  };
+
   const handleDateChang = (e) => {
     const { value } = e.target;
     setOrderDetails((prevDetails) => ({
@@ -1002,12 +998,8 @@ function AddOrders() {
     }
 
     // Update statusUpdatedData if necessary
-    if (
-      updatedStatusOrderDetails?.OrderStatus !== orderDetails.OrderStatus ||
-      updatedStatusOrderDetails?.OrderStatus !==
-        orderIdDetails?.order?.OrderStatus
-    ) {
-      setStatusUpdatedData(updatedStatusOrderDetails?.OrderStatus);
+    if (updatedStatusOrderDetails?.OrderStatus) {
+      setStatusUpdatedData(updatedStatusOrderDetails.OrderStatus);
     }
   }, [
     isEditMode,
@@ -1018,20 +1010,6 @@ function AddOrders() {
     states,
     cities,
   ]);
-  const handleCountryChange = (selectedCountry) => {
-    if (!selectedCountry) return;
-
-    const countryID =
-      countryMap[selectedCountry.CountryName] || selectedCountry.CountryID;
-
-    setSelectedCountry(selectedCountry);
-    setOrderDetails({
-      ...orderDetails,
-      CountryID: countryID,
-      CountryName: selectedCountry.CountryName,
-    });
-    // fetchStatesByCountry(countryID);
-  };
 
   const [selectedStore, setSelectedStore] = useState("");
   const [storeNames, setStoreNames] = useState([]);
@@ -1237,7 +1215,6 @@ function AddOrders() {
             {activeStep === 2 && (
               <Step3 onBack={handleBack} orderId={orderId} />
             )}
-            {console.log(orderId, "oid------------")}
             {activeStep === 1 && (
               <Step2
                 onBack={handleBack}
@@ -1278,7 +1255,13 @@ function AddOrders() {
                                 </span>
 
                                 <span className="w-1/3">
-                                  <StatusBadge status={statusUpdatedData} />
+                                  <StatusBadge
+                                    status={
+                                      statusUpdatedData ||
+                                      orderDetails.OrderStatus ||
+                                      "N/A"
+                                    }
+                                  />
                                 </span>
                                 {orderDetails.StatusID === 4 &&
                                   orderDetails.subStatusId !== 0 && (

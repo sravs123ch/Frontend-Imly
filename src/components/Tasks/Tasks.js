@@ -31,11 +31,11 @@ const Tasks = () => {
     { id: "5", name: "User 2" },
   ];
 
-  const fetchTasks = async (userId) => {
+  const fetchTasks = async (userId, searchTerm) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://imly-b2y.onrender.com/api/orderhistory/getusertasks?UserID=${userId}`
+        `https://imly-b2y.onrender.com/api/orderhistory/getusertasks?UserID=${userId}&searchText=${searchTerm}`
       );
       const data = await response.json();
 
@@ -71,37 +71,36 @@ const Tasks = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      setError("Failed to fetch tasks"); // Set error message
+      setError("Failed to fetch tasks");
       setLoading(false);
     }
   };
   const searchItems = (value) => {
     setSearchName(value);
+    fetchTasks(userID, value);
   };
-
   useEffect(() => {
-    fetchTasks(userID); // Fetch tasks based on the initial userID
-  }, [userID]); // Re-fetch when userID changes
-
-  const handleUserChange = (e) => {
-    setUserID(e.target.value); // Update userID state with selected user ID
-  };
+    fetchTasks(userID, searchName);
+  }, [userID, searchName]);
 
   if (error) return <p className="main-container">{error}</p>; // Apply error class
 
   return (
     <div className="main-container">
       {loading && <LoadingAnimation />}
-      <h1 className="text-3xl font-semibold mb-6">User Tasks</h1>
+      <h2 className="heading">User Tasks</h2>
       <hr className="border-t border-gray-300 mb-6" />
 
       <div className="flex flex-wrap justify-end gap-2 mt-2">
         {/* Dropdown for User Selection */}
-        <div className="search-container-c-u">
+        {/* <div className="search-container-c-u">
           <label className="mr-2">Select User:</label>
           <select
             value={userID}
-            onChange={handleUserChange}
+            onChange={(e) => {
+              setUserID(e.target.value);
+              searchItems(searchName);
+            }}
             className="border rounded p-2"
           >
             {userOptions.map((user) => (
@@ -110,7 +109,7 @@ const Tasks = () => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         {/* Container for centering search box */}
         <div className="search-container-c-u">

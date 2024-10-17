@@ -6,6 +6,7 @@ import { Combobox } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { GETALLSTORES_API } from "../../Constants/apiRoutes";
 import Datepicker from "react-tailwindcss-datepicker";
+import { GET_SALES_AND_PAYMENT_REPORT_BY_MONTH } from "../../Constants/apiRoutes";
 import axios from "axios";
 import {
   faChartLine,
@@ -65,7 +66,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getSalesAndPaymentReportByMonth",
+        GET_SALES_AND_PAYMENT_REPORT_BY_MONTH,
         { StoreId: selectedStore.StoreID } // Pass selected store ID
       );
       if (response.data.StatusCode === "SUCCESS") {
