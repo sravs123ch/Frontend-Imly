@@ -13,10 +13,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import StatusBadge from "./Statuses";
 import {
-  // COUNTRIES_API,
   GETALLUSERS_API,
-  // STATES_API,
-  // CITIES_API,
   GETALLCUSTOMERS_API,
   GETALLSTORES_API,
   ORDERBYCUSTOMERID_API,
@@ -192,17 +189,17 @@ function AddOrders() {
 
   const getCountryNameById = (id, countries) => {
     const country = countries.find((country) => country.CountryID === id);
-    return country ? country.CountryName : "N/A";
+    return country ? country.CountryName : "";
   };
 
   const getStateNameById = (id, states) => {
     const state = states.find((state) => state.StateID === id);
-    return state ? state.StateName : "N/A";
+    return state ? state.StateName : "";
   };
 
   const getCityNameById = (id, cities) => {
     const city = cities.find((city) => city.CityID === id);
-    return city ? city.CityName : "N/A";
+    return city ? city.CityName : "";
   };
 
   useEffect(() => {
@@ -976,20 +973,20 @@ function AddOrders() {
       }
 
       // Fetch states if the country is selected but states aren't available
-      if (order?.CountryID && !states.length) {
-        fetchStatesByCountry(order.CountryID).then((fetchedStates) => {
-          const state = fetchedStates?.find((s) => s.StateID === order.StateID);
-          setSelectedState(state || {});
-        });
-      }
+      // if (order?.CountryID && !states.length) {
+      //   fetchStatesByCountry(order.CountryID).then((fetchedStates) => {
+      //     const state = fetchedStates?.find((s) => s.StateID === order.StateID);
+      //     setSelectedState(state || {});
+      //   });
+      // }
 
       // Fetch cities if the state is selected but cities aren't available
-      if (order?.StateID && !cities.length) {
-        fetchCitiesByState(order.StateID).then((fetchedCities) => {
-          const city = fetchedCities?.find((c) => c.CityID === order.CityID);
-          setSelectedCity(city || {});
-        });
-      }
+      // if (order?.StateID && !cities.length) {
+      //   fetchCitiesByState(order.StateID).then((fetchedCities) => {
+      //     const city = fetchedCities?.find((c) => c.CityID === order.CityID);
+      //     setSelectedCity(city || {});
+      //   });
+      // }
     }
 
     // Handle customer details update if available
@@ -1033,7 +1030,7 @@ function AddOrders() {
       CountryID: countryID,
       CountryName: selectedCountry.CountryName,
     });
-    fetchStatesByCountry(countryID);
+    // fetchStatesByCountry(countryID);
   };
 
   const [selectedStore, setSelectedStore] = useState("");
@@ -1287,34 +1284,6 @@ function AddOrders() {
                                     </div>
                                   )}
                               </div>
-                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-  <span className="w-1/3 mt-2">Order Status:</span>
-
-  <span className="w-1/3">
-    <StatusBadge status={statusUpdatedData} />
-  </span> */}
-
-                              {/* Conditionally show substatus when StatusID is 4 or OrderStatus contains "Revised Design" */}
-                              {/* {(statusUpdatedData.StatusID === 4 || 
-    statusUpdatedData.OrderStatus?.includes("Revised Design")) && (
-    <span className="w-1/3 mt-2 ml-2">
-     
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-400 text-white">
-        Substatus: {statusUpdatedData.OrderStatus} 
-      </span>
-    </span>
-  )} */}
-                              {/* <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-                                  <span className="w-1/3 mt-2">Order Status:</span>
-
-                                  <span className="w-1/3">
-                                    <div className="w-6 h-6 bg-green-500 text-white flex items-center justify-center rounded-sm">
-                                    <StatusBadge status={statusUpdatedData} />
-                                    </div>
-                                  </span>
-
-                                  
-                                </div> */}
 
                               <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
                                 <span className="w-1/3  mt-2">Store Name:</span>
