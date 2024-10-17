@@ -26,7 +26,6 @@ export const UpdatedStatusOrderProvider = ({ children }) => {
 
   // Use useEffect to log the current state whenever it changes
   useEffect(() => {
-    console.log('Updated Order Details:', updatedStatusOrderDetails);
   }, [updatedStatusOrderDetails]);
 
   return (

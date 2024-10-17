@@ -53,15 +53,16 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { useUpdatedStatusOrderContext } from "../../Context/UpdatedOrder";
 // import { useFormData } from "../../Context/statusFormContext";
 
-const YourComponent = ({ onBack, onNext }) => {
+const YourComponent = ({ onBack, onNext, orderId }) => {
   // Define state for orders, images, pdfPreview, errors, etc.
 
-  const { orderIdDetails } = useContext(OrderContext);
+  // const { orderIdDetails } = useContext(OrderContext);
   const location = useLocation();
 
   // Get orderId from either location state or context
-  const { orderId } = location.state || {};
-  const OrderID = orderId || orderIdDetails?.order?.OrderID;
+  // const { orderId } = location.state || {};
+  const OrderID = orderId;
+  // const OrderID = orderId || orderIdDetails?.order?.OrderID;
 
   const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -596,8 +597,9 @@ const YourComponent = ({ onBack, onNext }) => {
   const [statusDetails, setStatusDetails] = useState([]);
 
   const fetchOrderDetails = async () => {
-    setLoading(true);
     try {
+      if (OrderID === "new") return;
+      setLoading(true);
       const response = await fetch(`${GET_ALL_HYSTORYID_API}${OrderID}`, {
         method: "GET",
         headers: {

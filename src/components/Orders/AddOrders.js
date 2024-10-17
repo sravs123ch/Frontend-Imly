@@ -106,7 +106,7 @@ function AddOrders() {
       setOrderDetails(finalOrderDetails);
     }
   };
-
+  const navigate = useNavigate();
   const handleStepClick = (index) => {
     setActiveStep(index); // Set the active step to the clicked step
     // Add your logic to change the page or navigate here
@@ -331,7 +331,6 @@ function AddOrders() {
       );
       return;
     }
-    console.log(selectedAddress.CityID);
 
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
@@ -682,6 +681,7 @@ function AddOrders() {
               setOrderDetails(data.order); // Update order details from fetched data
               setStatusID(data.order.StatusID);
               setOrderIdDetails({ order: data.order });
+              navigate(`/OrdersAdd/${generatedId}`);
             }
           })
           .catch((error) => {
@@ -743,7 +743,7 @@ function AddOrders() {
       UserID: "",
       AssainTo: "",
     });
-    setActiveStep(0); // Optional: Reset to the first step
+    setActiveStep(0); // Optional: Reset to the first step\
   };
 
   const [countryMap, setCountryMap] = useState({});
@@ -1237,8 +1237,13 @@ function AddOrders() {
             {activeStep === 2 && (
               <Step3 onBack={handleBack} orderId={orderId} />
             )}
+            {console.log(orderId, "oid------------")}
             {activeStep === 1 && (
-              <Step2 onBack={handleBack} onNext={handleNext} />
+              <Step2
+                onBack={handleBack}
+                onNext={handleNext}
+                orderId={orderId}
+              />
             )}
 
             <Box
@@ -1765,12 +1770,19 @@ function AddOrders() {
                                                 </StyledTableCell>
                                                 <StyledTableCell>
                                                   {new Date(
-                                                    order.CreatedAt
-                                                  ).toLocaleDateString()}
+                                                    order.OrderDate
+                                                  ).toLocaleDateString(
+                                                    "en-US",
+                                                    {
+                                                      year: "numeric",
+                                                      month: "short",
+                                                      day: "numeric",
+                                                    }
+                                                  )}
                                                 </StyledTableCell>{" "}
                                                 {/* Adjusted to use CreatedAt */}
                                                 <StyledTableCell>
-                                                  ${order.TotalAmount}
+                                                  &#8377;{order.TotalAmount}
                                                 </StyledTableCell>
                                                 <StyledTableCell
                                                   sx={{
@@ -1782,8 +1794,7 @@ function AddOrders() {
                                                   {order.OrderStatus}
                                                 </StyledTableCell>
                                                 <StyledTableCell>
-                                                  {order.Customer?.Store
-                                                    ?.StoreName || "N/A"}
+                                                  {order.StoreName}
                                                 </StyledTableCell>{" "}
                                                 {/* Access StoreName from Customer */}
                                               </StyledTableRow>

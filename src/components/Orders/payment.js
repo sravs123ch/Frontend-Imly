@@ -113,7 +113,7 @@ const Payment = ({ orderId }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("API Response:", data); // Log the response
+        // Log the response
 
         // Check if the response's StatusCode indicates success
         if (data.StatusCode === "SUCCESS") {
@@ -187,16 +187,17 @@ const Payment = ({ orderId }) => {
   };
   const handleCancel = () => {
     // Example: Reset form or navigate to a different page
-    console.log("Cancel clicked");
+
     // If you want to navigate away from the form, for example:
-    navigate("/nav"); // This assumes you're using `react-router-dom` for navigation
+    navigate("/orders"); // This assumes you're using `react-router-dom` for navigation
   };
 
   const [activeStep, setActiveStep] = useState(0);
   const [paymentDetails, setPaymentDetails] = useState([]);
   const fetchOrderDetails = async () => {
-    setLoading(true);
     try {
+      if (orderId === "new") return;
+      setLoading(true);
       const response = await fetch(`${GET_PAYMENTSBY_ORDERID_API}/${orderId}`, {
         method: "GET",
         headers: {
@@ -209,7 +210,7 @@ const Payment = ({ orderId }) => {
       }
 
       const result = await response.json();
-      console.log("API Response:", result); // Log the entire response
+      // Log the entire response
 
       const payments = result.data || [];
       const paymentDetails = payments.map((payment) => ({
@@ -220,8 +221,7 @@ const Payment = ({ orderId }) => {
         Amount: payment.Amount || "N/A",
         PaymentDate: payment.PaymentDate || "N/A",
       }));
-
-      console.log("Mapped Payment Details:", paymentDetails); // Log payment details
+      // Log payment details
       setPaymentDetails(paymentDetails);
     } catch (err) {
       setError(err.message);
@@ -235,12 +235,6 @@ const Payment = ({ orderId }) => {
   }, [orderId]);
 
   const handleEditPayment = (paymentId) => {
-    console.log("Attempting to edit PaymentID:", paymentId);
-    console.log(
-      "Available PaymentIDs:",
-      paymentDetails.map((payment) => payment.PaymentID)
-    );
-
     const paymentData = paymentDetails.find(
       (payment) => payment.PaymentID === paymentId
     );
