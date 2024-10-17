@@ -2396,7 +2396,7 @@ function AddOrders() {
                     className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     onClick={handleSubmit}
                   >
-                    {orderDetails.OrderID ? "Update" : "Add"}{" "}
+                    {orderDetails.OrderID ? "Update" : "Create Order"}{" "}
                     {/* Conditional button text */}
                   </button>
                   <button

@@ -24,10 +24,6 @@ const Dashboard = () => {
   const doughnutChartRef = useRef(null);
   const bigChartRef = useRef(null);
   // State to hold the API data
-
-  const [citiesData, setCitiesData] = useState([]);
-  const [statesData, setStatesData] = useState([]);
-  const [countriesData, setCountriesData] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
   const [salesAndPaymentData, setSalesAndPaymentData] = useState([]);
   const [overallData, setOverallData] = useState({});
@@ -42,7 +38,12 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getOverAllDataForDashboard"
+        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getOverAllDataForDashboard",
+        { 
+          StartDate: value.startDate, // Use start date from state
+          EndDate: value.endDate,      // Use end date from state
+          StoreId: selectedStore.StoreID // Pass selected store ID
+        }
       );
       if (response.data.StatusCode === "SUCCESS") {
         setOverallData(response.data);
@@ -50,14 +51,22 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching overall dashboard data:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching data
+      setLoading(false);
     }
   };
+  
+  useEffect(() => {
+    if (selectedStore) { 
+      fetchOverallData();
+      fetchSalesAndPaymentData();
+    }
+  }, [selectedStore, value]); 
   const fetchSalesAndPaymentData = async () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getSalesAndPaymentReportByMonth"
+        "https://imly-b2y-ttnc.onrender.com/api/Dashboard/getSalesAndPaymentReportByMonth",
+        { StoreId: selectedStore.StoreID } // Pass selected store ID
       );
       if (response.data.StatusCode === "SUCCESS") {
         setSalesAndPaymentData(response.data.OrdersAndPayments);
@@ -65,13 +74,20 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching sales and payment data:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching data
+      setLoading(false);
     }
   };
   useEffect(() => {
     fetchOverallData();
     fetchSalesAndPaymentData();
   }, []);
+  useEffect(() => {
+    if (selectedStore) { // Check if a store is selected
+      fetchOverallData();
+      fetchSalesAndPaymentData();
+    }
+  }, [selectedStore]); // Dependency on selectedStore
+
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -313,7 +329,7 @@ const Dashboard = () => {
         <div className="bg-green-500 text-white shadow rounded-lg p-4 relative">
           <div className="flex flex-col justify-between h-full">
             <div>
-              <h3 className="text-lg font-semibold">Users Registered</h3>
+              <h3 className="text-lg font-semibold">Customer</h3>
               <p className="text-2xl">{overallData.CustomerCount || 0}</p>
             </div>
             <FontAwesomeIcon
@@ -339,7 +355,7 @@ const Dashboard = () => {
         <div className="bg-yellow-500 text-white shadow rounded-lg p-4 relative">
           <div className="flex flex-col justify-between h-full">
             <div>
-              <h3 className="text-lg font-semibold">Products Added</h3>
+              <h3 className="text-lg font-semibold">Production</h3>
               <p className="text-2xl">
                 {overallData.ProductionOrderCount || 0}
               </p>
@@ -363,7 +379,7 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white shadow rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">OrderStatusCounts</h2>
+            <h2 className="text-xl font-semibold mb-4">Order Status</h2>
 
             <div className="w-72 h-72 mx-auto">
               <Doughnut data={doughnutData} ref={doughnutChartRef} />

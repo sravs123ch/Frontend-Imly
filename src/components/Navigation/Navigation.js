@@ -370,7 +370,7 @@ export default function Navigation() {
                       </span>
                       <ChevronDownIcon
                         aria-hidden="true"
-                        className="ml-2 h-4 w-4 text-white"
+                        className="ml-2 h-4 w-4 text-black"
                       />
                     </span>
                   </MenuButton>
