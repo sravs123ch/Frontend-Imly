@@ -1295,7 +1295,8 @@ function AddOrders() {
                                   />
                                 </span>
                                 {orderDetails.StatusID === 4 &&
-                                  orderDetails.subStatusId !== 0 && (
+                                  orderDetails.SubStatusId !== 0 &&
+                                  orderDetails.SubStatusId !== "N/A" && (
                                     <div className="w-1/3 ml-2">
                                       <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
                                         {`R${updatedsubStatusId}`}
