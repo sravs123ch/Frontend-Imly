@@ -42,7 +42,7 @@ import {
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineCancel } from "react-icons/md";
 import Typography from "@mui/material/Typography";
-// import LoadingAnimation from "../Loading/LoadingAnimation";
+
 import { OrderContext } from "../../Context/orderContext";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -73,7 +73,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const [errors, setErrors] = useState({});
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [totalRecords, setTotalRecords] = useState("");
@@ -336,7 +336,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       closeModalAndMoveToNextStep();
       setSelectedRole("");
       setSelectedStatus("");
-      setSearchUserValue("");
       setImagePreviews("");
       setImages("");
       setFormOrderDetails({
@@ -518,8 +517,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       reader.readAsArrayBuffer(file); // Read the file as an ArrayBuffer
     });
   };
-
-  // Clean up object URLs to avoid memory leaks
   // useEffect(() => {
   //   return () => {
   //     // Clean up image previews
@@ -527,6 +524,23 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   //     pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
   //   };
   // }, [imagePreviews, pdfPreviews]);
+  useEffect(() => {
+    return () => {
+      // Ensure imagePreviews is an array before calling forEach
+      if (Array.isArray(imagePreviews)) {
+        imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
+      } else {
+        console.error("imagePreviews is not an array:", imagePreviews);
+      }
+
+      // Ensure pdfPreviews is an array before calling forEach
+      if (Array.isArray(pdfPreviews)) {
+        pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
+      } else {
+        console.error("pdfPreviews is not an array:", pdfPreviews);
+      }
+    };
+  }, [imagePreviews, pdfPreviews]);
 
   const handleImageRemove = (index) => {
     const newImages = images.filter((_, i) => i !== index);
@@ -720,7 +734,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         RoleName: statusData.RoleName || "",
       });
       // Set the search user value for the input field
-      // setSearchUserValue(statusData.AssignTo || "");
+      setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
       setSelectedRole(statusData.UserRoleID || "");
 
@@ -759,7 +773,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const handleCancel2 = () => {
     setSelectedRole("");
     setSelectedStatus("");
-    setSearchUserValue("");
     setImagePreviews("");
     setImages("");
     setFormOrderDetails({
@@ -1095,7 +1108,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 </label>
                 <div className="relative w-full sm:w-1/4">
                   <input
-                    type="search"
+                    type="text"
                     name="AssignedTo"
                     value={searchUserValue}
                     onChange={handleUserChange}
@@ -1202,7 +1215,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 </Combobox>
               </div>
 
-              <div className="flex flex-col hidden sm:flex-row justify-center items-center gap-4 w-full">
+              <div className=" flex-col hidden sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
                   StartDate
                 </label>
@@ -1330,7 +1343,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </div>
             </div>
 
-            <div onScroll={handleScroll} className="overflow-y-auto w-[20rem]">
+            <div onScroll={handleScroll} className="overflow-y-auto pl-4 pr-14">
               <nav aria-label="Progress">
                 <ol role="list">
                   {filteredStatusList.map((status, index) => (
@@ -1393,14 +1406,22 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
             <div className=" flex justify-end gap-4">
               <button
                 type="button"
+                onClick={handleCancel2}
+                className="inline-flex justify-center rounded-md border border-transparent text-blue-500 bg-white py-2 px-4 text-sm font-medium  hover:text-black shadow-sm hover:bg-blue-200"
+              >
+                Clear
+              </button>
+
+              <button
+                type="button"
                 onClick={saveOrderHistory}
                 className="button-base save-btn"
               >
-                {editMode ? "Update" : "Save"}{" "}
+                {editMode ? "Update" : "Save"}
               </button>
               <button
                 type="button"
-                onClick={handleCancel2}
+                onClick={handleCancel}
                 className="button-base cancel-btn"
               >
                 Cancel
@@ -1495,15 +1516,18 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       align="center"
                       className="border-r border-gray-300"
                     >
-                      <div className="flex items-center justify-center">
-                        {/* Status Badge */}
-                        <StatusBadge status={status.OrderStatus} />
+                      <div className="flex items-center justify-center space-x-2">
+                        {/* Render StatusBadge with a fixed width to maintain alignment */}
+                        <div className="flex items-center">
+                          <StatusBadge status={status.OrderStatus} />
+                        </div>
 
-                        {/* Conditionally render the status ID only if OrderStatus is 'Revised Design' and SubStatusId is not 0 */}
+                        {/* Conditionally render SubStatusId */}
                         {status.OrderStatus === "Revised Design" &&
-                          status.SubStatusId !== 0 && (
-                            <div className="w-1/3 ml-2">
-                              <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                          status.SubStatusId !== 0 &&
+                          status.SubStatusId !== "N/A" && (
+                            <div className="flex items-center justify-center">
+                              <div className="w-6 h-6 bg-green-500 text-white flex items-center justify-center rounded-sm">
                                 {`R${status.SubStatusId}`}
                               </div>
                             </div>
@@ -1669,7 +1693,15 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                   </TableRow>
                 ))
               ) : (
-                <TableRow></TableRow>
+                <TableRow>
+                  <StyledTableCell align="center" colSpan={7}>
+                    {isLoading
+                      ? "Loading..."
+                      : error
+                      ? error
+                      : "No Order Found"}
+                  </StyledTableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
