@@ -40,6 +40,7 @@ import UpiIcon from "../../assests/Images/Payments/UPI-Color.svg";
 import DebitCardIcon from "../../assests/Images/Payments/debit-card.svg";
 import PaypalIcon from "../../assests/Images/Payments/paypal.svg";
 import AmazonPayIcon from "../../assests/Images/Payments/amazon-pay.svg";
+import LoadingAnimation from "../Loading/LoadingAnimation";
 
 const Payment = ({ orderId }) => {
   const { generatedId, customerId, orderDate } = useContext(IdContext);
@@ -59,7 +60,7 @@ const Payment = ({ orderId }) => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [editMode, setEditMode] = useState(false); // Initialize editMode to false
 
   const savePayment = () => {
@@ -197,7 +198,7 @@ const Payment = ({ orderId }) => {
   const fetchOrderDetails = async () => {
     try {
       if (orderId === "new") return;
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(`${GET_PAYMENTSBY_ORDERID_API}/${orderId}`, {
         method: "GET",
         headers: {
@@ -226,7 +227,7 @@ const Payment = ({ orderId }) => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -317,6 +318,7 @@ const Payment = ({ orderId }) => {
         pt: 2,
       }}
     >
+      {isLoading && <LoadingAnimation />}
       <>
         <div className="flex justify-center flex-col sm:flex-row gap-2 sm:gap-0">
           <label className="w-full sm:w-1/4 text-xs font-medium text-gray-700">
@@ -525,6 +527,16 @@ const Payment = ({ orderId }) => {
                         fontWeight: "bold",
                       }}
                     >
+                      Payment Date
+                    </StyledTableCell>
+                    <StyledTableCell
+                      align="center"
+                      sx={{
+                        borderRight: "1px solid #e5e7eb",
+                        color: "white",
+                        fontWeight: "bold",
+                      }}
+                    >
                       Action
                     </StyledTableCell>
                   </TableRow>
@@ -561,6 +573,17 @@ const Payment = ({ orderId }) => {
                       {/* Amount */}
                       <StyledTableCell align="center" className="border-r">
                         {payment.Amount}
+                      </StyledTableCell>
+                      <StyledTableCell align="center" className="border-r">
+                        <span>
+                          {new Date(payment.PaymentDate)
+                            .toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                            .replace("17", "24")}
+                        </span>
                       </StyledTableCell>
 
                       {/* Edit Button */}

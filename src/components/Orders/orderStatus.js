@@ -42,7 +42,7 @@ import {
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineCancel } from "react-icons/md";
 import Typography from "@mui/material/Typography";
-
+// import LoadingAnimation from "../Loading/LoadingAnimation";
 import { OrderContext } from "../../Context/orderContext";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -80,7 +80,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const [pdfPreviews, setPdfPreviews] = useState([]);
   {
@@ -260,13 +259,13 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     formData.append("UserRoleID", RoleID);
     formData.append("CreatedBy", "sandy");
     formData.append("OrderStatus", selectedStatus || "N/A");
-  
+
     const selectedOrderStatus = orderStatusList.find(
       (status) => status.StatusID === selectedStatus
     );
     formData.append("StatusID", selectedStatus || 1);
     formData.append("OrderStatus", selectedOrderStatus?.OrderStatus || "N/A");
-  
+
     if (images && images.length > 0) {
       images.forEach((fileData, index) => {
         const { data, name, type } = fileData;
@@ -281,23 +280,26 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         method: "POST",
         body: formData,
       });
-  
+
       const data = await response.json(); // Parse the JSON response
-  
+
       if (data.StatusCode === "FAILURE" || data.error) {
         // Show the error message from the API response's `error` field
-        toast.error(data.error || "Error occurred while processing the request.", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.error(
+          data.error || "Error occurred while processing the request.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
         return;
       }
-  
+
       // Show success message from the API response
       toast.success(data.message || "Order history created successfully!", {
         position: "top-right",
@@ -308,12 +310,10 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         draggable: true,
         progress: undefined,
       });
-  
+
       const updatedCustomer = await fetchOrderDetails(OrderID);
-  
-      fetch(
-        `https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`
-      )
+
+      fetch(`https://imly-b2y.onrender.com/api/orders/getOrderById/${OrderID}`)
         .then((response) => response.json())
         .then((data) => {
           if (data?.order) {
@@ -332,7 +332,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
             progress: undefined,
           });
         });
-  
+
       closeModalAndMoveToNextStep();
       setSelectedRole("");
       setSelectedStatus("");
@@ -340,10 +340,10 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       setImagePreviews("");
       setImages("");
       setFormOrderDetails({
-        ...formOrderDetails,       // Preserve other fields
-        DeliveryDate: "",          // Clear Delivery Date
-        Comments: "", 
-        ExpectedDays:"",             // Clear Comments
+        ...formOrderDetails, // Preserve other fields
+        DeliveryDate: "", // Clear Delivery Date
+        Comments: "",
+        ExpectedDays: "", // Clear Comments
       });
     } catch (error) {
       // Show the actual error message from the try-catch block
@@ -359,7 +359,6 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     } finally {
       setIsLoading(false); // Hide loader when done
     }
-    
   };
   useEffect(() => {
     // Log the updated order details or perform any side effects here
@@ -600,7 +599,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const fetchOrderDetails = async () => {
     try {
       if (OrderID === "new") return;
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(`${GET_ALL_HYSTORYID_API}${OrderID}`, {
         method: "GET",
         headers: {
@@ -616,7 +615,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
 
       const statuses = Array.isArray(result) ? result : [result];
       const totalRecords = statuses.length;
-      setTotalRecords(totalRecords)
+      setTotalRecords(totalRecords);
       // Map the result to statusDetails
       const mappedStatusDetails = statuses.map((status) => ({
         StatusID: status.StatusID || "N/A",
@@ -654,7 +653,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       setError(err.message);
       console.error("Fetch Error:", err.message); // Log fetch error
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -717,17 +716,16 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         StatusID: statusId || "",
         AssignTo: statusData.AssignTo || "",
         AssignTo: desginerID || "",
-        RoleID: statusData.UserRoleID|| "", // Corrected key if needed
+        RoleID: statusData.UserRoleID || "", // Corrected key if needed
         RoleName: statusData.RoleName || "",
       });
       // Set the search user value for the input field
       // setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
-      setSelectedRole(statusData.UserRoleID|| "");
-     
-      // Set the selected role for the combobox
-  // Call setSelectedRole only once
+      setSelectedRole(statusData.UserRoleID || "");
 
+      // Set the selected role for the combobox
+      // Call setSelectedRole only once
 
       // Get the index of the current status in the list
       const selectedStepIndex = filteredStatusList.findIndex(
@@ -765,13 +763,12 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     setImagePreviews("");
     setImages("");
     setFormOrderDetails({
-      ...formOrderDetails,       // Preserve other fields
-      DeliveryDate: "",          // Clear Delivery Date
-      Comments: "", 
-      ExpectedDays:"",             // Clear Comments
+      ...formOrderDetails, // Preserve other fields
+      DeliveryDate: "", // Clear Delivery Date
+      Comments: "",
+      ExpectedDays: "", // Clear Comments
     });
   };
-
 
   useEffect(() => {
     console.log("FormOrderDetails updated:", formOrderDetails);
@@ -1020,11 +1017,12 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         pt: 2,
       }}
     >
+      {isLoading && <LoadingAnimation />}
       <>
         {/* <form onSubmit={saveOrderHistory}> */}
         <form>
           <div className="flex">
-            <div className="flex flex-col items-center flex-1 sm:ml-0 lg:ml-5 gap-4">
+            <div className="flex flex-col items-center flex-1 sm:ml-0 lg:ml-5 gap-6">
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
                 <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
                   Order Status:
@@ -1033,10 +1031,11 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 <Combobox value={selectedStatus} onChange={handleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${errors.OrderStatus
-                        ? "border-red-500"
-                        : "border-gray-300"
-                        }`}
+                      className={`p-1 w-full border rounded-md ${
+                        errors.OrderStatus
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(statusID) => {
                         const selected = filteredStatusList.find(
@@ -1056,15 +1055,20 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       {filteredStatusList.length > 0 ? (
                         // Filter the statuses to only show those after the active step
                         filteredStatusList
-                          .filter((_, index) => index === 3 ? index >= activeStep : index > activeStep) // Show statuses after the active one
+                          .filter((_, index) =>
+                            index === 3
+                              ? index >= activeStep
+                              : index > activeStep
+                          ) // Show statuses after the active one
                           .map((status) => (
                             <Combobox.Option
                               key={status.StatusID}
                               value={status.StatusID}
                               className={({ active }) =>
-                                `cursor-pointer select-none relative p-2 ${active
-                                  ? "bg-blue-500 text-white"
-                                  : "text-gray-900"
+                                `cursor-pointer select-none relative p-2 ${
+                                  active
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-900"
                                 }`
                               }
                             >
@@ -1326,59 +1330,67 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </div>
             </div>
 
-            <div onScroll={handleScroll} className="overflow-y-auto max-h-[30rem] w-[20rem]">
+            <div onScroll={handleScroll} className="overflow-y-auto w-[20rem]">
               <nav aria-label="Progress">
                 <ol role="list">
-                  {filteredStatusList
-                    .slice(0, visibleSteps)
-                    .map((status, index) => (
-                      <li
-                        key={status.StatusID}
-                        className={`relative pb-12 cursor-pointer ${completedSteps[index] ? "completed" : ""
-                          }`}
-                        onClick={() => handleStepClick(index)}
-                      >
-                        {/* Step rendering logic with lines */}
-                        <div
-                          className={`step-indicator flex items-center ${completedSteps[index]
+                  {filteredStatusList.map((status, index) => (
+                    <li
+                      key={status.StatusID}
+                      className={`relative pb-5 cursor-pointer ${
+                        completedSteps[index] ? "completed" : ""
+                      }`}
+                      // Remove the click handler if you don't want individual steps to be clickable
+                      // onClick={() => handleStepClick(index)}
+                    >
+                      {/* Step rendering logic with lines */}
+                      <div
+                        className={`step-indicator flex items-center ${
+                          completedSteps[index]
                             ? "text-gray-800"
                             : "text-gray-800"
-                            } ${activeStep === index ? "text-orange-500" : ""}`}
+                        } ${activeStep === index ? "text-orange-500" : ""}`}
+                      >
+                        {/* Step Circle */}
+                        <span
+                          className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center ${
+                            completedSteps[index]
+                              ? "bg-green-400 text-white"
+                              : "bg-gray-300"
+                          } ${
+                            activeStep === index
+                              ? "bg-orange-400 text-white"
+                              : "bg-gray-300"
+                          }`}
                         >
-                          {/* Step Circle */}
-                          <span
-                            className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center
-                      ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"}
-                      ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
-                          >
-                            {activeStep === index ? (
-                              <GrInProgress />
-                            ) : completedSteps[index] ? (
-                              "✓"
-                            ) : (
-                              <FaRegUserCircle />
-                            )}
-                          </span>
+                          {activeStep === index ? (
+                            <GrInProgress />
+                          ) : completedSteps[index] ? (
+                            "✓"
+                          ) : (
+                            <FaRegUserCircle />
+                          )}
+                        </span>
 
-                          {/* Status Text */}
-                          {status.OrderStatus}
-                        </div>
+                        {/* Status Text */}
+                        {status.OrderStatus}
+                      </div>
 
-                        {/* Line between steps */}
-                        {index < filteredStatusList.length - 1 && (
-                          <div
-                            className={`absolute top-6 left-3 w-0.5 h-12 bg-gray-300 ${completedSteps[index] ? "bg-green-400" : ""
-                              }`}
-                          />
-                        )}
-                      </li>
-                    ))}
+                      {/* Line between steps */}
+                      {index < filteredStatusList.length - 1 && (
+                        <div
+                          className={`absolute top-6 left-3 w-0.5 h-8 bg-gray-300 ${
+                            completedSteps[index] ? "bg-green-400" : ""
+                          }`}
+                        />
+                      )}
+                    </li>
+                  ))}
                 </ol>
               </nav>
             </div>
           </div>
-          <div className="relative mt-10 flex justify-end gap-4">
-            <div className="mt-6 flex justify-end gap-4">
+          <div className="relative flex justify-end gap-4">
+            <div className=" flex justify-end gap-4">
               <button
                 type="button"
                 onClick={saveOrderHistory}
@@ -1394,11 +1406,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 Cancel
               </button>
             </div>
-            {isLoading && (
-              <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-                <LoadingAnimation />
-              </div>
-            )}
+
             {showModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                 <div className="bg-white rounded-lg p-6 text-center shadow-lg w-11/12 max-w-sm">
@@ -1492,13 +1500,14 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         <StatusBadge status={status.OrderStatus} />
 
                         {/* Conditionally render the status ID only if OrderStatus is 'Revised Design' and SubStatusId is not 0 */}
-                        {status.OrderStatus === "Revised Design" && status.SubStatusId !== 0 && (
-                          <div className="w-1/3 ml-2">
-                            <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
-                              {`R${status.SubStatusId}`}
+                        {status.OrderStatus === "Revised Design" &&
+                          status.SubStatusId !== 0 && (
+                            <div className="w-1/3 ml-2">
+                              <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                                {`R${status.SubStatusId}`}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </StyledTableCell>
 
@@ -1511,36 +1520,36 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         Start Date:{" "}
                         {status.StartDate
                           ? (() => {
-                            const date = new Date(status.StartDate);
-                            const month = date.toLocaleString("en-US", {
-                              month: "short",
-                            });
-                            const day = String(date.getDate()).padStart(
-                              2,
-                              "0"
-                            ); // Pad day with leading zero if needed
-                            const year = date.getFullYear();
+                              const date = new Date(status.StartDate);
+                              const month = date.toLocaleString("en-US", {
+                                month: "short",
+                              });
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0"
+                              ); // Pad day with leading zero if needed
+                              const year = date.getFullYear();
 
-                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                          })()
+                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                            })()
                           : "N/A"}
                         <br />
                         {/* Delivery Date */}
                         End Date:{" "}
                         {status.DeliveryDate
                           ? (() => {
-                            const date = new Date(status.DeliveryDate);
-                            const month = date.toLocaleString("en-US", {
-                              month: "short",
-                            });
-                            const day = String(date.getDate()).padStart(
-                              2,
-                              "0"
-                            ); // Pad day with leading zero if needed
-                            const year = date.getFullYear();
+                              const date = new Date(status.DeliveryDate);
+                              const month = date.toLocaleString("en-US", {
+                                month: "short",
+                              });
+                              const day = String(date.getDate()).padStart(
+                                2,
+                                "0"
+                              ); // Pad day with leading zero if needed
+                              const year = date.getFullYear();
 
-                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                          })()
+                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                            })()
                           : "N/A"}
                       </p>
                     </StyledTableCell>
@@ -1576,7 +1585,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       className="border-r border-gray-300"
                     >
                       {Array.isArray(status.viewdocuments) &&
-                        status.viewdocuments.length > 0 ? (
+                      status.viewdocuments.length > 0 ? (
                         status.viewdocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1600,7 +1609,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       )}
 
                       {Array.isArray(status.DownloadDocuments) &&
-                        status.DownloadDocuments.length > 0 ? (
+                      status.DownloadDocuments.length > 0 ? (
                         status.DownloadDocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1660,11 +1669,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
-                  <StyledTableCell align="center" colSpan={7}>
-                    {loading ? "Loading..." : error ? error : "No Order Found"}
-                  </StyledTableCell>
-                </TableRow>
+                <TableRow></TableRow>
               )}
             </TableBody>
           </Table>

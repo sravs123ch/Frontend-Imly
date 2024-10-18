@@ -185,21 +185,28 @@ function AddOrders() {
     return null;
   };
 
-  const getCountryNameById = (id, countries) => {
-    const country = countries.find((country) => country.CountryID === id);
+  const getCountryByIdOrName = (identifier, countries) => {
+    const country = countries.find(
+      (country) =>
+        country.CountryID === identifier || country.CountryName === identifier
+    );
     return country ? country.CountryName : "";
   };
 
-  const getStateNameById = (id, states) => {
-    const state = states.find((state) => state.StateID === id);
+  const getStateByIdOrName = (identifier, states) => {
+    const state = states.find(
+      (state) => state.StateID === identifier || state.StateName === identifier
+    );
     return state ? state.StateName : "";
   };
 
-  const getCityNameById = (id, cities) => {
-    const city = cities.find((city) => city.CityID === id);
+  const getCityByIdOrName = (identifier, cities) => {
+    console.log(identifier, "idf");
+    const city = cities.find(
+      (city) => city.CityID === identifier || city.CityName === identifier
+    );
     return city ? city.CityName : "";
   };
-
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (orderId === "new") {
@@ -251,8 +258,8 @@ function AddOrders() {
   }, [isDialogOpen, selectedCustomer]);
 
   const fetchData = async (value) => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       if (isEditMode) {
         return;
       }
@@ -671,24 +678,34 @@ function AddOrders() {
           ? "Order updated successfully!"
           : "Order created successfully!"
       );
-
       if (generatedId) {
-        // Fetch updated order details using the generated ID
+        setIsLoading(true);
         fetch(
           `https://imly-b2y.onrender.com/api/orders/getOrderById/${generatedId}`
         )
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
           .then((data) => {
             if (data?.order) {
               setOrderDetails(data.order); // Update order details from fetched data
               setStatusID(data.order.StatusID);
               setOrderIdDetails({ order: data.order });
+
+              // Optionally, you can keep the loading state until the new page is fully loaded
               navigate(`/OrdersAdd/${generatedId}`);
+              // This may require additional state management to show loading on the new page
             }
           })
           .catch((error) => {
             console.error("Error fetching order:", error);
             toast.error("Failed to fetch the order details!");
+          })
+          .finally(() => {
+            setIsLoading(false); // Move setIsLoading(false) here
           });
       }
 
@@ -866,8 +883,6 @@ function AddOrders() {
     setFile1(null);
   };
 
-
-  
   const [selectedReferralType, setSelectedReferralType] = useState("");
   const [selectedReferenceSubOption, setSelectedReferenceSubOption] =
     useState("");
@@ -928,11 +943,9 @@ function AddOrders() {
         customerPhone: order.PhoneNumber || order.customerPhone || "",
         AddressLine1: order.AddressLine1 || "",
         AddressLine2: order.AddressLine2 || "",
-        CityName: order.CityName || "",
-        State: order.State || "",
         Country: order.Country || "",
-        StateID: order.StateID || "",
-        CountryID: order.CountryID || "",
+        City: order.City || "",
+        State: order.State || "",
         ZipCode: order.ZipCode || "",
         CreatedAt: order.CreatedAt || "",
         UpdatedAt: order.UpdatedAt || "",
@@ -940,6 +953,7 @@ function AddOrders() {
         StoreName: order.StoreName || "",
         StoreCode: order.StoreCode || "",
       }));
+      console.log(order, "ord");
 
       // Set status and designer-related data using optional chaining
       setStatusUpdatedData(order?.OrderStatus || "");
@@ -1014,10 +1028,9 @@ function AddOrders() {
     cities,
   ]);
 
-
   useEffect(() => {
     // Compare and update statusUpdatedData if different
-    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId)
+    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId);
     setStatusUpdatedData(orderDetails.OrderStatus);
     if (
       updatedStatusOrderDetails.OrderStatus !== orderDetails.OrderStatus ||
@@ -1027,8 +1040,6 @@ function AddOrders() {
       setStatusUpdatedData(updatedStatusOrderDetails.OrderStatus);
     }
   }, [updatedStatusOrderDetails]);
-
-
 
   const [selectedStore, setSelectedStore] = useState("");
   const [storeNames, setStoreNames] = useState([]);
@@ -1200,6 +1211,7 @@ function AddOrders() {
   return (
     <>
       <div className="main-container">
+        {isLoading && <LoadingAnimation />}
         <ToastContainer />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} className="mb-1" alternativeLabel>
@@ -2367,7 +2379,7 @@ function AddOrders() {
                           <span className="w-1/2">Country</span>
                           <span className="mr-20">:</span>
                           <span className="w-1/2">
-                            {getCountryNameById(
+                            {getCountryByIdOrName(
                               orderDetails.Country,
                               countries
                             )}
@@ -2378,7 +2390,7 @@ function AddOrders() {
                           <span className="w-1/2">State</span>
                           <span className="mr-20">:</span>
                           <span className="w-1/2">
-                            {getStateNameById(orderDetails.State, states)}
+                            {getStateByIdOrName(orderDetails.State, states)}
                           </span>
                         </div>
 
@@ -2386,7 +2398,14 @@ function AddOrders() {
                           <span className="w-1/2">City</span>
                           <span className="mr-20">:</span>
                           <span className="w-1/2">
-                            {getCityNameById(orderDetails.City, cities)}
+                            {getCityByIdOrName(
+                              orderDetails?.City !== ""
+                                ? orderDetails.City
+                                : orderDetails.CityName,
+                              cities
+                            )}
+
+                            {console.log(orderDetails, "ordDet")}
                           </span>
                         </div>
                         <div className="flex text-sm sm:text-xs font-medium text-gray-700">
@@ -2420,11 +2439,6 @@ function AddOrders() {
                     Cancel
                   </button>
                 </>
-              )}
-              {isLoading && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
-                  <LoadingAnimation />
-                </div>
               )}
             </div>
           </React.Fragment>

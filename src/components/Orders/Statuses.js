@@ -91,7 +91,7 @@ const StatusBadge = ({ status }) => {
       ? "bg-indigo-100 text-indigo-800 ring-indigo-700/30" // Indigo background and text for Initial Design
       : status === "Initial Measurement"
       ? "bg-indigo-100 text-indigo-800 ring-indigo-700/30" // Indigo background and text for Initial Design
-      : status === "Revised Design"
+      : status.startsWith("Revised Design")
       ? "bg-purple-100 text-purple-800 ring-purple-700/30" // Purple background and text for Revised Design
       : status === "Final Measurement"
       ? "bg-gray-100 text-gray-800 ring-gray-700/30" // Gray background and text for Production

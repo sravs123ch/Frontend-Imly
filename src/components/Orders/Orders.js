@@ -18,7 +18,6 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import {
   GET_ALL_ORDERS,
-  GETALLSTORES_API,
   GETORDERBYID_API,
   GET_ORDER_REPORT,
 } from "../../Constants/apiRoutes";
@@ -553,7 +552,13 @@ const Orders = () => {
                     </div>
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    <StatusBadge status={product.OrderStatus} />
+                    <StatusBadge
+                      status={
+                        product.SubStatusId !== 0
+                          ? `${product.OrderStatus} R${product.SubStatusId}`
+                          : product.OrderStatus
+                      }
+                    />
                     <br />
                     {/* <br /> */}
 
