@@ -359,6 +359,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     } finally {
       setIsLoading(false); // Hide loader when done
     }
+    
   };
   useEffect(() => {
     // Log the updated order details or perform any side effects here

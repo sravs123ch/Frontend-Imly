@@ -865,6 +865,9 @@ function AddOrders() {
   const handleDelete1 = () => {
     setFile1(null);
   };
+
+
+  
   const [selectedReferralType, setSelectedReferralType] = useState("");
   const [selectedReferenceSubOption, setSelectedReferenceSubOption] =
     useState("");
@@ -1010,6 +1013,22 @@ function AddOrders() {
     states,
     cities,
   ]);
+
+
+  useEffect(() => {
+    // Compare and update statusUpdatedData if different
+    setUpdatedSubStatusId(updatedStatusOrderDetails.SubStatusId)
+    setStatusUpdatedData(orderDetails.OrderStatus);
+    if (
+      updatedStatusOrderDetails.OrderStatus !== orderDetails.OrderStatus ||
+      updatedStatusOrderDetails.OrderStatus !==
+        orderIdDetails.order?.OrderStatus
+    ) {
+      setStatusUpdatedData(updatedStatusOrderDetails.OrderStatus);
+    }
+  }, [updatedStatusOrderDetails]);
+
+
 
   const [selectedStore, setSelectedStore] = useState("");
   const [storeNames, setStoreNames] = useState([]);
