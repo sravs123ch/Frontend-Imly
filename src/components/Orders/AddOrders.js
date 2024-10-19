@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { IoIosCall, IoMdMail } from "react-icons/io";
+import { IoIosCall, IoMdHelpCircleOutline, IoMdMail } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ADDRESS_API } from "../../Constants/apiRoutes";
 import AOS from "aos";
@@ -47,6 +47,7 @@ import TablePagination from "@mui/material/TablePagination";
 import { useUpdatedStatusOrderContext } from "../../Context/UpdatedOrder";
 import { useParams } from "react-router-dom";
 import { DataContext } from "../../Context/DataContext";
+import { Help } from "@mui/icons-material";
 
 const categories = [
   { id: 1, name: "Walk-in", subOptions: ["Newspaper ad"] },
@@ -1270,20 +1271,16 @@ function AddOrders() {
                       <div className="flex w-full flex-col justify-end  items-center">
                         {isEditMode && (
                           <>
-                            <div className=" w-full flex justify-between gap-1 sm:pt-2 space-y-1 border border-gray-300 rounded-md p-1  pt-3">
-                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                <span className="w-1/3 mt-3">
-                                  Order Number:
-                                </span>
-                                <span className="w-1/3  mt-3">
+                            <div className=" w-full flex justify-between  sm:pt-2 p-2 border border-gray-300 rounded-md  ">
+                              <div className="flex items-center w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                <span className="w-1/3 ">Order Number:</span>
+                                <span className="w-1/3  ">
                                   {orderDetails.OrderNumber}
                                 </span>
                               </div>
 
-                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-700">
-                                <span className="w-1/3 mt-2">
-                                  Order Status:
-                                </span>
+                              <div className="flex w-1/3 items-center text-sm sm:text-xs font-medium text-gray-700">
+                                <span className="w-1/3">Order Status:</span>
 
                                 <span className="w-1/3">
                                   <StatusBadge
@@ -1294,20 +1291,35 @@ function AddOrders() {
                                     }
                                   />
                                 </span>
+
                                 {orderDetails.StatusID === 4 &&
                                   orderDetails.SubStatusId !== 0 &&
                                   orderDetails.SubStatusId !== "N/A" && (
                                     <div className="w-1/3 ml-2">
-                                      <div className="w-6 h-6 bg-green-500 text-white mt-1 flex items-center justify-center rounded-sm">
+                                      <div className="w-6 h-6 bg-green-500 text-white flex items-center justify-center rounded-sm">
                                         {`R${updatedsubStatusId}`}
                                       </div>
                                     </div>
                                   )}
+
+                                {/* Conditionally render the Help icon if the order status is "Final Measurement" */}
+                                {(statusUpdatedData ||
+                                  orderDetails.OrderStatus) ===
+                                  "Final Measurement" && (
+                                  <div className="relative group inline-block">
+                                    <div className="flex items-center justify-center p-2 cursor-pointer">
+                                      <Help className="text-[#e58799]" />
+                                    </div>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max invisible opacity-0 group-hover:visible group-hover:opacity-100 bg-[#f6d5da] text-[#a22e4f] text-sm py-2 px-3 rounded transition-opacity duration-300 border border-s-1 border-[#a22e4f]">
+                                      Waiting for customer approval
+                                    </div>
+                                  </div>
+                                )}
                               </div>
 
-                              <div className="flex w-1/3 text-sm sm:text-xs font-medium text-gray-800">
-                                <span className="w-1/3  mt-2">Store Name:</span>
-                                <span className="w-1/3  mt-2">
+                              <div className="flex items-center w-1/3 text-sm sm:text-xs font-medium text-gray-800">
+                                <span className="w-1/3  ">Store Name:</span>
+                                <span className="w-2/3  ">
                                   {orderDetails.StoreName}
                                 </span>
                               </div>

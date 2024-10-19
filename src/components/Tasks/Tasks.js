@@ -4,6 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 import { Combobox } from "@headlessui/react";
 import { DataContext } from "../../Context/DataContext";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { GET_TASKS } from "../../Constants/apiRoutes";
 
 const Tasks = () => {
   const { storesData } = useContext(DataContext);
@@ -30,14 +31,20 @@ const Tasks = () => {
     { id: "1", name: "User 1" },
     { id: "5", name: "User 2" },
   ];
-
-  const fetchTasks = async (userId, searchTerm) => {
+  
+  const fetchTasks = async (userId, searchTerm, selectedStore) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://imly-b2y.onrender.com/api/orderhistory/getusertasks?UserID=${userId}&searchText=${searchTerm}`
-      );
-      const data = await response.json();
+      let url = `${GET_TASKS}?UserID=${userId}&searchText=${searchTerm}`;
+
+      // Only add StoreID to the URL if it's not null
+      if (selectedStore && selectedStore.StoreID) {
+        url += `&StoreID=${selectedStore.StoreID}`;
+      }
+
+      const response = await fetch(url);
+      const result = await response.json();
+      const data = result.tasks;
 
       const transformedData = {
         toDo: data.filter(
@@ -67,6 +74,7 @@ const Tasks = () => {
               task.OrderHistoryStatus.includes("Canceled"))
         ),
       };
+
       setTaskData(transformedData);
       setLoading(false);
     } catch (error) {
@@ -75,13 +83,14 @@ const Tasks = () => {
       setLoading(false);
     }
   };
+
   const searchItems = (value) => {
     setSearchName(value);
     fetchTasks(userID, value);
   };
   useEffect(() => {
-    fetchTasks(userID, searchName);
-  }, [userID, searchName]);
+    fetchTasks(userID, searchName, selectedStore);
+  }, [userID, searchName, selectedStore]);
 
   if (error) return <p className="main-container">{error}</p>; // Apply error class
 

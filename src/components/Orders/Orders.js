@@ -554,11 +554,15 @@ const Orders = () => {
                   <StyledTableCell align="center">
                     <StatusBadge
                       status={
-                        product.SubStatusId !== 0
-                          ? `${product.OrderStatus} R${product.SubStatusId}`
+                        product.OrderStatus === "Revised Design" ||
+                        product.OrderStatus === "Production"
+                          ? product.SubStatusId !== 0
+                            ? `${product.OrderStatus} R${product.SubStatusId}`
+                            : product.OrderStatus
                           : product.OrderStatus
                       }
                     />
+
                     <br />
                     {/* <br /> */}
 

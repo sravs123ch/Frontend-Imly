@@ -69,6 +69,9 @@ export const GET_INVENTORY_FILE_API = (fileID) =>
 export const GET_INVENTORY_FILE_UPL_API = `${BASE_URL}/InventoryFile/uploadInventoryFile`;
 export const GET_ORDER_REPORT = `${BASE_URL}/reports/getOrderReport`;
 
+
+export const GET_TASKS = `${BASE_URL}/orderhistory/getusertasks`;
+
 export const GET_SALES_AND_PAYMENT_REPORT_BY_MONTH = `${BASE_URL}/Dashboard/getSalesAndPaymentReportByMonth
 `;
 export const GET_OVERALL_DATA_FOR_DASHBOARD = `${BASE_URL}/Dashboard/getOverAllDataForDashboard`;
