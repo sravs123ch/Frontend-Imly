@@ -1,3 +1,4 @@
+
 import React, { useState, useContext, useEffect } from "react";
 import {
   Box,
@@ -95,6 +96,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     setDesginerID,
     statusID,
     setStatusID,
+    setRoleID,
+    roleID,
   } = useContext(IdContext);
   const [orderStatusList, setOrderStatusList] = useState([]);
   const [results, setResults] = useState([]);
@@ -103,18 +106,16 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const [searchUserValue, setSearchUserValue] = useState(designerName || "");
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("");
-  const [selectedRole, setSelectedRole] = useState(null);
-
+  const [selectedRole, setSelectedRole] = useState(roleID || "");
   const { updatedStatusOrderDetails, setUpdatedStatusOrderDetails } =
     useUpdatedStatusOrderContext();
-
   const [formOrderDetails, setFormOrderDetails] = useState({
     OrderStatus: "",
     ExpectedDays: "",
     DeliveryDate: "",
     Comments: "",
     AssignTo: desginerID,
-    RoleID: "",
+    RoleID: roleID,
     UploadDocument: "",
     StartDate: new Date().toISOString().split("T")[0], // Set StartDate to today's date in YYYY-MM-DD format
   });
@@ -1402,8 +1403,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </nav>
             </div>
           </div>
-          <div className="relative flex justify-end gap-4">
-            <div className=" flex justify-end gap-4">
+          <div className="relative flex justify-center gap-4">
+            <div className=" flex justify-start gap-4">
               <button
                 type="button"
                 onClick={handleCancel2}

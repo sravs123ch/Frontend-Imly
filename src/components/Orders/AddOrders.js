@@ -151,6 +151,8 @@ function AddOrders() {
     setDesginerID,
     statusID,
     setStatusID,
+    roleID,
+    setRoleID,
   } = useContext(IdContext);
   const [selectedTab, setSelectedTab] = useState("address");
 
@@ -961,7 +963,8 @@ function AddOrders() {
       setUpdatedSubStatusId(order?.SubStatusId || "");
       setDesignerName(order?.DesginerName || "");
       setDesginerID(order?.DesginerID || "");
-
+      setRoleID(order?.RoleID || "");
+      console.log("roleidvijay", roleID);
       // Fetch location data based on the country, state, and city
 
       // Set selected country, state, and city using optional chaining
@@ -1162,6 +1165,7 @@ function AddOrders() {
             // Clear if no users are found
             setDesignerName("");
             setDesginerID("");
+            setRoleID("");
           }
         })
         .catch((error) => {
