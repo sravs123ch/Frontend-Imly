@@ -1429,13 +1429,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </button>
             </div>
 
-            {showModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div className="bg-white rounded-lg p-6 text-center shadow-lg w-11/12 max-w-sm">
-                  <p className="text-lg">{popupMessage}</p>
-                </div>
-              </div>
-            )}
+            
           </div>
         </form>
 
