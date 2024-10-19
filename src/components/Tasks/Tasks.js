@@ -31,7 +31,7 @@ const Tasks = () => {
     { id: "1", name: "User 1" },
     { id: "5", name: "User 2" },
   ];
-  
+
   const fetchTasks = async (userId, searchTerm, selectedStore) => {
     setLoading(true);
     try {
@@ -43,8 +43,7 @@ const Tasks = () => {
       }
 
       const response = await fetch(url);
-      const result = await response.json();
-      const data = result.tasks;
+      const data = await response.json();
 
       const transformedData = {
         toDo: data.filter(
@@ -101,25 +100,6 @@ const Tasks = () => {
       <hr className="border-t border-gray-300 mb-6" />
 
       <div className="flex flex-wrap justify-end gap-2 mt-2">
-        {/* Dropdown for User Selection */}
-        {/* <div className="search-container-c-u">
-          <label className="mr-2">Select User:</label>
-          <select
-            value={userID}
-            onChange={(e) => {
-              setUserID(e.target.value);
-              searchItems(searchName);
-            }}
-            className="border rounded p-2"
-          >
-            {userOptions.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
         {/* Container for centering search box */}
         <div className="search-container-c-u">
           <label htmlFor="searchName" className="sr-only">
