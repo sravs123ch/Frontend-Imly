@@ -83,6 +83,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null); // Error state
   const [pdfPreviews, setPdfPreviews] = useState([]);
+  const [docPreviews, setDocPreviews] = useState([]);
   {
     activeStep === 2 && <Step2 />;
   }
@@ -335,10 +336,10 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
         });
 
       closeModalAndMoveToNextStep();
-      setSelectedRole("");
       setSelectedStatus("");
-      setImagePreviews("");
-      setImages("");
+      setImagePreviews([]);
+      setImages([]);
+      setPdfPreviews([]);
       setFormOrderDetails({
         ...formOrderDetails, // Preserve other fields
         DeliveryDate: "", // Clear Delivery Date
@@ -468,61 +469,114 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       }));
     }
   };
-
   const handleFileChange = (event) => {
     const files = event.target.files; // Get the FileList object from the input
     const selectedFiles = Array.from(files); // Convert the FileList to an array
 
-    const UploadDocuments = {}; // Object to store key-value pairs of document names
-    const binaryFiles = []; // Array to store binary files
-    const previews = [];
 
-    selectedFiles.forEach((file, index) => {
-      // Create a URL for preview if it's an image
-      if (file.type.startsWith("image/")) {
-        const previewUrl = URL.createObjectURL(file);
-        previews.push(previewUrl); // Add to previews array
-      }
+    const UploadDocuments = {}; // Object to store document names
+    const previews = []; // Array to store image previews
+    const pdfPreviews = []; // Array to store PDF previews
+    const docPreviews = []; // Array to store other document previews
+    const binaryFiles = []; // Array to store binary files for all file types
 
-      // Store document names as key-value pairs
-      UploadDocuments[`Document_${index + 1}`] = file.name; // Store document names
+    // Create an array of promises for reading each file asynchronously
+    const fileReadPromises = selectedFiles.map((file, index) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        // After reading the file, we can get the binary data
-        const binaryData = reader.result;
-        binaryFiles.push({
-          name: file.name,
-          type: file.type,
-          data: binaryData,
-        });
+        // Handle file load event
+        reader.onload = () => {
+          const binaryData = reader.result; // Get binary data
 
-        // Check if the file is a PDF
-        if (file.type === "application/pdf") {
-          const pdfPreviewUrl = URL.createObjectURL(file); // Create a PDF preview URL
-          setPdfPreviews((prev) => [...prev, pdfPreviewUrl]); // Store PDF previews
-        }
+          // Create a preview URL for images or PDFs
+          if (file.type.startsWith("image/")) {
+            const previewUrl = URL.createObjectURL(file);
+            previews.push(previewUrl); // Add image preview URL
+          }
 
-        // After processing the last file, update the state
-        if (index === selectedFiles.length - 1) {
-          // Store image previews and binary files in state
-          setImagePreviews(previews);
-          setImages(binaryFiles); // Store the actual binary files for backend upload
-          setFormOrderDetails((prev) => ({
-            ...prev,
-            UploadDocument: UploadDocuments, // Store document names
-          }));
-        }
-      };
+          if (file.type === "application/pdf") {
+            const pdfPreviewUrl = URL.createObjectURL(file);
+            pdfPreviews.push(pdfPreviewUrl); // Add PDF preview URL
+            console.log(`PDF preview generated for: ${file.name}`);
+          }
 
-      reader.readAsArrayBuffer(file); // Read the file as an ArrayBuffer
+          // Handle other document types
+          if (
+            file.type === "application/msword" || // .doc
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || // .docx
+            file.type === "text/plain" || // .txt
+            file.type === "application/vnd.ms-excel" || // .xls
+            file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" // .xlsx
+          ) {
+            const docPreviewUrl = URL.createObjectURL(file);
+            docPreviews.push({
+              name: file.name,
+              url: docPreviewUrl,
+              type: file.type, // Store the file type for proper handling
+            });
+            console.log(`Document preview generated for: ${file.name}`);
+          }
+
+          // Store document names as key-value pairs
+          UploadDocuments[`Document_${index + 1}`] = file.name;
+          console.log(`Stored document name: ${file.name}`);
+
+          // Add binary data to the array
+          binaryFiles.push({
+            name: file.name,
+            type: file.type,
+            data: binaryData, // Binary data for backend upload
+          });
+
+
+          resolve(); // Resolve the promise after the file is read
+        };
+
+        // Handle errors
+        reader.onerror = () => {
+          reject(new Error(`Error reading file: ${file.name}`));
+        };
+
+        // Read the file as ArrayBuffer
+        reader.readAsArrayBuffer(file);
+      });
     });
+
+    // Wait for all file reads to complete before updating the state
+    Promise.all(fileReadPromises)
+      .then(() => {
+        console.log("All files processed, updating state...");
+
+        setImagePreviews(previews); // Set image previews in state
+        setPdfPreviews(pdfPreviews); // Set PDF previews in state
+        setDocPreviews(docPreviews); // Set document previews in state
+        setImages(binaryFiles); // Store all binary files (any type)
+        setFormOrderDetails((prev) => ({
+          ...prev,
+          UploadDocument: UploadDocuments, // Store document names
+        }));
+
+        console.log("State updated with document names and binary data");
+      })
+      .catch((error) => {
+        console.error("Error processing files:", error);
+      });
   };
   // useEffect(() => {
   //   return () => {
-  //     // Clean up image previews
-  //     imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
-  //     pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
+  //     // Ensure imagePreviews is an array before calling forEach
+  //     if (Array.isArray(imagePreviews)) {
+  //       imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
+  //     } else {
+  //       console.error("imagePreviews is not an array:", imagePreviews);
+  //     }
+  //     // Ensure pdfPreviews is an array before calling forEach
+  //     if (Array.isArray(pdfPreviews)) {
+  //       pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
+  //     } else {
+  //       console.error("pdfPreviews is not an array:", pdfPreviews);
+  //     }
   //   };
   // }, [imagePreviews, pdfPreviews]);
   useEffect(() => {
@@ -530,19 +584,17 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       // Ensure imagePreviews is an array before calling forEach
       if (Array.isArray(imagePreviews)) {
         imagePreviews.forEach((url) => URL.revokeObjectURL(url)); // Release object URLs created
-      } else {
-        console.error("imagePreviews is not an array:", imagePreviews);
       }
-
       // Ensure pdfPreviews is an array before calling forEach
       if (Array.isArray(pdfPreviews)) {
         pdfPreviews.forEach((url) => URL.revokeObjectURL(url)); // Release PDF preview URLs
-      } else {
-        console.error("pdfPreviews is not an array:", pdfPreviews);
+      }
+      // Ensure docPreviews is an array before calling forEach
+      if (Array.isArray(docPreviews)) {
+        docPreviews.forEach((doc) => URL.revokeObjectURL(doc.url)); // Release document URLs
       }
     };
-  }, [imagePreviews, pdfPreviews]);
-
+  }, [imagePreviews, pdfPreviews, docPreviews]);
   const handleImageRemove = (index) => {
     const newImages = images.filter((_, i) => i !== index);
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
@@ -587,8 +639,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     query === ""
       ? orderStatusList
       : orderStatusList.filter((status) =>
-          status.OrderStatus.toLowerCase().includes(query.toLowerCase())
-        );
+        status.OrderStatus.toLowerCase().includes(query.toLowerCase())
+      );
 
   const handleSelect = (statusID) => {
     const selectedStatus = orderStatusList.find(
@@ -610,7 +662,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     return duration;
   };
   const [statusDetails, setStatusDetails] = useState([]);
-
+  const [subStatusId, setSubStatusId] = useState("");
   const fetchOrderDetails = async () => {
     try {
       if (OrderID === "new") return;
@@ -659,10 +711,17 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
 
       setStatusDetails(mappedStatusDetails);
 
+
+      const getSubStatusId = (statusDetails, status) => {
+        const foundItem = statusDetails.find(item => item.StatusID === status.StatusID);
+        return foundItem ? foundItem.SubStatusId ?? "" : "";
+      };
       // Automatically set the active step based on the first record's status
       if (mappedStatusDetails.length > 0) {
         const firstRecordStatus = mappedStatusDetails[0].OrderStatus;
         updateStepperStatus(firstRecordStatus);
+        const newSubStatusId = getSubStatusId(mappedStatusDetails, mappedStatusDetails[0]);
+        setSubStatusId(newSubStatusId);
       }
     } catch (err) {
       setError(err.message);
@@ -738,7 +797,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
       setSearchUserValue(statusData.AssignTo || "");
       // Set the selected role for the combobox
       setSelectedRole(statusData.UserRoleID || "");
-
+      setSubStatusId(statusData.SubStatusId)
       // Set the selected role for the combobox
       // Call setSelectedRole only once
 
@@ -1002,19 +1061,21 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
     event.preventDefault();
     // Logic to handle viewing documents
     if (imagePreviews.length > 0) {
-      // Open the first image preview, for example
+      // Open the first image preview
       window.open(imagePreviews[0], "_blank");
     } else if (pdfPreviews.length > 0) {
       // Open the first PDF preview
       window.open(pdfPreviews[0], "_blank");
-    } else {
+    } else if (docPreviews.length > 0) {
+      // Open the first document preview (e.g., .doc, .xls, .txt)
+      window.open(docPreviews[0].url, "_blank");
     }
   };
-
   const handleCancelDocuments = () => {
     // Clear both image and PDF previews
     setImagePreviews([]); // Clear image previews
-    setPdfPreviews([]); // Clear PDF previews
+    setPdfPreviews([]);
+    setDocPreviews([]);
 
     // You can also reset the file input if needed
     document.getElementById("UploadFiles").value = "";
@@ -1045,11 +1106,10 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 <Combobox value={selectedStatus} onChange={handleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${
-                        errors.OrderStatus
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
+                      className={`p-1 w-full border rounded-md ${errors.OrderStatus
+                        ? "border-red-500"
+                        : "border-gray-300"
+                        }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(statusID) => {
                         const selected = filteredStatusList.find(
@@ -1079,10 +1139,9 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                               key={status.StatusID}
                               value={status.StatusID}
                               className={({ active }) =>
-                                `cursor-pointer select-none relative p-2 ${
-                                  active
-                                    ? "bg-blue-500 text-white"
-                                    : "text-gray-900"
+                                `cursor-pointer select-none relative p-2 ${active
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-900"
                                 }`
                               }
                             >
@@ -1114,9 +1173,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                     value={searchUserValue}
                     onChange={handleUserChange}
                     onFocus={() => setIsUserFocused(true)}
-                    className={`p-1 pr-10 w-full border rounded-md ${
-                      errors.AssignedTo ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`p-1 pr-10 w-full border rounded-md ${errors.AssignedTo ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="Search by User Name..."
                   />
                   {errors.AssignedTo && (
@@ -1174,9 +1232,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 <Combobox value={selectedRole} onChange={handleRoleChanging}>
                   <div className="relative w-full sm:w-1/4">
                     <Combobox.Input
-                      className={`p-1 w-full border rounded-md ${
-                        errors.UserRole ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`p-1 w-full border rounded-md ${errors.UserRole ? "border-red-500" : "border-gray-300"
+                        }`}
                       onChange={(e) => setQuery(e.target.value)}
                       displayValue={(roleID) => {
                         const selected = roles.find(
@@ -1198,10 +1255,9 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                             key={role.RoleID}
                             value={role.RoleID}
                             className={({ active }) =>
-                              `cursor-pointer select-none relative p-2 ${
-                                active
-                                  ? "bg-blue-500 text-white"
-                                  : "text-gray-900"
+                              `cursor-pointer select-none relative p-2 ${active
+                                ? "bg-blue-500 text-white"
+                                : "text-gray-900"
                               }`
                             }
                           >
@@ -1225,9 +1281,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                   name="StartDate"
                   value={formatDate(formOrderDetails.StartDate)}
                   onChange={handleChange}
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.StartDate ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.StartDate ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
               </div>
 
@@ -1241,9 +1296,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                     name="ExpectedDays"
                     value={formOrderDetails.ExpectedDays}
                     onChange={handleExpectedDaysChange}
-                    className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                      errors.ExpectedDays ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.ExpectedDays ? "border-red-500" : "border-gray-300"
+                      }`}
                     min="0" // Ensure the user can't select a negative number of days
                   />
                 </div>
@@ -1258,9 +1312,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                   name="DeliveryDate"
                   value={formatDate(formOrderDetails.DeliveryDate)}
                   onChange={handleDateChanging} // Manually change if needed
-                  className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                    errors.DeliveryDate ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.DeliveryDate ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
                 {errors.DeliveryDate && (
                   <p className="text-red-500 text-sm ml-2">
@@ -1280,7 +1333,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                     <input
                       type="file"
                       multiple
-                      accept="image/*,application/pdf,.doc,.docx"
+                      accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,image/*"
                       onChange={handleFileChange}
                       className="hidden"
                       id="UploadFiles"
@@ -1296,7 +1349,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
 
                   {/* View and Cancel Buttons */}
                   <div className="flex flex-1 items-center gap-2">
-                    {(imagePreviews.length > 0 || pdfPreviews.length > 0) && (
+                    {(imagePreviews.length > 0 || pdfPreviews.length > 0 || docPreviews.length > 0) && (
                       <>
                         {/* View Button */}
                         <button
@@ -1333,9 +1386,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       Comments: e.target.value,
                     })
                   }
-                  className={`p-2 w-full sm:w-1/4 border rounded-md ${
-                    errors.Comments ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-2 w-full sm:w-1/4 border rounded-md ${errors.Comments ? "border-red-500" : "border-gray-300"
+                    }`}
                   rows={3} // Set the number of visible rows
                 />
                 {errors.Comments && (
@@ -1343,38 +1395,21 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 )}
               </div>
             </div>
-
             <div onScroll={handleScroll} className="overflow-y-auto pl-4 pr-14">
               <nav aria-label="Progress">
                 <ol role="list">
                   {filteredStatusList.map((status, index) => (
                     <li
                       key={status.StatusID}
-                      className={`relative pb-5 cursor-pointer ${
-                        completedSteps[index] ? "completed" : ""
-                      }`}
-                      // Remove the click handler if you don't want individual steps to be clickable
-                      // onClick={() => handleStepClick(index)}
+                      className={`relative pb-5 cursor-pointer ${completedSteps[index] ? "completed" : ""}`}
                     >
                       {/* Step rendering logic with lines */}
                       <div
-                        className={`step-indicator flex items-center ${
-                          completedSteps[index]
-                            ? "text-gray-800"
-                            : "text-gray-800"
-                        } ${activeStep === index ? "text-orange-500" : ""}`}
+                        className={`step-indicator flex items-center ${completedSteps[index] ? "text-gray-800" : "text-gray-800"} ${activeStep === index ? "text-orange-500" : ""}`}
                       >
                         {/* Step Circle */}
                         <span
-                          className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center ${
-                            completedSteps[index]
-                              ? "bg-green-400 text-white"
-                              : "bg-gray-300"
-                          } ${
-                            activeStep === index
-                              ? "bg-orange-400 text-white"
-                              : "bg-gray-300"
-                          }`}
+                          className={`mr-2 h-6 w-6 rounded-full flex items-center justify-center ${completedSteps[index] ? "bg-green-400 text-white" : "bg-gray-300"} ${activeStep === index ? "bg-orange-400 text-white" : "bg-gray-300"}`}
                         >
                           {activeStep === index ? (
                             <GrInProgress />
@@ -1386,15 +1421,25 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         </span>
 
                         {/* Status Text */}
-                        {status.OrderStatus}
+
+                        {/* Conditional rendering based on OrderStatus */}
+                        {status.OrderStatus === "Revised Design" &&
+                          subStatusId &&
+                          subStatusId !== 0 &&
+                          subStatusId !== "N/A" ? (
+                          <span>
+                            {status.OrderStatus} {`R${subStatusId}`}
+                          </span>
+                        ) : (
+                          <span>{status?.OrderStatus}</span>
+                        )}
+
                       </div>
 
                       {/* Line between steps */}
                       {index < filteredStatusList.length - 1 && (
                         <div
-                          className={`absolute top-6 left-3 w-0.5 h-8 bg-gray-300 ${
-                            completedSteps[index] ? "bg-green-400" : ""
-                          }`}
+                          className={`absolute top-6 left-3 w-0.5 h-8 bg-gray-300 ${completedSteps[index] ? "bg-green-400" : ""}`}
                         />
                       )}
                     </li>
@@ -1402,6 +1447,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                 </ol>
               </nav>
             </div>
+
           </div>
           <div className="relative flex justify-center gap-4">
             <div className=" flex justify-start gap-4">
@@ -1429,7 +1475,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
               </button>
             </div>
 
-            
+
           </div>
         </form>
 
@@ -1539,36 +1585,36 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                         Start Date:{" "}
                         {status.StartDate
                           ? (() => {
-                              const date = new Date(status.StartDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.StartDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                         <br />
                         {/* Delivery Date */}
                         End Date:{" "}
                         {status.DeliveryDate
                           ? (() => {
-                              const date = new Date(status.DeliveryDate);
-                              const month = date.toLocaleString("en-US", {
-                                month: "short",
-                              });
-                              const day = String(date.getDate()).padStart(
-                                2,
-                                "0"
-                              ); // Pad day with leading zero if needed
-                              const year = date.getFullYear();
+                            const date = new Date(status.DeliveryDate);
+                            const month = date.toLocaleString("en-US", {
+                              month: "short",
+                            });
+                            const day = String(date.getDate()).padStart(
+                              2,
+                              "0"
+                            ); // Pad day with leading zero if needed
+                            const year = date.getFullYear();
 
-                              return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
-                            })()
+                            return `${month} ${day}, ${year}`; // Format: Jan 01, 2024
+                          })()
                           : "N/A"}
                       </p>
                     </StyledTableCell>
@@ -1604,7 +1650,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       className="border-r border-gray-300"
                     >
                       {Array.isArray(status.viewdocuments) &&
-                      status.viewdocuments.length > 0 ? (
+                        status.viewdocuments.length > 0 ? (
                         status.viewdocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1628,7 +1674,7 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                       )}
 
                       {Array.isArray(status.DownloadDocuments) &&
-                      status.DownloadDocuments.length > 0 ? (
+                        status.DownloadDocuments.length > 0 ? (
                         status.DownloadDocuments.map((url, docIndex) => (
                           <div
                             key={docIndex}
@@ -1693,8 +1739,8 @@ const YourComponent = ({ onBack, onNext, orderId }) => {
                     {isLoading
                       ? "Loading..."
                       : error
-                      ? error
-                      : "No Order Found"}
+                        ? error
+                        : "No Order Found"}
                   </StyledTableCell>
                 </TableRow>
               )}

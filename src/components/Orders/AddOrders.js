@@ -508,7 +508,7 @@ function AddOrders() {
   const isStepSkipped = (step) => skipped.has(step);
   const [orderID, setOrderID] = useState(null); // Or an initial value
   const [IsEditMode, setIsEditMode] = useState(false);
-  const [statusUpdatedData, setStatusUpdatedData] = useState(false);
+  const [statusUpdatedData, setStatusUpdatedData] = useState("");
   const [updatedsubStatusId, setUpdatedSubStatusId] = useState("");
   const handleNext = () => {
     let newSkipped = skipped;
@@ -1019,9 +1019,6 @@ function AddOrders() {
     }
 
     // Update statusUpdatedData if necessary
-    if (updatedStatusOrderDetails?.OrderStatus) {
-      setStatusUpdatedData(updatedStatusOrderDetails.OrderStatus);
-    }
   }, [
     isEditMode,
     orderIdDetails,
@@ -1296,9 +1293,9 @@ function AddOrders() {
                                   />
                                 </span>
 
-                                {orderDetails.StatusID === 4 &&
-                                  orderDetails.SubStatusId !== 0 &&
-                                  orderDetails.SubStatusId !== "N/A" && (
+                                {( statusUpdatedData === "Revised Design" || updatedsubStatusId === "Revised Design") &&
+                                  updatedsubStatusId !== 0 &&
+                                  updatedsubStatusId !== "N/A" && (
                                     <div className="w-1/3 ml-2">
                                       <div className="w-6 h-6 bg-green-500 text-white flex items-center justify-center rounded-sm">
                                         {`R${updatedsubStatusId}`}
@@ -1350,8 +1347,7 @@ function AddOrders() {
 
                             {/* Only show the dropdown when searchValue is not empty and input is focused */}
                             <div
-                              className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${
-                                searchValue && isFocused ? "block" : "hidden"
+                              className={`absolute flex-1 top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${searchValue && isFocused ? "block" : "hidden"
                               }`}
                               style={{
                                 maxHeight: "200px",
@@ -1542,8 +1538,7 @@ function AddOrders() {
                             <ul className="flex flex-wrap -mb-px">
                               <li className="me-2">
                                 <button
-                                  className={`inline-block p-4 ${
-                                    selectedTab === "address"
+                                  className={`inline-block p-4 ${selectedTab === "address"
                                       ? "text-blue-600 border-b-2 border-blue-600"
                                       : "hover:text-gray-600 hover:border-gray-300"
                                   } rounded-t-lg`}
@@ -1554,8 +1549,7 @@ function AddOrders() {
                               </li>
                               <li className="me-2">
                                 <button
-                                  className={`inline-block p-4 ${
-                                    selectedTab === "order"
+                                  className={`inline-block p-4 ${selectedTab === "order"
                                       ? "text-blue-600 border-b-2 border-blue-600"
                                       : "hover:text-gray-600 hover:border-gray-300"
                                   } rounded-t-lg`}
@@ -1946,8 +1940,7 @@ function AddOrders() {
                           name="ExpectedDurationDays"
                           value={orderDetails.ExpectedDurationDays}
                           onChange={handling}
-                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${
-                            errors.ExpectedDurationDays
+                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${errors.ExpectedDurationDays
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -1974,8 +1967,7 @@ function AddOrders() {
                                 : ""
                             }
                             onChange={handleChange}
-                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                              errors.OrderDate
+                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.OrderDate
                                 ? "border-red-500"
                                 : "border-gray-300"
                             }`}
@@ -2003,8 +1995,7 @@ function AddOrders() {
                               : ""
                           }
                           onChange={handleDateChang}
-                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${
-                            errors.DeliveryDate
+                          className={` p-1  mt-2 mb-1 w-full border rounded-md ${errors.DeliveryDate
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -2029,8 +2020,7 @@ function AddOrders() {
                             onChange={handleUserChange}
                             onFocus={() => setIsUserFocused(true)}
                             // onBlur={() => setIsFocused(false)} // Uncomment if you want the dropdown to close on blur
-                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${
-                              errors.DesginerName
+                            className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.DesginerName
                                 ? "border-red-500"
                                 : "border-gray-300"
                             }`}
@@ -2099,8 +2089,7 @@ function AddOrders() {
                           name="Comments"
                           value={orderDetails.Comments}
                           onChange={handleChange}
-                          className={` p-1  mt-0 mb-5 w-full border rounded-md ${
-                            errors.Comments
+                          className={` p-1  mt-0 mb-5 w-full border rounded-md ${errors.Comments
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -2122,8 +2111,7 @@ function AddOrders() {
                           name="TotalAmount"
                           value={orderDetails.TotalAmount}
                           onChange={handleChange}
-                          className={` p-1  mt-3 w-full border rounded-md ${
-                            errors.TotalAmount
+                          className={` p-1  mt-3 w-full border rounded-md ${errors.TotalAmount
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -2144,8 +2132,7 @@ function AddOrders() {
                           name="AdvanceAmount"
                           value={orderDetails.AdvanceAmount}
                           onChange={handleChange}
-                          className={` p-1  mt-3  w-full border rounded-md ${
-                            errors.AdvanceAmount
+                          className={` p-1  mt-3  w-full border rounded-md ${errors.AdvanceAmount
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}

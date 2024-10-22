@@ -33,8 +33,8 @@ const FeedbackComponent = () => {
     const fetchFeedbacks = async () => {
       setLoading(true);
       try {
-        const startDate = value.startDate || "2024-9-09"; // Fallback start date
-        const endDate = value.endDate || "2024-10-11"; // Fallback end date
+        const startDate = value.startDate; // Fallback start date
+        const endDate = value.endDate; // Fallback end date
         const StoreID = selectedStore.StoreID; // Use dynamic store ID
 
         // Perform API call using axios
