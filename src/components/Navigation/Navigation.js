@@ -23,7 +23,7 @@ import {
   UserIcon,
   DocumentMagnifyingGlassIcon,
   ChatBubbleLeftEllipsisIcon,
-  ClipboardDocumentCheckIcon
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
@@ -33,22 +33,21 @@ import logo from "../../assests/Images/imly-logo-new.jpg";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { CogIcon } from "@heroicons/react/20/solid";
 import { useAuth } from "../../Context/AuthContext";
-import { FaRegCommentDots } from 'react-icons/fa';
 
 const allNavigation = {
   Service: [
-    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, roles: [1, 2] },
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, roles: [1, 2, ] },
     {
       name: "Orders",
       href: "/Orders",
       icon: ClipboardDocumentListIcon,
-      roles: [1, 2],
+      roles: [1, 2, 3],
     },
     {
       name: "Payments",
       href: "/Payments",
       icon: CreditCardIcon,
-      roles: [1, 2],
+      roles: [1, 2, 3],
     },
     {
       name: "Services",
@@ -56,7 +55,7 @@ const allNavigation = {
       icon: DocumentMagnifyingGlassIcon,
       roles: [1, 2],
     },
-    { name: "Customers", href: "/Customer", icon: UsersIcon, roles: [1, 2] },
+    { name: "Customers", href: "/Customer", icon: UsersIcon, roles: [1, 2, 3] },
   ],
   Reporting: [
     { name: "Reports", href: "/Reports", icon: FolderIcon, roles: [1, 2] },
@@ -66,7 +65,12 @@ const allNavigation = {
   Inventory: [
     { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
     { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1, 2] },
-    { name: "Tasks", href: "/tasks", icon:ClipboardDocumentCheckIcon , roles: [1, 2] },
+    {
+      name: "Tasks",
+      href: "/tasks",
+      icon: ClipboardDocumentCheckIcon,
+      roles: [1, 2],
+    },
     {
       name: "Feedbacks",
       href: "/feedback",
@@ -74,7 +78,6 @@ const allNavigation = {
       roles: [1, 2],
     },
   ],
-  
 };
 
 const userNavigation = [
@@ -215,9 +218,9 @@ export default function Navigation() {
           <div
             className="flex flex-col grow bg-white px-6 pb-4" // Add left padding to the entire container
             style={{
-              overflowY: 'auto',
-              scrollbarWidth: 'none', // For Firefox
-              msOverflowStyle: 'none', // For Internet Explorer and Edge
+              overflowY: "auto",
+              scrollbarWidth: "none", // For Firefox
+              msOverflowStyle: "none", // For Internet Explorer and Edge
             }}
           >
             <style>
@@ -236,14 +239,12 @@ export default function Navigation() {
             <hr className="border-gray-300" />
             {/* Navigation Section */}
 
-
-
             <nav className="flex flex-col mt-2 flex-1 w-full">
               <ul role="list" className="space-y-6 w-full">
                 {Object.entries(navigation).map(([key, items]) => (
                   <li key={key} className="w-full">
                     <h3 className="text-sm font-bold text-gray-700 mb-2 text-left pl-4">
-                      {key.replace(/([A-Z])/g, ' $1')}
+                      {key.replace(/([A-Z])/g, " $1")}
                     </h3>
                     <ul role="list" className="space-y-1 w-full">
                       {items.map((item) => (
@@ -253,16 +254,18 @@ export default function Navigation() {
                             onClick={() => setSidebarOpen(false)}
                             className={classNames(
                               location.pathname.startsWith(item.href)
-                                ? 'bg-custom-darkblue text-white'
-                                : 'text-gray-900 hover:bg-custom-lightblue hover:text-gray-700',
-                              'group flex items-center p-2 text-xs font-medium w-full pl-6'
+                                ? "bg-custom-darkblue text-white"
+                                : "text-gray-900 hover:bg-custom-lightblue hover:text-gray-700",
+                              "group flex items-center p-2 text-xs font-medium w-full pl-6"
                             )}
                           >
                             <item.icon
                               aria-hidden="true"
                               className={classNames(
-                                location.pathname.startsWith(item.href) ? 'text-white' : 'group-hover:text-gray-700',
-                                'h-4 w-4 shrink-0 mr-2'
+                                location.pathname.startsWith(item.href)
+                                  ? "text-white"
+                                  : "group-hover:text-gray-700",
+                                "h-4 w-4 shrink-0 mr-2"
                               )}
                             />
                             {item.name}
@@ -338,7 +341,7 @@ export default function Navigation() {
                 <button
                   type="button"
                   // className="-m-1.5 p-1.5 text-white hover:text-gray-500"
-                   className="-m-1.5 p-1.5 text-black hover:text-gray-500"
+                  className="-m-1.5 p-1.5 text-black hover:text-gray-500"
                 >
                   <span className="sr-only">View notifications</span>
                   <BellIcon aria-hidden="true" className="h-5 w-5" />
@@ -347,8 +350,7 @@ export default function Navigation() {
                 <div
                   aria-hidden="true"
                   // className="hidden lg:block lg:h-5 lg:w-px lg:bg-white"
-                   className="hidden lg:block lg:h-5 lg:w-px lg:bg-black"
-
+                  className="hidden lg:block lg:h-5 lg:w-px lg:bg-black"
                 />
 
                 {/* User Menu */}
@@ -364,7 +366,7 @@ export default function Navigation() {
                       <span
                         aria-hidden="true"
                         // className="text-sm font-semibold leading-6 text-white"
-                         className="text-sm font-semibold leading-6 text-black"
+                        className="text-sm font-semibold leading-6 text-black"
                       >
                         Tom Cook
                       </span>

@@ -45,6 +45,7 @@ import { UpdatedStatusOrderProvider } from "./Context/UpdatedOrder";
 import Test from "./components/Testing/Testing";
 import Temp from "./components/Testing/Temp";
 import Feedback from "./components/FeedBack/feeedbackForm";
+import Restricted from "./components/Unauth/Restricted";
 
 function App() {
   const location = useLocation();
@@ -102,7 +103,7 @@ function App() {
                               <Route
                                 path="/Orders"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute allowedRoles={[1,3]}>
                                     <Orders />
                                   </ProtectedRoute>
                                 }
@@ -110,7 +111,7 @@ function App() {
                               <Route
                                 path="/dashboard"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute allowedRoles={[1,3]}>
                                     <Dashboard />
                                   </ProtectedRoute>
                                 }
@@ -175,7 +176,7 @@ function App() {
                               <Route
                                 path="/RoleUserAddform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute allowedRoles={[1,3]}>
                                     <RoleUserAddForm />
                                   </ProtectedRoute>
                                 }
@@ -191,7 +192,7 @@ function App() {
                               <Route
                                 path="/RoleUserEditform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute allowedRoles={[1,3]}>
                                     <RoleUserEditForm />
                                   </ProtectedRoute>
                                 }
@@ -199,7 +200,7 @@ function App() {
                               <Route
                                 path="/Customerform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute allowedRoles={[1,3]}>
                                     <AddCustomers />
                                   </ProtectedRoute>
                                 }
@@ -270,6 +271,7 @@ function App() {
                                   </ProtectedRoute>
                                 }
                               />
+                              <Route path="/unauthorized" element={<Restricted />} />
                             </Routes>
                           </IdProvider>
                         </DataProvider>

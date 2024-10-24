@@ -22,9 +22,9 @@ const genderOptions = [
 const roleOptions = [
   { id: "1", name: "Admin" },
   { id: "2", name: "Store User" },
-  { id: "3", name: " Finance" },
+  { id: "3", name: "Finance" },
   { id: "4", name: "Production" },
-  { id: "5", name: "Techinical" },
+  { id: "5", name: "Technical" },
 ];
 
 function Userform() {
@@ -57,7 +57,7 @@ function Userform() {
       StoreID: "",
     }
   );
-
+  const [roles, setRoles] = useState([]);
   const [countryMap, setCountryMap] = useState({});
   const [StoreMap, setStoreMap] = useState({});
   const [stateMap, setStateMap] = useState({});
@@ -87,6 +87,27 @@ function Userform() {
       setCities(citiesData.data || []);
     }
   }, [countriesData, statesData, citiesData]);
+
+  const fetchRoles = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        "https://imly-b2y-ttnc.onrender.com/api/userrole/getAllRoles"
+      );
+      const data = await response.json();
+      if (data.StatusCode === "SUCCESS") {
+        setRoles(data.roles);
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    } finally {
+      setIsLoading(false); // Hide loading animation
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
   useEffect(() => {
     if (storesData) {
@@ -134,7 +155,8 @@ function Userform() {
 
       if (selectedStore) {
         setSelectedStore(selectedStore); // This sets the selected store
-        console.log("Selected Store:", selectedStore.StoreName); // You can log the selected store name
+        console.log("Selected Store:", selectedStore.StoreName);
+        console.log("Selected Store:", selectedStore.StoreID);
       } else {
         console.log("No store found for StoreID:", user.StoreID);
       }
@@ -180,10 +202,6 @@ function Userform() {
   const [selectedGender, setSelectedGender] = useState(formData.Gender || "");
   const [isLoading, setIsLoading] = useState(false);
 
-  // const handleStoreChange = (store) => {
-  //   setSelectedStore(store);
-  // };
-
   const handleGenderChange = (gender) => {
     setSelectedGender(gender);
     setFormData({
@@ -204,8 +222,8 @@ function Userform() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true); // Show loading animation
     try {
+      setIsLoading(true); // Show loading animation
       const formDataToSend = new FormData();
 
       Object.keys(formData).forEach((key) => {
@@ -284,11 +302,10 @@ function Userform() {
   const handleStoreChange = (selectedStore) => {
     if (!selectedStore) return;
 
-    const StoreID = selectedStore.id; // Use the id directly
     setSelectedStore(selectedStore);
     setFormData({
       ...formData,
-      StoreID: StoreID,
+      StoreID: selectedStore.StoreID, // Use StoreID directly from the store object
       StoreName: selectedStore.StoreName,
     });
   };
@@ -373,7 +390,7 @@ function Userform() {
                   <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                     {stores.map((store) => (
                       <Combobox.Option
-                        key={store.StoreID} // Use StoreID as the key
+                        key={store.StoreID}
                         className={({ active }) =>
                           `relative cursor-default select-none py-2 pl-3 pr-9 ${
                             active
@@ -381,7 +398,7 @@ function Userform() {
                               : "text-gray-900"
                           }`
                         }
-                        value={store}
+                        value={store} // Pass the entire store object
                       >
                         {({ selected, active }) => (
                           <>
@@ -390,7 +407,7 @@ function Userform() {
                                 selected ? "font-semibold" : "font-normal"
                               }`}
                             >
-                              {store.StoreName} {/* Display the StoreName */}
+                              {store.StoreName}
                             </span>
                             {selected && (
                               <span
@@ -420,63 +437,21 @@ function Userform() {
               >
                 Role
               </label>
-              <Combobox
-                value={selectedRole}
-                onChange={handleRoleChange}
-                as="div"
+              <select
+                id="RoleID"
+                name="RoleID"
+                value={formData.RoleID || ""}
+                onChange={handleFormChange}
+                className="mt-1 block w-full rounded-md border border-gray-400 shadow-sm py-2 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
-                <div className="relative mt-1">
-                  <Combobox.Input
-                    className="block w-full rounded-md border border-gray-400 shadow-sm py-2 px-4 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    displayValue={(role) => role?.name || ""}
-                  />
-                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <ChevronUpDownIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                  </Combobox.Button>
-                  <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    {roleOptions.map((role) => (
-                      <Combobox.Option
-                        key={role.id}
-                        value={role}
-                        className={({ active }) =>
-                          `relative cursor-default select-none py-2 pl-3 pr-9 ${
-                            active
-                              ? "bg-indigo-600 text-white"
-                              : "text-gray-900"
-                          }`
-                        }
-                      >
-                        {({ selected, active }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-semibold" : "font-normal"
-                              }`}
-                            >
-                              {role.name}
-                            </span>
-                            {selected ? (
-                              <span
-                                className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                  active ? "text-white" : "text-indigo-600"
-                                }`}
-                              >
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            ) : null}
-                          </>
-                        )}
-                      </Combobox.Option>
-                    ))}
-                  </Combobox.Options>
-                </div>
-              </Combobox>
+                <option value="">Select Role</option>
+                {roles.map((role) => (
+                  <option key={role.RoleID} value={role.RoleID}>
+                    {/* {role.RoleName} - {role.StoreName} */}
+                    {role.RoleName}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* First Name */}
