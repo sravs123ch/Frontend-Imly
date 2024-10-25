@@ -1,29 +1,43 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode"; // Make sure to install jwt-decode
+
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading state
+
+  const [permissionsID, setPermissionsID] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = () => {
       const token = localStorage.getItem("token");
+
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
+
           setIsLoggedIn(true);
-          setUserRole(decodedToken.RoleID); // Adjust based on your token structure
+
+          setUserRole(decodedToken.RoleID);
+
+          setPermissionsID(decodedToken.PermissionID || []);
         } catch (error) {
           console.error("Token decoding failed:", error);
         }
       } else {
         setIsLoggedIn(false);
+
         setUserRole(null);
+
+        setPermissionsID([]);
       }
-      setLoading(false); // Set loading to false after checking
+
+      setLoading(false);
     };
 
     checkAuthStatus();
@@ -31,21 +45,31 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token) => {
     localStorage.setItem("token", token);
+
     const decodedToken = jwtDecode(token);
+
     setIsLoggedIn(true);
+
     setUserRole(decodedToken.RoleID);
+
+    setPermissionsID(decodedToken.PermissionID || []); // Set permissions on login
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("UserID");
+    localStorage.removeItem("storesData");
+
     setIsLoggedIn(false);
+
     setUserRole(null);
+
+    setPermissionsID([]);
   };
 
+  console.log("pid", permissionsID);
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, userRole, login, logout, loading }}
+      value={{ isLoggedIn, userRole, permissionsID, login, logout, loading }}
     >
       {children}
     </AuthContext.Provider>
