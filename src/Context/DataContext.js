@@ -1,36 +1,39 @@
 import React, { createContext, useEffect, useState } from "react";
 
-// Create the context
 export const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
   const [citiesData, setCitiesData] = useState([]);
   const [statesData, setStatesData] = useState([]);
   const [countriesData, setCountriesData] = useState([]);
-  const [storesData, setStoresData] = useState([]); // Add store data state
-  const [loading, setLoading] = useState(true); // Loading state
+  const [storesData, setStoresData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchDataFromLocalStorage = (key, setter) => {
-    const data = JSON.parse(localStorage.getItem(key));
+    const data = localStorage.getItem(key);
     if (data) {
-      setter(data); // Access the data array
+      try {
+        const parsedData = JSON.parse(data);
+        setter(Array.isArray(parsedData) ? parsedData : []);
+      } catch (error) {
+        console.error(`Error parsing ${key} data from localStorage:`, error);
+        setter([]);
+      }
     } else {
       console.warn(`No ${key} data found in localStorage`);
+      setter([]);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      // Start loading
       setLoading(true);
 
-      // Fetch data from local storage
       fetchDataFromLocalStorage("citiesData", setCitiesData);
       fetchDataFromLocalStorage("statesData", setStatesData);
       fetchDataFromLocalStorage("countriesData", setCountriesData);
-      fetchDataFromLocalStorage("storesData", setStoresData); // Fetch store data
+      fetchDataFromLocalStorage("storesData", setStoresData);
 
-      // Finish loading
       setLoading(false);
     };
 

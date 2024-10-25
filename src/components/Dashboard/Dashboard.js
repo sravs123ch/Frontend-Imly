@@ -37,11 +37,37 @@ const Dashboard = () => {
   const { storesData } = useContext(DataContext);
   const [storeNames, setStoreNames] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
+  const [isStoreDataLoading, setIsStoreDataLoading] = useState(true);
   useEffect(() => {
-    if (storesData) {
-      setStoreNames(storesData || []);
-    }
-  }, [storesData]);
+    const loadStoreData = () => {
+      const storedData = localStorage.getItem("storesData");
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setStoreNames(parsedData);
+          setIsStoreDataLoading(false);
+        } catch (error) {
+          console.error("Error parsing store data:", error);
+          setIsStoreDataLoading(false);
+        }
+      } else {
+        setIsStoreDataLoading(false);
+      }
+    };
+
+    loadStoreData();
+
+    // Listen for the storeDataReady event
+    const handleStoreDataReady = () => {
+      loadStoreData();
+    };
+
+    window.addEventListener("storeDataReady", handleStoreDataReady);
+
+    return () => {
+      window.removeEventListener("storeDataReady", handleStoreDataReady);
+    };
+  }, []);
 
   const [value, setValue] = useState({
     startDate: "",
@@ -195,7 +221,7 @@ const Dashboard = () => {
 
   return (
     <div className="main-container">
-      {loading && <LoadingAnimation />}
+      {(loading || isStoreDataLoading) && <LoadingAnimation />}
       {/* Dashboard Header */}
       <div className="flex justify-end items-center space-x-4">
         <div className="flex flex-col items-end">

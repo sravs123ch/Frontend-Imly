@@ -20,6 +20,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const [isStoreDataLoading, setIsStoreDataLoading] = useState(false);
 
   // Fetch data from the APIs if not present in local storage
   const fetchApiData = async () => {
@@ -48,7 +49,32 @@ const Login = () => {
       }
     }
   };
-
+  const fetchAndStoreStoresData = async () => {
+    setIsStoreDataLoading(true);
+    const params = {
+      pageNumber: 1,
+      pageSize: 1000,
+    };
+  
+    try {
+      const storeResponse = await fetch(
+        `${GETALLSTORES_API}?${new URLSearchParams(params).toString()}`
+      );
+      const storesData = await storeResponse.json();
+      const stores = storesData.Stores || [];
+      localStorage.setItem("storesData", JSON.stringify(stores));
+      
+      // Dispatch an event to notify that store data is ready
+      window.dispatchEvent(new Event('storeDataReady'));
+      
+      return stores;
+    } catch (error) {
+      console.error("Error fetching store data:", error);
+      return [];
+    } finally {
+      setIsStoreDataLoading(false);
+    }
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -67,36 +93,18 @@ const Login = () => {
         console.log("Login successful:", data);
         const { token } = data;
 
-        // Decode the token to get UserID and RoleID
         const decodedToken = jwtDecode(token);
         const roleID = decodedToken.RoleID;
-        const userID = decodedToken.UserID; // Assuming UserID is in the token
+        const userID = decodedToken.UserID;
 
-        // Store UserID in local storage
         localStorage.setItem("UserID", userID);
 
-        // Login function from context
         login(token, roleID, userID);
 
-        // Fetch cities, states, and countries data if not present
-        await fetchApiData();
+        // Wait for both data fetching operations to complete
+        await Promise.all([fetchApiData(), fetchAndStoreStoresData()]);
 
-        const storedStoresData = localStorage.getItem("storesData");
-        if (!storedStoresData) {
-          const params = {
-            pageNumber: 1,
-            pageSize: 1000,
-          };
-
-          const storeResponse = await fetch(
-            `${GETALLSTORES_API}?${new URLSearchParams(params).toString()}`
-          );
-          const storesData = await storeResponse.json();
-          const stores = storesData.Stores || [];
-          localStorage.setItem("storesData", JSON.stringify(stores));
-        }
-
-        // Redirect based on role or other criteria
+        // Now that all data is loaded, navigate to the dashboard
         navigate("/dashboard");
       } else {
         console.error("Login failed:", data.message);
@@ -109,11 +117,10 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <>
       <div className="flex min-h-full p-0 m-0 flex-1 bg-white">
-        {isLoading && <LoadingAnimation />} 
+        {(isLoading || isStoreDataLoading) && <LoadingAnimation />}
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
@@ -190,7 +197,9 @@ const Login = () => {
                       onClick={(e) => handleLogin(e)}
                       // Disable the button when loading
                     >
-                      {isLoading ? "Please wait..." : "Sign in"}
+                      {isLoading || isStoreDataLoading
+                        ? "Please wait..."
+                        : "Sign in"}
                     </button>
                     {error && <p className="p-2 text-red-500">{error}</p>}
                   </div>
