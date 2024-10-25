@@ -1652,7 +1652,7 @@ function AddCustomers() {
                                   ).toLocaleDateString()}
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                  ${order.TotalAmount}
+                                &#8377;{order.TotalAmount}
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   {order.OrderStatus}

@@ -1,13 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Combobox } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import {
-  GET_OVERALL_DATA_FOR_DASHBOARD,
-  GETALLSTORES_API,
-} from "../../Constants/apiRoutes";
+import { GET_OVERALL_DATA_FOR_DASHBOARD } from "../../Constants/apiRoutes";
 import Datepicker from "react-tailwindcss-datepicker";
 import { GET_SALES_AND_PAYMENT_REPORT_BY_MONTH } from "../../Constants/apiRoutes";
 import axios from "axios";
@@ -20,7 +17,6 @@ import {
 
 import "chart.js/auto";
 import LoadingAnimation from "../Loading/LoadingAnimation";
-import { DataContext } from "../../Context/DataContext";
 
 Chart.register(...registerables);
 
@@ -33,8 +29,6 @@ const Dashboard = () => {
   const [overallData, setOverallData] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // const [storeNames, setStoreNames] = useState([]);
-  const { storesData } = useContext(DataContext);
   const [storeNames, setStoreNames] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
   const [isStoreDataLoading, setIsStoreDataLoading] = useState(true);
