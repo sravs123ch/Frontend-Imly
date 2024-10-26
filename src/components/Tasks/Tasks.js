@@ -25,16 +25,60 @@ const Tasks = () => {
   const [error, setError] = useState(null);
   const [userID, setUserID] = useState("1"); // Default user ID (Admin)
   const [searchName, setSearchName] = useState("");
+  const [userOptions, setUserOptions] = useState([]);
 
-  const userOptions = [
-    { id: "3", name: "Admin" },
-    { id: "1", name: "User 1" },
-    { id: "5", name: "User 2" },
-  ];
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await fetch(
+        "https://imly-b2y-ttnc.onrender.com/api/users/getAllUsers?page=1&limit=10",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await response.json();
+      if (data.StatusCode === "SUCCESS" && data.users) {
+        const formattedUsers = data.users.map((user) => ({
+          id: user.UserID.toString(),
+          name: `${user.FirstName} ${user.LastName}`,
+          email: user.Email,
+          employeeId: user.EmployeeID,
+          storeId: user.StoreID,
+          storeName: user.StoreName,
+        }));
+        setUserOptions(formattedUsers);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Failed to fetch users. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const fetchTasks = async (userId, searchTerm, selectedStore) => {
-    setLoading(true);
     try {
+      setLoading(true);
       let url = `${GET_TASKS}?UserID=${userId}&searchText=${searchTerm}`;
 
       // Only add StoreID to the URL if it's not null
@@ -100,11 +144,31 @@ const Tasks = () => {
   return (
     <div className="main-container">
       {loading && <LoadingAnimation />}
+      {error && <p className="text-red-500">{error}</p>}
       <h2 className="heading">User Tasks</h2>
       <hr className="border-t border-gray-300 mb-6" />
 
       <div className="flex flex-wrap justify-end gap-2 mt-2">
         {/* Container for centering search box */}
+        <div className="search-container-c-u ">
+          <label className="mr-2">Select User:</label>
+            <select
+              value={userID}
+              onChange={(e) => {
+                setUserID(e.target.value);
+                searchItems(searchName);
+              }}
+              className="border rounded p-2"
+              disabled={loading}
+            >
+              <option value="">Select a user</option>
+              {userOptions.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name} - {user.id}
+                </option>
+              ))}
+            </select>
+        </div>
         <div className="search-container-c-u">
           <label htmlFor="searchName" className="sr-only">
             Search
