@@ -115,6 +115,90 @@ const allNavigation = {
   ],
 };
 
+
+// const allNavigation = {
+//   Service: [
+//     {
+//       name: "Dashboard",
+//       href: "/dashboard",
+//       icon: HomeIcon,
+//       permissions: 37
+//     },
+//     {
+//       name: "Orders",
+//       href: "/Orders",
+//       icon: ClipboardDocumentListIcon,
+//       permissions: 38,
+//     },
+//     {
+//       name: "Payments",
+//       href: "/Payments",
+//       icon: CreditCardIcon,
+//       permissions: 39,
+//     },
+//     {
+//       name: "Services",
+//       href: "/services",
+//       icon: DocumentMagnifyingGlassIcon,
+//       permissions: 40,
+//     },
+//     {
+//       name: "Customers",
+//       href: "/Customer",
+//       icon: UsersIcon,
+//       permissions: 41
+//     },
+//   ],
+//   Reporting: [
+//     {
+//       name: "Reports",
+//       href: "/Reports",
+//       icon: FolderIcon,
+//        permissions: 42
+//     },
+//     {
+//       name: "Users",
+//       href: "/user",
+//       icon: UsersIcon,
+//       permissions: 43
+//     },
+//     {
+//       name: "User Roles",
+//       href: "/RoleUser",
+//       icon: UsersIcon,
+//        permissions: 44
+//     },
+//   ],
+//   Inventory: [
+//     {
+//       name: "Production",
+//       href: "/production",
+//       icon: CogIcon,
+//       permissions: 45
+//     },
+//     {
+//       name: "Stores",
+//       href: "/Stores",
+//       icon: ShoppingBagIcon,
+//       permissions: 46
+//     },
+//     {
+//       name: "Tasks",
+//       href: "/tasks",
+//       icon: ClipboardDocumentCheckIcon,
+//       permissions: 39,
+//     },
+//     {
+//       name: "Feedbacks",
+//       href: "/feedback",
+//       icon: ChatBubbleLeftEllipsisIcon,
+//       permissions: 39,
+//     },
+//   ],
+// };
+
+
+
 const userNavigation = [
   { name: "Your profile", href: "#" },
   { name: "Sign out", href: "/" }, // Redirect to login page

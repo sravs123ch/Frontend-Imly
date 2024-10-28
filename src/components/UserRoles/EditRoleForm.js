@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 import Select from "react-select";
-import { FETCH_PERMISSION_URL_BY_ROLEID } from "../../Constants/apiRoutes";
+import { FETCH_PERMISSION_URL_BY_ROLEID, CREATE_OR_UPDATE_ROLE_URL } from "../../Constants/apiRoutes";
 import { DataContext } from "../../Context/DataContext";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -29,14 +29,14 @@ const EditRoleForm = () => {
   // `${GETORDERBYID_API}/${orderId}`
 
  
-  const updateRoleUrl = `https://imly-b2y.onrender.com/api/permissions/createOrUpdateRolePermissions?storeId=${storeId}`;
-
   // Fetch role permissions and categorize them by PermissionModule
   useEffect(() => {
     const fetchRolePermissions = async () => {
       setLoading(true); // Start loading animation when API call starts
       try {
         const response = await axios.get(`${FETCH_PERMISSION_URL_BY_ROLEID}/${roleId}?storeId=${storeId}`);
+     
+        
         const data = response.data;
         const categorizedPermissions = {};
 
@@ -115,7 +115,7 @@ const EditRoleForm = () => {
 
     try {
       setIsLoading(true); // Start loading animation during form submission
-      const response = await axios.post(updateRoleUrl, payload);
+      const response = await axios.post(`${CREATE_OR_UPDATE_ROLE_URL}?storeId=${storeId}`, payload);
 
       toast.success("Role updated successfully!");
       setTimeout(() => {
