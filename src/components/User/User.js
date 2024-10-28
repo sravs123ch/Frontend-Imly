@@ -90,7 +90,7 @@ function User() {
           page: pageNum + 1,
           limit: pageSize,
           SearchText: search,
-          StoreID: storeId, // Add this parameter
+          StoreID: storeId, 
         },
         headers: {
           Authorization: `Bearer ${token}`,

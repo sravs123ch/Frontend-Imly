@@ -413,7 +413,7 @@ const FilterBar = ({ selectedFilter, onFilterChange }) => {
 
           <MenuItem
             onClick={() => {
-              onFilterChange("Completed");
+              onFilterChange("Completion");
               handleMenuClose();
             }}
             style={{
