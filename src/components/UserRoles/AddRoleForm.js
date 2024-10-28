@@ -13,9 +13,8 @@ const AddRoleForm = () => {
   const [roleName, setRoleName] = useState("");
   const [storeId, setStoreId] = useState("0");
   const [permissionsByModule, setPermissionsByModule] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { storesData } = useContext(DataContext);
   const [stores, setStores] = useState([]);
@@ -82,7 +81,6 @@ const AddRoleForm = () => {
   };
 
   const handleSaveRole = async () => {
-    setIsLoading(true);
     const permissions = [];
 
     Object.keys(permissionsByModule).forEach((module) => {
@@ -102,6 +100,7 @@ const AddRoleForm = () => {
     };
 
     try {
+      setLoading(true);
       const response = await axios.post(CREATE_OR_UPDATE_ROLE_URL, roleData);
       toast.success("Role saved successfully!");
       setTimeout(() => {
@@ -110,7 +109,7 @@ const AddRoleForm = () => {
     } catch (error) {
       toast.error("Error saving role. Please try again.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -135,6 +134,8 @@ const AddRoleForm = () => {
     <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-72 w-auto">
       <div className="mt-6  p-6 rounded-lg ">
         <ToastContainer />
+        {loading && <LoadingAnimation />}
+
         {/* <div className="mt-6 bg-white p-6 rounded-lg shadow-md"> */}
         <h2 className="heading">Add Role</h2>
         <hr className="border-gray-300 my-4 mb-4" />
@@ -223,7 +224,6 @@ const AddRoleForm = () => {
           </button>
         </div>
       </div>
-      {loading && <LoadingAnimation />}
     </div>
   );
 };

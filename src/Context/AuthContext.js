@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 import { jwtDecode } from "jwt-decode";
+import LoadingAnimation from "../components/Loading/LoadingAnimation";
 
 const AuthContext = createContext();
 
@@ -65,6 +66,11 @@ export const AuthProvider = ({ children }) => {
 
     setPermissionsID([]);
   };
+
+  if (loading) {
+    return <LoadingAnimation/>; // Or a spinner/loading indicator
+  }
+
 
   console.log("pid", permissionsID);
   return (

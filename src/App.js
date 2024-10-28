@@ -14,7 +14,6 @@ import Stores from "./components/Stores/Stores";
 import Reports from "./components/Reports/Reports";
 import Payments from "./components/Payments/Payments";
 import Customer from "./components/Customer/Customer";
-// import UserRole from "./components/User/UserRole";
 import Userform from "./components/User/Userform";
 import Storesform from "./components/Stores/Storeform";
 import { UserProvider } from "./Context/userContext";
@@ -46,6 +45,7 @@ import Test from "./components/Testing/Testing";
 import Temp from "./components/Testing/Temp";
 import Feedback from "./components/FeedBack/feeedbackForm";
 import Restricted from "./components/Unauth/Restricted";
+import { PERMISSIONS } from "./Constants/permissions";
 
 function App() {
   const location = useLocation();
@@ -68,26 +68,14 @@ function App() {
                           <IdProvider>
                             <Routes>
                               <Route path="/" element={<Login />} />
-                              <Route
-                                path="/product"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <ProductPage />
-                                  </ProtectedRoute>
-                                }
-                              />
-                              <Route
-                                path="/products"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <AddProduct />
-                                  </ProtectedRoute>
-                                }
-                              />
+
                               <Route
                                 path="/user"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={PERMISSIONS.VIEW_USERS}
+                                  >
                                     <User />
                                   </ProtectedRoute>
                                 }
@@ -95,7 +83,12 @@ function App() {
                               <Route
                                 path="/Customer"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_CUSTOMERS
+                                    }
+                                  >
                                     <Customer />
                                   </ProtectedRoute>
                                 }
@@ -103,7 +96,10 @@ function App() {
                               <Route
                                 path="/Orders"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1,3]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1, 3]}
+                                    requiredPermission={PERMISSIONS.VIEW_ORDERS}
+                                  >
                                     <Orders />
                                   </ProtectedRoute>
                                 }
@@ -111,23 +107,22 @@ function App() {
                               <Route
                                 path="/dashboard"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1,3]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1, 3]}
+                                    // requiredPermission={PERMISSIONS.VIEW_ORDERS}
+                                  >
                                     <Dashboard />
                                   </ProtectedRoute>
                                 }
                               />
-                              <Route
-                                path="/add-product"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <AddEditProduct />
-                                  </ProtectedRoute>
-                                }
-                              />
+
                               <Route
                                 path="/OrdersAdd/:orderId"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={PERMISSIONS.EDIT_ORDER}
+                                  >
                                     <AddOrders />
                                   </ProtectedRoute>
                                 }
@@ -135,7 +130,10 @@ function App() {
                               <Route
                                 path="/Stores"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    // requiredPermission={PERMISSIONS.EDIT_ORDER}
+                                  >
                                     <Stores />
                                   </ProtectedRoute>
                                 }
@@ -143,7 +141,12 @@ function App() {
                               <Route
                                 path="/Reports"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_REPORTS
+                                    }
+                                  >
                                     <Reports />
                                   </ProtectedRoute>
                                 }
@@ -151,7 +154,12 @@ function App() {
                               <Route
                                 path="/Payments"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_PAYMENTS
+                                    }
+                                  >
                                     <Payments />
                                   </ProtectedRoute>
                                 }
@@ -168,7 +176,12 @@ function App() {
                               <Route
                                 path="/RoleUser"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_USER_ROLES
+                                    }
+                                  >
                                     <RoleUser />
                                   </ProtectedRoute>
                                 }
@@ -176,23 +189,21 @@ function App() {
                               <Route
                                 path="/RoleUserAddform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1,3]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]} 
+                                    requiredPermission={PERMISSIONS.ADD_ROLE}
+                                  >
                                     <RoleUserAddForm />
-                                  </ProtectedRoute>
-                                }
-                              />
-                              <Route
-                                path="/Popup"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <SuccessPopup />
                                   </ProtectedRoute>
                                 }
                               />
                               <Route
                                 path="/RoleUserEditform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1,3]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1, 3]}
+                                    requiredPermission={PERMISSIONS.EDIT_ROLE}
+                                  >
                                     <RoleUserEditForm />
                                   </ProtectedRoute>
                                 }
@@ -200,7 +211,14 @@ function App() {
                               <Route
                                 path="/Customerform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1,3]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1, 3]}
+                                    requiredPermission={
+                                      PERMISSIONS.ADD_CUSTOMER ||
+                                      PERMISSIONS.EDIT_CUSTOMER ||
+                                      PERMISSIONS.DELETE_CUSTOMER
+                                    }
+                                  >
                                     <AddCustomers />
                                   </ProtectedRoute>
                                 }
@@ -208,7 +226,14 @@ function App() {
                               <Route
                                 path="/Userform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.ADD_USER ||
+                                      PERMISSIONS.EDIT_USER ||
+                                      PERMISSIONS.DELETE_USER
+                                    }
+                                  >
                                     <Userform />
                                   </ProtectedRoute>
                                 }
@@ -216,24 +241,28 @@ function App() {
                               <Route
                                 path="/Storesform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.ADD_STORE ||
+                                      PERMISSIONS.EDIT_STORE ||
+                                      PERMISSIONS.DELETE_STORE
+                                    }
+                                  >
                                     <Storesform />
                                   </ProtectedRoute>
                                 }
                               />
 
                               <Route
-                                path="/update-order"
+                                path="/services"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <UpdateOrder />
-                                  </ProtectedRoute>
-                                }
-                              />
-                              <Route
-                                path="/Returns"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_SERVICES
+                                    }
+                                  >
                                     <Returns />
                                   </ProtectedRoute>
                                 }
@@ -241,7 +270,12 @@ function App() {
                               <Route
                                 path="/production"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_PRODUCTION
+                                    }
+                                  >
                                     <Production />
                                   </ProtectedRoute>
                                 }
@@ -271,7 +305,10 @@ function App() {
                                   </ProtectedRoute>
                                 }
                               />
-                              <Route path="/unauthorized" element={<Restricted />} />
+                              <Route
+                                path="/unauthorized"
+                                element={<Restricted />}
+                              />
                             </Routes>
                           </IdProvider>
                         </DataProvider>

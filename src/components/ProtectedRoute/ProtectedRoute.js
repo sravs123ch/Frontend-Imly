@@ -2,8 +2,12 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 import LoadingAnimation from "../Loading/LoadingAnimation";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isLoggedIn, userRole, loading } = useAuth();
+const ProtectedRoute = ({
+  children,
+  allowedRoles,
+  requiredPermissions = [],
+}) => {
+  const { isLoggedIn, userRole, permissionsID, loading } = useAuth();
 
   if (loading) {
     return <LoadingAnimation />; // Or a loading spinner
@@ -17,12 +21,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/unauthorized" />;
   }
 
+  if (
+    requiredPermissions.length > 0 &&
+    !requiredPermissions.some((permission) =>
+      permissionsID.includes(permission)
+    )
+  ) {
+    return <Navigate to="/unauthorized" />;
+  }
+
   return children;
 };
 
 export default ProtectedRoute;
-
-
-
-
-

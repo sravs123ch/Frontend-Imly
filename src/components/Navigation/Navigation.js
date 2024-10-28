@@ -36,46 +36,81 @@ import { useAuth } from "../../Context/AuthContext";
 
 const allNavigation = {
   Service: [
-    { name: "Dashboard", href: "/dashboard", icon: HomeIcon, roles: [1, 2, ] },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: HomeIcon,
+      // permissions: 37
+    },
     {
       name: "Orders",
       href: "/Orders",
       icon: ClipboardDocumentListIcon,
-      roles: [1, 2, 3],
+      // permissions: 38,
     },
     {
       name: "Payments",
       href: "/Payments",
       icon: CreditCardIcon,
-      roles: [1, 2, 3],
+      // permissions: 39,
     },
     {
       name: "Services",
-      href: "/Returns",
+      href: "/services",
       icon: DocumentMagnifyingGlassIcon,
-      roles: [1, 2],
+      // permissions: 40,
     },
-    { name: "Customers", href: "/Customer", icon: UsersIcon, roles: [1, 2, 3] },
+    {
+      name: "Customers",
+      href: "/Customer",
+      icon: UsersIcon,
+      // permissions: 41
+    },
   ],
   Reporting: [
-    { name: "Reports", href: "/Reports", icon: FolderIcon, roles: [1, 2] },
-    { name: "Users", href: "/user", icon: UsersIcon, roles: [1, 2] },
-    { name: "User Roles", href: "/RoleUser", icon: UsersIcon, roles: [1, 2] },
+    {
+      name: "Reports",
+      href: "/Reports",
+      icon: FolderIcon,
+      //  permissions: 42
+    },
+    {
+      name: "Users",
+      href: "/user",
+      icon: UsersIcon,
+      // permissions: 43
+    },
+    {
+      name: "User Roles",
+      href: "/RoleUser",
+      icon: UsersIcon,
+      //  permissions: 44
+    },
   ],
   Inventory: [
-    { name: "Production", href: "/production", icon: CogIcon, roles: [1, 2] },
-    { name: "Stores", href: "/Stores", icon: ShoppingBagIcon, roles: [1, 2] },
+    {
+      name: "Production",
+      href: "/production",
+      icon: CogIcon,
+      // permissions: 45
+    },
+    {
+      name: "Stores",
+      href: "/Stores",
+      icon: ShoppingBagIcon,
+      // permissions: 46
+    },
     {
       name: "Tasks",
       href: "/tasks",
       icon: ClipboardDocumentCheckIcon,
-      roles: [1, 2],
+      // permissions: 39,
     },
     {
       name: "Feedbacks",
       href: "/feedback",
       icon: ChatBubbleLeftEllipsisIcon,
-      roles: [1, 2],
+      // permissions: 39,
     },
   ],
 };
@@ -90,7 +125,7 @@ function classNames(...classes) {
 }
 
 export default function Navigation() {
-  const { isLoggedIn, userRole } = useAuth();
+  const { isLoggedIn, permissionsID } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
   const location = useLocation(); // Initialize useLocation
@@ -106,15 +141,17 @@ export default function Navigation() {
     // Handle settings logic here, such as opening a settings modal
     console.log("Settings button clicked");
   };
-  const navigation = Object.keys(allNavigation).reduce((acc, key) => {
-    const filteredItems = allNavigation[key].filter((item) =>
-      item.roles.includes(userRole)
-    );
-    if (filteredItems.length > 0) {
-      acc[key] = filteredItems;
-    }
-    return acc;
-  }, {});
+  // const navigation = Object.keys(allNavigation).reduce((acc, key) => {
+  //   const filteredItems = allNavigation[key].filter(
+  //     (item) => permissionsID.includes(item.permissions) // Change to includes
+  //   );
+  //   if (filteredItems.length > 0) {
+  //     acc[key] = filteredItems;
+  //   }
+  //   return acc;
+  // }, {});
+
+  const navigation = allNavigation;
   return (
     <>
       <div>
