@@ -150,24 +150,110 @@ const Tasks = () => {
 
       <div className="flex flex-wrap justify-end gap-2 mt-2">
         {/* Container for centering search box */}
-        <div className="search-container-c-u ">
+        <div className="combobox-container flex items-center">
           <label className="mr-2">Select User:</label>
-            <select
-              value={userID}
-              onChange={(e) => {
-                setUserID(e.target.value);
-                searchItems(searchName);
-              }}
-              className="border rounded p-2"
-              disabled={loading}
-            >
-              <option value="">Select a user</option>
-              {userOptions.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name} - {user.id}
-                </option>
-              ))}
-            </select>
+
+          <Combobox
+            value={userID}
+            onChange={(value) => {
+              setUserID(value);
+              searchItems(searchName);
+            }}
+          >
+            <div className="combobox-wrapper h-[40px]">
+              <Combobox.Input
+                className="combobox-input w-full h-full"
+                displayValue={(userId) => {
+                  const user = userOptions.find((user) => user.id === userId);
+                  return user ? user.name : "Select a user";
+                }}
+                placeholder="Select User"
+              />
+              <Combobox.Button className="combobox-button">
+                <ChevronUpDownIcon
+                  className="combobox-icon"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+              <Combobox.Options className="combobox-options">
+                {/* Add "Select User" option */}
+                <Combobox.Option
+                  key="select-user"
+                  className={({ active }) =>
+                    active ? "combobox-option-active" : "combobox-option"
+                  }
+                  value={null}
+                >
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={
+                          selected
+                            ? "combobox-option-text font-semibold"
+                            : "combobox-option-text font-normal"
+                        }
+                      >
+                        Select User
+                      </span>
+                      {selected && (
+                        <span
+                          className={
+                            active
+                              ? "combobox-option-selected-icon active-selected-icon"
+                              : "combobox-option-selected-icon"
+                          }
+                        >
+                          <CheckIcon
+                            className="combobox-check-icon"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+
+                {/* Render all user options */}
+                {userOptions.map((user) => (
+                  <Combobox.Option
+                    key={user.id}
+                    className={({ active }) =>
+                      active ? "combobox-option-active" : "combobox-option"
+                    }
+                    value={user.id}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <span
+                          className={
+                            selected
+                              ? "combobox-option-text font-semibold"
+                              : "combobox-option-text font-normal"
+                          }
+                        >
+                          {user.name} - {user.id}
+                        </span>
+                        {selected && (
+                          <span
+                            className={
+                              active
+                                ? "combobox-option-selected-icon active-selected-icon"
+                                : "combobox-option-selected-icon"
+                            }
+                          >
+                            <CheckIcon
+                              className="combobox-check-icon"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </div>
+          </Combobox>
         </div>
         <div className="search-container-c-u">
           <label htmlFor="searchName" className="sr-only">

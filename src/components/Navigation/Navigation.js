@@ -34,119 +34,37 @@ import { useNavigate, useLocation } from "react-router-dom"; // Import useNaviga
 import { CogIcon } from "@heroicons/react/20/solid";
 import { useAuth } from "../../Context/AuthContext";
 
-const allNavigation = {
-  Service: [
-    {
-      name: "Dashboard",
-      href: "/dashboard",
-      icon: HomeIcon,
-      // permissions: 37
-    },
-    {
-      name: "Orders",
-      href: "/Orders",
-      icon: ClipboardDocumentListIcon,
-      // permissions: 38,
-    },
-    {
-      name: "Payments",
-      href: "/Payments",
-      icon: CreditCardIcon,
-      // permissions: 39,
-    },
-    {
-      name: "Services",
-      href: "/services",
-      icon: DocumentMagnifyingGlassIcon,
-      // permissions: 40,
-    },
-    {
-      name: "Customers",
-      href: "/Customer",
-      icon: UsersIcon,
-      // permissions: 41
-    },
-  ],
-  Reporting: [
-    {
-      name: "Reports",
-      href: "/Reports",
-      icon: FolderIcon,
-      //  permissions: 42
-    },
-    {
-      name: "Users",
-      href: "/user",
-      icon: UsersIcon,
-      // permissions: 43
-    },
-    {
-      name: "User Roles",
-      href: "/RoleUser",
-      icon: UsersIcon,
-      //  permissions: 44
-    },
-  ],
-  Inventory: [
-    {
-      name: "Production",
-      href: "/production",
-      icon: CogIcon,
-      // permissions: 45
-    },
-    {
-      name: "Stores",
-      href: "/Stores",
-      icon: ShoppingBagIcon,
-      // permissions: 46
-    },
-    {
-      name: "Tasks",
-      href: "/tasks",
-      icon: ClipboardDocumentCheckIcon,
-      // permissions: 39,
-    },
-    {
-      name: "Feedbacks",
-      href: "/feedback",
-      icon: ChatBubbleLeftEllipsisIcon,
-      // permissions: 39,
-    },
-  ],
-};
-
-
 // const allNavigation = {
 //   Service: [
 //     {
 //       name: "Dashboard",
 //       href: "/dashboard",
 //       icon: HomeIcon,
-//       permissions: 37
+//       // permissions: 37
 //     },
 //     {
 //       name: "Orders",
 //       href: "/Orders",
 //       icon: ClipboardDocumentListIcon,
-//       permissions: 38,
+//       // permissions: 38,
 //     },
 //     {
 //       name: "Payments",
 //       href: "/Payments",
 //       icon: CreditCardIcon,
-//       permissions: 39,
+//       // permissions: 39,
 //     },
 //     {
 //       name: "Services",
 //       href: "/services",
 //       icon: DocumentMagnifyingGlassIcon,
-//       permissions: 40,
+//       // permissions: 40,
 //     },
 //     {
 //       name: "Customers",
 //       href: "/Customer",
 //       icon: UsersIcon,
-//       permissions: 41
+//       // permissions: 41
 //     },
 //   ],
 //   Reporting: [
@@ -154,19 +72,19 @@ const allNavigation = {
 //       name: "Reports",
 //       href: "/Reports",
 //       icon: FolderIcon,
-//        permissions: 42
+//       //  permissions: 42
 //     },
 //     {
 //       name: "Users",
 //       href: "/user",
 //       icon: UsersIcon,
-//       permissions: 43
+//       // permissions: 43
 //     },
 //     {
 //       name: "User Roles",
 //       href: "/RoleUser",
 //       icon: UsersIcon,
-//        permissions: 44
+//       //  permissions: 44
 //     },
 //   ],
 //   Inventory: [
@@ -174,28 +92,110 @@ const allNavigation = {
 //       name: "Production",
 //       href: "/production",
 //       icon: CogIcon,
-//       permissions: 45
+//       // permissions: 45
 //     },
 //     {
 //       name: "Stores",
 //       href: "/Stores",
 //       icon: ShoppingBagIcon,
-//       permissions: 46
+//       // permissions: 46
 //     },
 //     {
 //       name: "Tasks",
 //       href: "/tasks",
 //       icon: ClipboardDocumentCheckIcon,
-//       permissions: 39,
+//       // permissions: 39,
 //     },
 //     {
 //       name: "Feedbacks",
 //       href: "/feedback",
 //       icon: ChatBubbleLeftEllipsisIcon,
-//       permissions: 39,
+//       // permissions: 39,
 //     },
 //   ],
 // };
+
+
+const allNavigation = {
+  Service: [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: HomeIcon,
+      permissions: 37
+    },
+    {
+      name: "Orders",
+      href: "/Orders",
+      icon: ClipboardDocumentListIcon,
+      permissions: 38,
+    },
+    {
+      name: "Payments",
+      href: "/Payments",
+      icon: CreditCardIcon,
+      permissions: 39,
+    },
+    {
+      name: "Services",
+      href: "/services",
+      icon: DocumentMagnifyingGlassIcon,
+      permissions: 40,
+    },
+    {
+      name: "Customers",
+      href: "/Customer",
+      icon: UsersIcon,
+      permissions: 41
+    },
+  ],
+  Reporting: [
+    {
+      name: "Reports",
+      href: "/Reports",
+      icon: FolderIcon,
+       permissions: 42
+    },
+    {
+      name: "Users",
+      href: "/user",
+      icon: UsersIcon,
+      permissions: 43
+    },
+    {
+      name: "User Roles",
+      href: "/RoleUser",
+      icon: UsersIcon,
+       permissions: 44
+    },
+  ],
+  Inventory: [
+    {
+      name: "Production",
+      href: "/production",
+      icon: CogIcon,
+      permissions: 45
+    },
+    {
+      name: "Stores",
+      href: "/Stores",
+      icon: ShoppingBagIcon,
+      permissions: 46
+    },
+    {
+      name: "Tasks",
+      href: "/tasks",
+      icon: ClipboardDocumentCheckIcon,
+      permissions: 39,
+    },
+    {
+      name: "Feedbacks",
+      href: "/feedback",
+      icon: ChatBubbleLeftEllipsisIcon,
+      permissions: 39,
+    },
+  ],
+};
 
 
 
@@ -225,17 +225,17 @@ export default function Navigation() {
     // Handle settings logic here, such as opening a settings modal
     console.log("Settings button clicked");
   };
-  // const navigation = Object.keys(allNavigation).reduce((acc, key) => {
-  //   const filteredItems = allNavigation[key].filter(
-  //     (item) => permissionsID.includes(item.permissions) // Change to includes
-  //   );
-  //   if (filteredItems.length > 0) {
-  //     acc[key] = filteredItems;
-  //   }
-  //   return acc;
-  // }, {});
+  const navigation = Object.keys(allNavigation).reduce((acc, key) => {
+    const filteredItems = allNavigation[key].filter(
+      (item) => permissionsID.includes(item.permissions) // Change to includes
+    );
+    if (filteredItems.length > 0) {
+      acc[key] = filteredItems;
+    }
+    return acc;
+  }, {});
 
-  const navigation = allNavigation;
+  // const navigation = allNavigation;
   return (
     <>
       <div>

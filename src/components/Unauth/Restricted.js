@@ -4,11 +4,12 @@ import LockIcon from "@mui/icons-material/Lock";
 
 const Restricted = () => {
   return (
-    <Container maxWidth="sm">
+    <div className="main-container">
       <Box
         sx={{
           paddingTop: { xs: "50px", sm: "80px", md: "100px" },
           textAlign: "center",
+          marginTop:"1/3",
         }}
       >
         {/* Lock Icon inside the circle */}
@@ -19,6 +20,7 @@ const Restricted = () => {
             backgroundColor: "#003375",
             borderRadius: "50%",
             margin: "0 auto",
+          
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -49,7 +51,7 @@ const Restricted = () => {
           </Typography>
         </Box>
       </Box>
-    </Container>
+    </div>
   );
 };
 

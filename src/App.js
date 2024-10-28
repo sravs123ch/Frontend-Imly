@@ -167,7 +167,9 @@ function App() {
                               <Route
                                 path="/Paymentsform"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute 
+                                  // allowedRoles={[1]}
+                                  >
                                     <Paymentform />
                                   </ProtectedRoute>
                                 }
@@ -283,7 +285,9 @@ function App() {
                               <Route
                                 path="/tasks"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute 
+                                  // allowedRoles={[1]}
+                                  >
                                     <Tasks />
                                   </ProtectedRoute>
                                 }
@@ -300,7 +304,9 @@ function App() {
                               <Route
                                 path="/feedback"
                                 element={
-                                  <ProtectedRoute allowedRoles={[1]}>
+                                  <ProtectedRoute 
+                                  // allowedRoles={[1]}
+                                  >
                                     <Feedback />
                                   </ProtectedRoute>
                                 }
