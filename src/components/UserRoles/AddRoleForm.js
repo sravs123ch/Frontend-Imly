@@ -30,6 +30,8 @@ const AddRoleForm = () => {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
+        setLoading(true);
+
         const response = await axios.get(FETCH_PERMISSION_URL);
         const data = response.data;
         const categorizedPermissions = {};

@@ -21,9 +21,13 @@ const Tasks = () => {
     inProgress: [],
     inReview: [],
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [userID, setUserID] = useState("1"); // Default user ID (Admin)
+
+  const [userID, setUserID] = useState(() => {
+    const storedUserID = localStorage.getItem("userID");
+    return storedUserID || "1";
+  });
   const [searchName, setSearchName] = useState("");
   const [userOptions, setUserOptions] = useState([]);
 
@@ -79,15 +83,22 @@ const Tasks = () => {
   const fetchTasks = async (userId, searchTerm, selectedStore) => {
     try {
       setLoading(true);
-      let url = `${GET_TASKS}?UserID=${userId}&searchText=${searchTerm}`;
+      console.log("Fetching tasks with params:", {
+        userId,
+        searchTerm,
+        selectedStore,
+      });
 
-      // Only add StoreID to the URL if it's not null
+      let url = `${GET_TASKS}?UserID=${userId}&searchText=${searchTerm}`;
       if (selectedStore && selectedStore.StoreID) {
         url += `&StoreID=${selectedStore.StoreID}`;
       }
 
+      console.log("Fetching from URL:", url);
+
       const response = await fetch(url);
       const data = await response.json();
+      console.log("Received data:", data);
 
       if (data.message === "No tasks found for the provided UserId.") {
         setTaskData({ toDo: [], inProgress: [], inReview: [] });
@@ -120,14 +131,13 @@ const Tasks = () => {
                 task.OrderHistoryStatus.includes("Canceled"))
           ),
         };
-
         setTaskData(transformedData);
       }
-      setLoading(false);
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (error) {
       console.error("Error fetching tasks:", error);
       setError("Failed to fetch tasks");
+    } finally {
       setLoading(false);
     }
   };
@@ -136,8 +146,19 @@ const Tasks = () => {
     fetchTasks(userID, value);
   };
   useEffect(() => {
-    fetchTasks(userID, searchName, selectedStore);
-  }, [userID, searchName, selectedStore]);
+    const fetchInitialTasks = async () => {
+      const storedUserID = localStorage.getItem("userID") || "1"; // Provide default userID if none in localStorage
+      setUserID(storedUserID);
+      await fetchTasks(storedUserID, searchName, selectedStore);
+    };
+
+    fetchInitialTasks();
+  }, []);
+  useEffect(() => {
+    if (userID) {
+      fetchTasks(userID, searchName, selectedStore);
+    }
+  }, [selectedStore]);
 
   if (error) return <p className="main-container">{error}</p>; // Apply error class
 

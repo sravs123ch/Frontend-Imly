@@ -67,13 +67,6 @@ function User() {
     }
   }, [storesData]);
 
-  const roleOptions = [
-    { id: "1", name: "Admin" },
-    { id: "2", name: "Store User" },
-    { id: "3", name: "Finance" },
-    { id: "4", name: "Production" },
-    { id: "5", name: "Technical" },
-  ];
   const handleStoreChange = (newStore) => {
     setSelectedStore(newStore);
     setPage(0); // Reset to first page when store changes
@@ -90,7 +83,7 @@ function User() {
           page: pageNum + 1,
           limit: pageSize,
           SearchText: search,
-          StoreID: storeId, 
+          StoreID: storeId,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -462,24 +455,7 @@ function User() {
 
                   <StyledTableCell>{person.PhoneNumber}</StyledTableCell>
 
-                  <StyledTableCell>
-                    {(() => {
-                      // Log the RoleID and available options for debugging
-                      console.log("RoleID:", person.RoleID);
-                      console.log("Role Options:", roleOptions);
-
-                      // Ensure person.RoleID is treated as a string for comparison
-                      const role = roleOptions.find(
-                        (role) => role.id === String(person.RoleID)
-                      );
-
-                      // Log the found role
-                      console.log("Found Role:", role);
-
-                      // Return the role name or "Unknown Role"
-                      return role?.name || "Unknown Role";
-                    })()}
-                  </StyledTableCell>
+                  <StyledTableCell>{person.RoleName}</StyledTableCell>
 
                   <StyledTableCell>
                     <span
