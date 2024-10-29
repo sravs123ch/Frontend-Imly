@@ -33,6 +33,7 @@ import logo from "../../assests/Images/imly-logo-new.jpg";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { CogIcon } from "@heroicons/react/20/solid";
 import { useAuth } from "../../Context/AuthContext";
+import { PERMISSIONS } from "../../Constants/permissions";
 
 // const allNavigation = {
 //   Service: [
@@ -115,38 +116,38 @@ import { useAuth } from "../../Context/AuthContext";
 //   ],
 // };
 
-
+console.log(PERMISSIONS,"perm")
 const allNavigation = {
   Service: [
     {
       name: "Dashboard",
       href: "/dashboard",
       icon: HomeIcon,
-      permissions: 37
+      permission:PERMISSIONS.ACCESS_DASHBOARD
     },
     {
       name: "Orders",
       href: "/Orders",
       icon: ClipboardDocumentListIcon,
-      permissions: 38,
+      permission:PERMISSIONS.ACCESS_ORDERS
     },
     {
       name: "Payments",
       href: "/Payments",
       icon: CreditCardIcon,
-      permissions: 39,
+      permission:PERMISSIONS.ACCESS_PAYMENTS
     },
     {
       name: "Services",
       href: "/services",
       icon: DocumentMagnifyingGlassIcon,
-      permissions: 40,
+      permission:PERMISSIONS.ACCESS_SERVICES
     },
     {
       name: "Customers",
       href: "/Customer",
       icon: UsersIcon,
-      permissions: 41
+      permission:PERMISSIONS.ACCESS_CUSTOMERS
     },
   ],
   Reporting: [
@@ -154,19 +155,19 @@ const allNavigation = {
       name: "Reports",
       href: "/Reports",
       icon: FolderIcon,
-       permissions: 42
+      permission:PERMISSIONS.ACCESS_REPORTS
     },
     {
       name: "Users",
       href: "/user",
       icon: UsersIcon,
-      permissions: 43
+      permission:PERMISSIONS.ACCESS_USERS
     },
     {
       name: "User Roles",
       href: "/RoleUser",
       icon: UsersIcon,
-       permissions: 44
+      permission:PERMISSIONS.ACCESS_USERROLES
     },
   ],
   Inventory: [
@@ -174,25 +175,25 @@ const allNavigation = {
       name: "Production",
       href: "/production",
       icon: CogIcon,
-      permissions: 45
+      permission:PERMISSIONS.ACCESS_PRODUCTION
     },
     {
       name: "Stores",
       href: "/Stores",
       icon: ShoppingBagIcon,
-      permissions: 46
+      permission:PERMISSIONS.ACCESS_STORES
     },
     {
       name: "Tasks",
       href: "/tasks",
       icon: ClipboardDocumentCheckIcon,
-      permissions: 39,
+      permission:PERMISSIONS.ACCESS_TASKS
     },
     {
       name: "Feedbacks",
       href: "/feedback",
       icon: ChatBubbleLeftEllipsisIcon,
-      permissions: 39,
+      permission:PERMISSIONS.ACCESS_FEEDBACKS
     },
   ],
 };
@@ -227,7 +228,7 @@ export default function Navigation() {
   };
   const navigation = Object.keys(allNavigation).reduce((acc, key) => {
     const filteredItems = allNavigation[key].filter(
-      (item) => permissionsID.includes(item.permissions) // Change to includes
+      (item) => permissionsID.includes(item.permission)
     );
     if (filteredItems.length > 0) {
       acc[key] = filteredItems;

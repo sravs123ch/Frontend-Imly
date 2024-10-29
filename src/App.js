@@ -132,7 +132,7 @@ function App() {
                                 element={
                                   <ProtectedRoute
                                     // allowedRoles={[1]}
-                                    // requiredPermission={PERMISSIONS.EDIT_ORDER}
+                                    requiredPermission={PERMISSIONS.VIEW_STORE}
                                   >
                                     <Stores />
                                   </ProtectedRoute>
@@ -168,7 +168,9 @@ function App() {
                                 path="/Paymentsform"
                                 element={
                                   <ProtectedRoute 
-                                  // allowedRoles={[1]}
+                                  requiredPermission={
+                                    PERMISSIONS.ADD_PAYMENTS || PERMISSIONS.EDIT_PAYMENTS
+                                  }
                                   >
                                     <Paymentform />
                                   </ProtectedRoute>
@@ -181,7 +183,7 @@ function App() {
                                   <ProtectedRoute
                                     // allowedRoles={[1]}
                                     requiredPermission={
-                                      PERMISSIONS.VIEW_USER_ROLES
+                                      PERMISSIONS.VIEW_USER_ROLES || PERMISSIONS.VIEW_ROLE
                                     }
                                   >
                                     <RoleUser />
@@ -287,6 +289,9 @@ function App() {
                                 element={
                                   <ProtectedRoute 
                                   // allowedRoles={[1]}
+                                  requiredPermission={
+                                    PERMISSIONS.VIEW_TASKS
+                                  }
                                   >
                                     <Tasks />
                                   </ProtectedRoute>
@@ -306,6 +311,9 @@ function App() {
                                 element={
                                   <ProtectedRoute 
                                   // allowedRoles={[1]}
+                                  requiredPermission={
+                                    PERMISSIONS.VIEW_FEEDBACKS
+                                  }
                                   >
                                     <Feedback />
                                   </ProtectedRoute>
