@@ -1,25 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
-import { useTheme } from "@mui/material/styles";
+
 import { FaPlus, FaTable } from "react-icons/fa";
 import * as XLSX from "xlsx";
-import PropTypes from "prop-types";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
@@ -31,7 +22,6 @@ import {
   GETALLUSERS_API,
   GETALLUSERSBYID_API,
   DELETEUSERSBYID_API,
-  GETALLSTORES_API,
 } from "../../Constants/apiRoutes";
 import "../../style.css";
 import {
@@ -51,11 +41,7 @@ function User() {
   const [searchName, setSearchName] = useState("");
   const navigate = useNavigate();
   const { setUserDetails } = useContext(UserContext);
-  const [paginatedPeople, setPaginatedPeople] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
 
-  const [Users, setusers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const { storesData } = useContext(DataContext);
@@ -80,8 +66,8 @@ function User() {
 
       const response = await axios.get(GETALLUSERS_API, {
         params: {
-          page: pageNum + 1,
-          limit: pageSize,
+          pageNumber: pageNum + 1,
+          pageSize: pageSize,
           SearchText: search,
           StoreID: storeId,
         },
@@ -115,7 +101,6 @@ function User() {
         selectedStore?.StoreID || "" // Pass the selected store ID
       );
       setUsers(users);
-      setPaginatedPeople(users);
       setTotalUsers(totalCount);
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -220,56 +205,7 @@ function User() {
   // Search function
   const searchItems = (searchValue) => {
     setSearchName(searchValue);
-
-    if (searchValue === "") {
-      setIsSearching(false); // Reset search mode
-    } else {
-      setIsSearching(true); // Enable search mode
-    }
-
-    // Apply both store and search filters together
-    applyFilters(searchValue, selectedStore);
   };
-
-  // Apply both filters
-  const applyFilters = (searchValue, selectedStore) => {
-    let filteredData = users;
-
-    // Filter by store if a store is selected
-    if (selectedStore?.StoreID) {
-      filteredData = filteredData.filter(
-        (user) => user.StoreID === selectedStore.StoreID
-      );
-    }
-
-    // Filter by search term if there is one
-    if (searchValue) {
-      const searchLower = searchValue.toLowerCase();
-      filteredData = filteredData.filter((user) => {
-        return (
-          (user.FirstName &&
-            user.FirstName.toLowerCase().includes(searchLower)) ||
-          (user.LastName &&
-            user.LastName.toLowerCase().includes(searchLower)) ||
-          (user.Email && user.Email.toLowerCase().includes(searchLower)) ||
-          (user.PhoneNumber &&
-            user.PhoneNumber.toLowerCase().includes(searchLower))
-        );
-      });
-    }
-
-    // Update filtered users state
-    setFilteredUsers(filteredData);
-  };
-
-  // Effect for handling store selection
-  useEffect(() => {
-    // Apply store and search filters when selectedStore or users change
-    applyFilters(searchName, selectedStore);
-  }, [selectedStore, users]);
-
-  // Display logic: Use filteredUsers when searching or filtering, otherwise use all users
-  const displayUsers = searchName || selectedStore ? filteredUsers : users;
 
   return (
     <div className="main-container">
