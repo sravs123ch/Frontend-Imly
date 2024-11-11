@@ -68,7 +68,6 @@ function App() {
                           <IdProvider>
                             <Routes>
                               <Route path="/" element={<Login />} />
-                              <Route path="/pop" element={<Orders />} />
 
                               <Route
                                 path="/user"
@@ -109,8 +108,8 @@ function App() {
                                 path="/dashboard"
                                 element={
                                   <ProtectedRoute
-                                    // allowedRoles={[1, 3]}
-                                    // requiredPermission={PERMISSIONS.VIEW_ORDERS}
+                                  // allowedRoles={[1, 3]}
+                                  // requiredPermission={PERMISSIONS.VIEW_ORDERS}
                                   >
                                     <Dashboard />
                                   </ProtectedRoute>
@@ -168,10 +167,11 @@ function App() {
                               <Route
                                 path="/Paymentsform"
                                 element={
-                                  <ProtectedRoute 
-                                  requiredPermission={
-                                    PERMISSIONS.ADD_PAYMENTS || PERMISSIONS.EDIT_PAYMENTS
-                                  }
+                                  <ProtectedRoute
+                                    requiredPermission={
+                                      PERMISSIONS.ADD_PAYMENTS ||
+                                      PERMISSIONS.EDIT_PAYMENTS
+                                    }
                                   >
                                     <Paymentform />
                                   </ProtectedRoute>
@@ -184,7 +184,8 @@ function App() {
                                   <ProtectedRoute
                                     // allowedRoles={[1]}
                                     requiredPermission={
-                                      PERMISSIONS.VIEW_USER_ROLES || PERMISSIONS.VIEW_ROLE
+                                      PERMISSIONS.VIEW_USER_ROLES ||
+                                      PERMISSIONS.VIEW_ROLE
                                     }
                                   >
                                     <RoleUser />
@@ -195,7 +196,7 @@ function App() {
                                 path="/RoleUserAddform"
                                 element={
                                   <ProtectedRoute
-                                    // allowedRoles={[1]} 
+                                    // allowedRoles={[1]}
                                     requiredPermission={PERMISSIONS.ADD_ROLE}
                                   >
                                     <RoleUserAddForm />
@@ -288,33 +289,24 @@ function App() {
                               <Route
                                 path="/tasks"
                                 element={
-                                  <ProtectedRoute 
-                                  // allowedRoles={[1]}
-                                  requiredPermission={
-                                    PERMISSIONS.VIEW_TASKS
-                                  }
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={PERMISSIONS.VIEW_TASKS}
                                   >
                                     <Tasks />
                                   </ProtectedRoute>
                                 }
                               />
                               {/* Testing route */}
-                              <Route
-                                path="/pop"
-                                element={
-                                  <ProtectedRoute allowedRoles={[1]}>
-                                    <Temp />
-                                  </ProtectedRoute>
-                                }
-                              />
+
                               <Route
                                 path="/feedback"
                                 element={
-                                  <ProtectedRoute 
-                                  // allowedRoles={[1]}
-                                  requiredPermission={
-                                    PERMISSIONS.VIEW_FEEDBACKS
-                                  }
+                                  <ProtectedRoute
+                                    // allowedRoles={[1]}
+                                    requiredPermission={
+                                      PERMISSIONS.VIEW_FEEDBACKS
+                                    }
                                   >
                                     <Feedback />
                                   </ProtectedRoute>
