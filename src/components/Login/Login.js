@@ -121,7 +121,7 @@ const Login = () => {
     <>
       <div className="flex min-h-full p-0 m-0 flex-1 bg-white">
         {(isLoading || isStoreDataLoading) && <LoadingAnimation />}
-        <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 h-[100vh] ">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
               <img alt="Your Company" src={Logo} className="h-20 w-auto" />
